@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -27,6 +29,8 @@ import com.dou361.ijkplayer.listener.OnPlayerStartOrPauseListener;
 import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
+import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
+import com.tencent.iot.hub.device.android.core.util.TXLog;
 import com.tencent.iot.hub.device.java.App;
 import com.tencent.iot.hub.device.java.core.mqtt.TXMqttActionCallBack;
 import com.tencent.iot.hub.device.java.core.mqtt.TXMqttConnection;
@@ -36,6 +40,15 @@ import com.tencent.iot.hub.device.java.main.shadow.SelfMqttActionCallBack;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +63,9 @@ import static android.os.SystemClock.uptimeMillis;
  * status bar and navigation/system bar) by style.xml.
  */
 public class RemoteControl extends Activity {
+
+    private MQTTSample mMQTTSample;
+    private RemoteControlInitial mParent;
 
     private PlayerView player;
     private Context mContext;
@@ -109,7 +125,9 @@ public class RemoteControl extends Activity {
 
         while (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
-            MQTTSample mMQTTSample = new MQTTSample(new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,mSubProductID,mSubDevName,mTestTopic);
+
+            mMQTTSample = new MQTTSample(new SelfMqttActionCallBack(),mBrokerURL,mProductID,mDevName,mDevPSK,mSubProductID,mSubDevName,mTestTopic);
+
             mMQTTSample.connect();
             sleep(2000);
         }/* else {
@@ -635,6 +653,79 @@ public class RemoteControl extends Activity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+    }
+
+    /**
+     * 实现TXMqttLogCallBack回调接口
+     */
+    private class SelfMqttLogCallBack extends TXMqttLogCallBack {
+
+        @Override
+        public void printDebug(String message) {
+
+        }
+
+        @Override
+        public String setSecretKey() {
+            String secertKey;
+            if (mDevPSK != null && mDevPSK.length() != 0) {  //密钥认证
+                secertKey = mDevPSK;
+                secertKey = secertKey.length() > 24 ? secertKey.substring(0,24) : secertKey;
+                return secertKey;
+            } else {
+                BufferedReader cert;
+
+                if (mDevCert != null && mDevCert.length() != 0) { //动态注册,从DevCert中读取
+                    cert = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(mDevCert.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));
+
+                } else { //证书认证，从证书文件中读取
+                    AssetManager assetManager = mParent.getAssets();
+                    if (assetManager == null) {
+                        return null;
+                    }
+                    try {
+                        cert=new BufferedReader(new InputStreamReader(assetManager.open(mDevCertName)));
+                    } catch (IOException e) {
+                        Log.d(TAG, "setSecretKey: getSecertKey failed, cannot open CRT Files.");
+                        return null;
+                    }
+                }
+                //获取密钥
+                try {
+                    if (cert.readLine().contains("-----BEGIN")) {
+                        secertKey = cert.readLine();
+                        secertKey = secertKey.length() > 24 ? secertKey.substring(0,24) : secertKey;
+                    } else {
+                        secertKey = null;
+                        Log.d(TAG, "setSecretKey: Invaild CRT Files.");
+                    }
+                    cert.close();
+                } catch (IOException e) {
+                    TXLog.e(TAG, "getSecertKey failed.", e);
+                    Log.d(TAG, "getSecertKey failed.");
+                    return null;
+                }
+            }
+
+            return secertKey;
+        }
+
+        @Override
+        public boolean saveLogOffline(String log) {
+            return false;
+        }
+
+        @Override
+        public String readOfflineLog() {
+            return null;
+        }
+
+        @Override
+        public boolean delOfflineLog() {
+            return false;
+        }
+
+
     }
 
     //ms为需要休眠的时长

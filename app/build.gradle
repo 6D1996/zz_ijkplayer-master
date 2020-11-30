@@ -77,7 +77,12 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.0.1'
     implementation 'com.alibaba:fastjson:1.2.14'
 
-    implementation 'com.tencent.iot.hub:hub-device-java:1.0.0'
+
+    implementation 'com.tencent.iot.hub:hub-device-android-service:3.2.0'
+
+//    implementation project(':hub-device-android:iot_core')
+//    implementation project(':hub-device-android:iot_service')
+
 
 
 }
