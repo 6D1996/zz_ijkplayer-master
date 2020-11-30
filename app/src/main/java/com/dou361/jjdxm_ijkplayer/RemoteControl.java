@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -26,9 +27,19 @@ import com.dou361.ijkplayer.listener.OnPlayerStartOrPauseListener;
 import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
+import com.tencent.iot.hub.device.java.App;
+import com.tencent.iot.hub.device.java.core.mqtt.TXMqttActionCallBack;
+import com.tencent.iot.hub.device.java.core.mqtt.TXMqttConnection;
+import com.tencent.iot.hub.device.java.core.util.AsymcSslUtils;
+import com.tencent.iot.hub.device.java.main.mqtt.MQTTSample;
+import com.tencent.iot.hub.device.java.main.shadow.SelfMqttActionCallBack;
+
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.os.SystemClock.uptimeMillis;
 
 
 //I added a line here by Github
@@ -55,6 +66,36 @@ public class RemoteControl extends Activity {
     private ImageButton imageButton_forward,imageButton_backward;
     private ImageView app_video_play;
     private Spinner Video_Modul_Spinner;
+
+    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mProductID = "2N8PWJAI0V";
+    private String mDevName = "android_test_phone";
+    private String mDevPSK  = "KdV+RSnHAlmEpM75aWZQZg=="; //若使用证书验证，设为null
+    private String mSubProductID = null; // If you wont test gateway, let this to be null
+    private String mSubDevName = null;
+    private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
+    private String mTestTopic = "2N8PWJAI0V/android_test_phone/data";    // productID/DeviceName/TopicName
+    private String mDevCertName = "YOUR_DEVICE_NAME_cert.crt";
+    private String mDevKeyName  = "YOUR_DEVICE_NAME_private.key";
+    private String mProductKey = "BuildConfig.PRODUCT_KEY";        // Used for dynamic register
+    private String mDevCert = "";           // Cert String
+    private String mDevPriv = "";           // Priv String
+
+    private volatile boolean mIsConnected;
+
+    private final static String BROKER_URL = "broker_url";
+    private final static String PRODUCT_ID = "product_id";
+    private final static String DEVICE_NAME = "dev_name";
+    private final static String DEVICE_PSK = "dev_psk";
+    private final static String SUB_PRODUCID = "sub_prodid";
+    private final static String SUB_DEVNAME = "sub_devname";
+    private final static String TEST_TOPIC  = "test_topic";
+
+    private final static String DEVICE_CERT = "dev_cert";
+    private final static String DEVICE_PRIV  = "dev_priv";
+    private final static String PRODUCT_KEY  = "product_key";
+    private final static String SUB_DEVICE_PSK = "sub_dev_psk";
+
     @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +105,17 @@ public class RemoteControl extends Activity {
         this.mActivity = this;
         rootView = getLayoutInflater().from(this).inflate(R.layout.activity_remote_control, null);
         setContentView(rootView);
+
+
+        while (!mIsConnected) {
+            Log.d(TAG, "onCreate: Connecting Mqtt");
+            MQTTSample mMQTTSample = new MQTTSample(new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,mSubProductID,mSubDevName,mTestTopic);
+            mMQTTSample.connect();
+            sleep(2000);
+        }/* else {
+            Log.d(TAG, "Mqtt has been connected, do not connect it again.");
+        }*/
+
 
 
         /**常亮*/
@@ -86,6 +138,7 @@ public class RemoteControl extends Activity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG, "onTouch: backwarDown");
                     case MotionEvent.ACTION_POINTER_DOWN:
                         Log.d(TAG, "onTouch: backward");
                     case MotionEvent.ACTION_MOVE:
@@ -582,6 +635,27 @@ public class RemoteControl extends Activity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+    }
 
+    //ms为需要休眠的时长
+    public static void sleep(long ms)
+    {
+        //uptimeMillis() Returns milliseconds since boot, not counting time spent in deep sleep.
+        long start = uptimeMillis();
+        long duration = ms;
+        boolean interrupted = false;
+        do {
+            try {
+                Thread.sleep(duration);
+            }
+            catch (InterruptedException e) {
+                interrupted = true;
+            }
+            duration = start + ms - uptimeMillis();
+        } while (duration > 0);
+
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
