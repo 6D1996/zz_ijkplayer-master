@@ -111,7 +111,7 @@ public class RemoteControl extends Activity {
 
         if (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
-            //轮询连接
+            //轮询连接push
             sleep(2000);
         } else {
             //执行其余操作
