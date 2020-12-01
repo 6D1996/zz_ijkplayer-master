@@ -23,6 +23,8 @@ public class RemoteControlInitial extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        //一直连接Iothub
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_controlinitial);
         this.mContext = this;
@@ -32,7 +34,7 @@ public class RemoteControlInitial extends Activity {
             @Override
             public void onClick(View V){
 
-                        //对话框
+                        //IotHub连接成功弹出对话框，否则提示当前连接车辆失败
                         AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
                         builder.setIcon(R.drawable.shangbackground);
                         builder.setTitle("开始挪车");//设置对话框的标题

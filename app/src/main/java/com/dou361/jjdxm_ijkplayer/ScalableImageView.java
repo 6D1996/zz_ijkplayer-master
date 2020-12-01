@@ -105,7 +105,8 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                         if(degree>900) degree= 900;
                         if(degree<-900)degree=-900;
                     }
-                    Log.d("Degree",degree+"");
+                    mDegree=degree;
+                    Log.d("Degree",mDegree+"");
 
                     final RotateAnimation rotateAnimation = new RotateAnimation(0f, degree, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
                     matrix.postRotate(degree,bitmap.getWidth()/2, bitmap.getHeight()/ 2);

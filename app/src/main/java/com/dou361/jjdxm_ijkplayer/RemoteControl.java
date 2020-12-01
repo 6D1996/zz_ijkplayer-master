@@ -109,17 +109,13 @@ public class RemoteControl extends Activity {
         setContentView(rootView);
 
 
-        while (!mIsConnected) {
+        if (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
-
-
+            //轮询连接
             sleep(2000);
-        }/* else {
-            Log.d(TAG, "Mqtt has been connected, do not connect it again.");
-        //}
-
-
-
+        } else {
+            //执行其余操作
+        }
 
 
         /**常亮*/
@@ -133,6 +129,7 @@ public class RemoteControl extends Activity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Forward");
+                //发送挂挡及前进指令
             }
         });
 
