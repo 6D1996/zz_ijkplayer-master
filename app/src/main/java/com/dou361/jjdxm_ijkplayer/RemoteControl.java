@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -26,16 +25,12 @@ import com.dou361.ijkplayer.listener.OnPlayerStartOrPauseListener;
 import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
+import com.dou361.jjdxm_ijkplayer.mqtt.MQTTLocalSample;
+import com.tencent.iot.hub.device.java.main.mqtt.MQTTSample;
+import com.tencent.iot.hub.device.java.main.shadow.SelfMqttActionCallBack;
 
 
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static android.os.SystemClock.uptimeMillis;
@@ -52,6 +47,7 @@ public class RemoteControl extends Activity {
 
 
     private RemoteControlInitial mParent;
+    private MQTTLocalSample mqttLocalSample;
 
     private PlayerView player;
     private Context mContext;
@@ -109,13 +105,18 @@ public class RemoteControl extends Activity {
         setContentView(rootView);
 
 
-        if (!mIsConnected) {
+        while (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
             //轮询连接push
-            sleep(2000);
-        } else {
-            //执行其余操作
-        }
+            mqttLocalSample=new MQTTLocalSample(new SelfMqttActionCallBack(),mBrokerURL,mProductID,mDevName,mDevPSK,mSubProductID,mSubDevName,mTestTopic);
+            mqttLocalSample.connect();
+
+
+
+            sleep(2000);}
+//        } else {
+//            //执行其余操作
+//        }
 
 
         /**常亮*/
