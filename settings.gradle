@@ -1,1 +1,3 @@
 include ':app','jjdxm-ijkplayer'
+include ':hub-device-java'
+include 'hub-device-android:iot_core', 'hub-device-android:iot_service'//, 'hub-device-android:hub-demo'

@@ -11,6 +11,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/hub-device-android" />
+            <option value="$PROJECT_DIR$/hub-device-android/iot_core" />
+            <option value="$PROJECT_DIR$/hub-device-android/iot_service" />
+            <option value="$PROJECT_DIR$/hub-device-java" />
             <option value="$PROJECT_DIR$/jjdxm-ijkplayer" />
           </set>
         </option>

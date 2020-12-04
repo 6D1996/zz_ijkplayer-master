@@ -6,7 +6,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,12 +27,29 @@ import com.dou361.ijkplayer.listener.OnPlayerStartOrPauseListener;
 import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
-import com.dou361.jjdxm_ijkplayer.mqtt.MQTTLocalSample;
-import com.tencent.iot.hub.device.java.main.mqtt.MQTTSample;
+import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
+import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
+import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
+import com.tencent.iot.hub.device.android.core.util.TXLog;
+import com.tencent.iot.hub.device.java.core.common.Status;
+import com.tencent.iot.hub.device.java.core.mqtt.TXMqttActionCallBack;
 import com.tencent.iot.hub.device.java.main.shadow.SelfMqttActionCallBack;
 
 
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.os.SystemClock.uptimeMillis;
@@ -45,9 +64,11 @@ import static android.os.SystemClock.uptimeMillis;
  */
 public class RemoteControl extends Activity {
 
+    private final static String mLogPath = Environment.getExternalStorageDirectory().getPath() + "/tencent/";
 
-    private RemoteControlInitial mParent;
-    private MQTTLocalSample mqttLocalSample;
+    private MainActivity mParent;
+   // private MQTTLocalSample mqttLocalSample;
+    private MQTTSample mqttSample;
 
     private PlayerView player;
     private Context mContext;
@@ -69,8 +90,8 @@ public class RemoteControl extends Activity {
     private String mProductID = "2N8PWJAI0V";
     private String mDevName = "android_test_phone";
     private String mDevPSK  = "KdV+RSnHAlmEpM75aWZQZg=="; //若使用证书验证，设为null
-    private String mSubProductID = null; // If you wont test gateway, let this to be null
-    private String mSubDevName = null;
+    private String mSubProductID = ""; // If you wont test gateway, let this to be null
+    private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
     private String mTestTopic = "2N8PWJAI0V/android_test_phone/data";    // productID/DeviceName/TopicName
     private String mDevCertName = "YOUR_DEVICE_NAME_cert.crt";
@@ -107,9 +128,13 @@ public class RemoteControl extends Activity {
 
         while (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
-            //轮询连接push
-            mqttLocalSample=new MQTTLocalSample(new SelfMqttActionCallBack(),mBrokerURL,mProductID,mDevName,mDevPSK,mSubProductID,mSubDevName,mTestTopic);
-            mqttLocalSample.connect();
+            //轮询连接,万分感谢陈岩大佬
+            mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
+                    mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
+            Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
+            mqttSample.connect();
+//            mqttLocalSample=new MQTTLocalSample(new SelfMqttActionCallBack(),mBrokerURL,mProductID,mDevName,mDevPSK,mSubProductID,mSubDevName,mTestTopic);
+//            mqttLocalSample.connect();
 
 
 
@@ -661,4 +686,215 @@ public class RemoteControl extends Activity {
             Thread.currentThread().interrupt();
         }
     }
+
+    /**
+     * 实现TXMqttActionCallBack回调接口
+     */
+    private class SelfMqttActionCallBack extends TXMqttActionCallBack {
+
+        @Override
+        public void onConnectCompleted(Status status, boolean reconnect, Object userContext, String msg) {
+            String userContextInfo = "";
+            if (userContext instanceof MQTTRequest) {
+                userContextInfo = userContext.toString();
+            }
+            String logInfo = String.format("onConnectCompleted, status[%s], reconnect[%b], userContext[%s], msg[%s]",
+                    status.name(), reconnect, userContextInfo, msg);
+            Log.d(TAG, "onConnectCompleted: "+logInfo);
+            if(status==Status.OK){
+             mIsConnected = true;}
+        }
+
+        @Override
+        public void onConnectionLost(Throwable cause) {
+            String logInfo = String.format("onConnectionLost, cause[%s]", cause.toString());
+            Log.d(TAG, "onConnectCompleted: "+logInfo);
+        }
+
+        @Override
+        public void onDisconnectCompleted(Status status, Object userContext, String msg) {
+            String userContextInfo = "";
+            if (userContext instanceof MQTTRequest) {
+                userContextInfo = userContext.toString();
+            }
+            String logInfo = String.format("onDisconnectCompleted, status[%s], userContext[%s], msg[%s]", status.name(), userContextInfo, msg);
+            Log.d(TAG, "onConnectCompleted: "+logInfo);
+            mIsConnected = false;
+        }
+
+        @Override
+        public void onPublishCompleted(Status status, IMqttToken token, Object userContext, String errMsg) {
+            String userContextInfo = "";
+            if (userContext instanceof MQTTRequest) {
+                userContextInfo = userContext.toString();
+            }
+            String logInfo = String.format("onPublishCompleted, status[%s], topics[%s],  userContext[%s], errMsg[%s]",
+                    status.name(), Arrays.toString(token.getTopics()), userContextInfo, errMsg);
+            Log.d(TAG, "onConnectCompleted: "+logInfo);
+        }
+
+        @Override
+        public void onSubscribeCompleted(Status status, IMqttToken asyncActionToken, Object userContext, String errMsg) {
+            String userContextInfo = "";
+            if (userContext instanceof MQTTRequest) {
+                userContextInfo = userContext.toString();
+            }
+            String logInfo = String.format("onSubscribeCompleted, status[%s], topics[%s], userContext[%s], errMsg[%s]",
+                    status.name(), Arrays.toString(asyncActionToken.getTopics()), userContextInfo, errMsg);
+            if (Status.ERROR == status) {
+                Log.d(TAG, "onConnectCompleted: "+logInfo);
+            } else {
+                Log.d(TAG, "onConnectCompleted: "+logInfo);
+            }
+        }
+
+        @Override
+        public void onUnSubscribeCompleted(Status status, IMqttToken asyncActionToken, Object userContext, String errMsg) {
+            String userContextInfo = "";
+            if (userContext instanceof MQTTRequest) {
+                userContextInfo = userContext.toString();
+            }
+            String logInfo = String.format("onUnSubscribeCompleted, status[%s], topics[%s], userContext[%s], errMsg[%s]",
+                    status.name(), Arrays.toString(asyncActionToken.getTopics()), userContextInfo, errMsg);
+            Log.d(TAG, "onConnectCompleted: "+logInfo);
+        }
+
+        @Override
+        public void onMessageReceived(final String topic, final MqttMessage message) {
+            String logInfo = String.format("receive command, topic[%s], message[%s]", topic, message.toString());
+            Log.d(TAG, "onConnectCompleted: "+logInfo);
+        }
+    }
+
+    /**
+     * 实现TXMqttLogCallBack回调接口
+     */
+    private class SelfMqttLogCallBack extends TXMqttLogCallBack {
+
+        @Override
+        public String setSecretKey() {
+            String secertKey;
+            if (mDevPSK != null && mDevPSK.length() != 0) {  //密钥认证
+                secertKey = mDevPSK;
+                secertKey = secertKey.length() > 24 ? secertKey.substring(0,24) : secertKey;
+                return secertKey;
+            } else {
+                BufferedReader cert;
+
+                if (mDevCert != null && mDevCert.length() != 0) { //动态注册,从DevCert中读取
+                    cert = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(mDevCert.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));
+
+                } else { //证书认证，从证书文件中读取
+                    AssetManager assetManager = mParent.getAssets();
+                    if (assetManager == null) {
+                        return null;
+                    }
+                    try {
+                        cert=new BufferedReader(new InputStreamReader(assetManager.open(mDevCertName)));
+                    } catch (IOException e) {
+//                        mParent.printLogInfo(TAG, "getSecertKey failed, cannot open CRT Files.",mLogInfoText);
+                        return null;
+                    }
+                }
+                //获取密钥
+                try {
+                    if (cert.readLine().contains("-----BEGIN")) {
+                        secertKey = cert.readLine();
+                        secertKey = secertKey.length() > 24 ? secertKey.substring(0,24) : secertKey;
+                    } else {
+                        secertKey = null;
+//                        mParent.printLogInfo(TAG,"Invaild CRT Files.", mLogInfoText);
+                    }
+                    cert.close();
+                } catch (IOException e) {
+                    TXLog.e(TAG, "getSecertKey failed.", e);
+//                    mParent.printLogInfo(TAG,"getSecertKey failed.", mLogInfoText);
+                    return null;
+                }
+            }
+
+            return secertKey;
+        }
+
+        @Override
+        public void printDebug(String message){
+//            mParent.printLogInfo(TAG, message, mLogInfoText);
+            //TXLog.d(TAG,message);
+        }
+
+        @Override
+        public boolean saveLogOffline(String log){
+            //判断SD卡是否可用
+            if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+//                mParent.printLogInfo(TAG, "saveLogOffline not ready", mLogInfoText);
+                return false;
+            }
+
+            String logFilePath = mLogPath + mProductID + mDevName + ".log";
+
+            TXLog.i(TAG, "Save log to %s", logFilePath);
+
+            try {
+                BufferedWriter wLog = new BufferedWriter(new FileWriter(new File(logFilePath), true));
+                wLog.write(log);
+                wLog.flush();
+                wLog.close();
+                return true;
+            } catch (IOException e) {
+                String logInfo = String.format("Save log to [%s] failed, check the Storage permission!", logFilePath);
+//                mParent.printLogInfo(TAG,logInfo, mLogInfoText);
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        public String readOfflineLog(){
+            //判断SD卡是否可用
+            if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+//                mParent.printLogInfo(TAG, "readOfflineLog not ready", mLogInfoText);
+                return null;
+            }
+
+            String logFilePath = mLogPath + mProductID + mDevName + ".log";
+
+            TXLog.i(TAG, "Read log from %s", logFilePath);
+
+            try {
+                BufferedReader logReader = new BufferedReader(new FileReader(logFilePath));
+                StringBuilder offlineLog = new StringBuilder();
+                int data;
+                while (( data = logReader.read()) != -1 ) {
+                    offlineLog.append((char)data);
+                }
+                logReader.close();
+                return offlineLog.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public boolean delOfflineLog(){
+
+            //判断SD卡是否可用
+            if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+//                mParent.printLogInfo(TAG, "delOfflineLog not ready", mLogInfoText);
+                return false;
+            }
+
+            String logFilePath = mLogPath + mProductID + mDevName + ".log";
+
+            File file = new File(logFilePath);
+            if (file.exists() && file.isFile()) {
+                if (file.delete()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    }
+
 }
