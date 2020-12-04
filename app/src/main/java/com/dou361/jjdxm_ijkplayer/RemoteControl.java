@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.dou361.ijkplayer.bean.VideoijkBean;
 import com.dou361.ijkplayer.listener.OnPlayerBackListener;
@@ -27,6 +28,7 @@ import com.dou361.ijkplayer.listener.OnPlayerStartOrPauseListener;
 import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
+import com.dou361.jjdxm_ijkplayer.command.Handbrake;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
 import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
@@ -87,13 +89,19 @@ public class RemoteControl extends Activity {
     private Spinner Video_Modul_Spinner;
 
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-    private String mProductID = "2N8PWJAI0V";
-    private String mDevName = "android_test_phone";
-    private String mDevPSK  = "KdV+RSnHAlmEpM75aWZQZg=="; //若使用证书验证，设为null
+    /*private String mProductID = "2N8PWJAI0V";
+    private String mDevName = "OPPOA57t";
+    private String mDevPSK  = "TbtnFhJDmRe7N41vDBRVtA=="; //若使用证书验证，设为null
+    private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data";    // productID/DeviceName/TopicName
+*/
+    private String mProductID = "KM8UZXZOV9";
+    private String mDevName = "android_test";
+    private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
+    private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
+
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
-    private String mTestTopic = "2N8PWJAI0V/android_test_phone/data";    // productID/DeviceName/TopicName
     private String mDevCertName = "YOUR_DEVICE_NAME_cert.crt";
     private String mDevKeyName  = "YOUR_DEVICE_NAME_private.key";
     private String mProductKey = "BuildConfig.PRODUCT_KEY";        // Used for dynamic register
@@ -133,15 +141,17 @@ public class RemoteControl extends Activity {
                     mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
             Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
             mqttSample.connect();
+
+
 //            mqttLocalSample=new MQTTLocalSample(new SelfMqttActionCallBack(),mBrokerURL,mProductID,mDevName,mDevPSK,mSubProductID,mSubDevName,mTestTopic);
 //            mqttLocalSample.connect();
-
-
 
             sleep(2000);}
 //        } else {
 //            //执行其余操作
 //        }
+        turnOnHandbrake();
+        Log.d(TAG, "onCreate: ");
 
 
         /**常亮*/
@@ -658,6 +668,28 @@ public class RemoteControl extends Activity {
         });
 
     }
+
+    private void turnOnHandbrake() {
+        Handbrake  mHandbrakeOn = new Handbrake();
+        mHandbrakeOn.setTimestamp(System.currentTimeMillis());
+        mHandbrakeOn.setStatus(0);
+        mHandbrakeOn.setType(14);
+        mHandbrakeOn.setTaskid("6D");
+        // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
+        mqttSample.publishTopic("data", JSON.toJSONString(mHandbrakeOn));
+        Log.d(TAG, "onClick: "+JSON.toJSONString(mHandbrakeOn));
+    }
+    private void turnOffHandbrake(){
+        Handbrake  mHandbrakeOn = new Handbrake();
+        mHandbrakeOn.setTimestamp(System.currentTimeMillis());
+        mHandbrakeOn.setStatus(0);
+        mHandbrakeOn.setType(14);
+        mHandbrakeOn.setTaskid("6D");
+        // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
+        mqttSample.publishTopic("data", JSON.toJSONString(mHandbrakeOn));
+        Log.d(TAG, "onClick: "+JSON.toJSONString(mHandbrakeOn));
+    }
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

@@ -24,7 +24,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     private Matrix matrix;
     private Matrix cacheMatrix;  //缓存的matrix ，同时记录上一次滑动的位置
     private float mPointDistinct = 1f;
-    private float mDegree;
+    public float mDegree;
     private Bitmap bitmap;
     private float rotate = 0F;// 旋转的角度
 
@@ -102,8 +102,8 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                         if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) < -350)
                             circle++;
                         degree = degree + 360 * circle;
-                        if(degree>900) degree= 900;
-                        if(degree<-900)degree=-900;
+                        if(degree>900) degree = 900;
+                        if(degree<-900)degree =-900;
                     }
                     mDegree=degree;
                     Log.d("Degree",mDegree+"");
