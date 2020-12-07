@@ -28,7 +28,10 @@ import com.dou361.ijkplayer.listener.OnPlayerStartOrPauseListener;
 import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
+import com.dou361.jjdxm_ijkplayer.command.Control;
+import com.dou361.jjdxm_ijkplayer.command.Gears;
 import com.dou361.jjdxm_ijkplayer.command.Handbrake;
+import com.dou361.jjdxm_ijkplayer.command.Video;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
 import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
@@ -141,18 +144,10 @@ public class RemoteControl extends Activity {
                     mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
             Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
             mqttSample.connect();
-
-
-//            mqttLocalSample=new MQTTLocalSample(new SelfMqttActionCallBack(),mBrokerURL,mProductID,mDevName,mDevPSK,mSubProductID,mSubDevName,mTestTopic);
-//            mqttLocalSample.connect();
-
             sleep(2000);}
-//        } else {
-//            //执行其余操作
-//        }
-        turnOnHandbrake();
-        Log.d(TAG, "onCreate: ");
 
+        shiftHandbrake(1);
+        Log.d(TAG, "onCreate: ");
 
         /**常亮*/
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -166,6 +161,8 @@ public class RemoteControl extends Activity {
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Forward");
                 //发送挂挡及前进指令
+                shiftGear(4);
+                moveVehicle(3.3,5.0,0.0);
             }
         });
 
@@ -175,12 +172,17 @@ public class RemoteControl extends Activity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()){
                     case MotionEvent.ACTION_DOWN:
+                        shiftGear(2);
+                        moveVehicle(3.3,-5.0,0.0);
                         Log.d(TAG, "onTouch: backwarDown");
                     case MotionEvent.ACTION_POINTER_DOWN:
+                        moveVehicle(3.3,-5.0,0.0);
                         Log.d(TAG, "onTouch: backward");
                     case MotionEvent.ACTION_MOVE:
+                        moveVehicle(3.3,-5.0,0.0);
                         Log.d(TAG, "onTouch: backwarding");
                     case MotionEvent.ACTION_UP:
+                        moveVehicle(-3.4,0.0,0.0);
                         Log.d(TAG, "onTouch: Up");
                 }
                 return true;
@@ -669,25 +671,71 @@ public class RemoteControl extends Activity {
 
     }
 
-    private void turnOnHandbrake() {
-        Handbrake  mHandbrakeOn = new Handbrake();
-        mHandbrakeOn.setTimestamp(System.currentTimeMillis());
-        mHandbrakeOn.setStatus(0);
-        mHandbrakeOn.setType(14);
-        mHandbrakeOn.setTaskid("6D");
+    /**
+    1表示手刹释放，0表示手刹锁定
+     **/
+
+    private void shiftHandbrake(int handbrakeStatus) {
+        Handbrake  mHandbrake = new Handbrake();
+        mHandbrake.setTimestamp(System.currentTimeMillis());
+        mHandbrake.setStatus(0);
+        mHandbrake.setType(14);
+        mHandbrake.setTaskid("6D");
         // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-        mqttSample.publishTopic("data", JSON.toJSONString(mHandbrakeOn));
-        Log.d(TAG, "onClick: "+JSON.toJSONString(mHandbrakeOn));
+        mqttSample.publishTopic("data", JSON.toJSONString(mHandbrake));
+        Log.d(TAG, "onClick: "+JSON.toJSONString(mHandbrake));
     }
-    private void turnOffHandbrake(){
-        Handbrake  mHandbrakeOn = new Handbrake();
-        mHandbrakeOn.setTimestamp(System.currentTimeMillis());
-        mHandbrakeOn.setStatus(0);
-        mHandbrakeOn.setType(14);
-        mHandbrakeOn.setTaskid("6D");
+
+    /**
+    1,2,3,4分別對應P,R,N,D四個檔位
+     **/
+    private void shiftGear(int gear){
+        Gears mGear = new Gears();
+        mGear.setTimestamp(System.currentTimeMillis());
+        Log.d(TAG, "onClick: "+System.currentTimeMillis());
+        mGear.setGear(gear);
+        mGear.setType(13);
+        mGear.setTaskid("手機挂"+gear+"档");
         // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-        mqttSample.publishTopic("data", JSON.toJSONString(mHandbrakeOn));
-        Log.d(TAG, "onClick: "+JSON.toJSONString(mHandbrakeOn));
+        mqttSample.publishTopic("data", JSON.toJSONString(mGear));
+        Log.d(TAG, "onClick: "+JSON.toJSONString(mGear));
+    }
+
+
+    /**
+
+     @videoType
+     1为前方原始视频流，2为后方原始视频流，3为左侧原始视频流，4为右侧原始视频流，5为感知融合视频流，6为上帝视角视频流
+     @videoStatus
+     1为打开，0为关闭
+     */
+    private void shiftVideoType(int videoType,int videoStatus){
+        Video mVideo = new Video();
+        mVideo.setTimestamp(System.currentTimeMillis());
+        mVideo.setVideo_type(videoType);
+        mVideo.setOperation(videoStatus);
+        mVideo.setType(12);
+        // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
+        mqttSample.publishTopic("data", JSON.toJSONString(mVideo));
+        Log.d(TAG, "onClick: "+JSON.toJSONString(mVideo));
+    }
+
+    /**
+     * @acceleration 加速度，正是加速，負的是減速
+     * @speed 目標速度
+     * @wheelAngle 方向盤轉角
+     */
+
+    private void moveVehicle(Double acceleration,Double speed,Double wheelAngle){
+        Control mMove = new Control();
+        mMove.setTimestamp(System.currentTimeMillis());
+        mMove.setAcceleration(acceleration);
+        mMove.setSpeed(speed);
+        mMove.setType(11);
+        mMove.setWheel_angle(wheelAngle);
+        // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
+        mqttSample.publishTopic("data", JSON.toJSONString(mMove));
+        Log.d(TAG, "onClick: "+JSON.toJSONString(mMove));
     }
 
 
