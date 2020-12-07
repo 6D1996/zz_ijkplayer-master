@@ -1,0 +1,11 @@
+{
+  "PRODUCT_ID":        "2N8PWJAI0V",
+  "DEVICE_NAME":       "android_test_phone",
+  "DEVICE_PSK":        "KdV+RSnHAlmEpM75aWZQZg==",
+  "SUB_PRODUCT_ID":    "",
+  "SUB_DEVICE_PSK":    "",
+  "SUB_DEV_NAME":      "",
+  "TEST_TOPIC":        "2N8PWJAI0V/android_test_phone/data",
+  "SHADOW_TEST_TOPIC": "",
+  "PRODUCT_KEY":       ""
+}
