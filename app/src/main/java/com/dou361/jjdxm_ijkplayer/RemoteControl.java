@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -59,20 +63,18 @@ import java.util.List;
 
 import static android.os.SystemClock.uptimeMillis;
 
-
-//I added a line here by Github
-//I added this line by Android Studio
-
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) by style.xml.
+ 遥控车辆进行移动
  */
 public class RemoteControl extends Activity {
+
+    public String hostIP = /*"192.168.0.108:18081";*/"10.6.206.20:30549";
+    public String userId = "6D的安卓測試機";
+    public String vin = "001";
 
     private final static String mLogPath = Environment.getExternalStorageDirectory().getPath() + "/tencent/";
 
     private MainActivity mParent;
-   // private MQTTLocalSample mqttLocalSample;
     private MQTTSample mqttSample;
 
     private PlayerView player;
@@ -91,17 +93,19 @@ public class RemoteControl extends Activity {
     private ImageView app_video_play;
     private Spinner Video_Modul_Spinner;
 
+    private Double wheelAngle=0.0;
+    private Double speed=0.0;
+
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-    /*private String mProductID = "2N8PWJAI0V";
+    private String mProductID = "2N8PWJAI0V";
     private String mDevName = "OPPOA57t";
     private String mDevPSK  = "TbtnFhJDmRe7N41vDBRVtA=="; //若使用证书验证，设为null
     private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data";    // productID/DeviceName/TopicName
-*/
-    private String mProductID = "KM8UZXZOV9";
+ /*   private String mProductID = "KM8UZXZOV9";
     private String mDevName = "android_test";
     private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
     private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
-
+*/
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
@@ -113,18 +117,6 @@ public class RemoteControl extends Activity {
 
     private volatile boolean mIsConnected=false;
 
-    private final static String BROKER_URL = "broker_url";
-    private final static String PRODUCT_ID = "product_id";
-    private final static String DEVICE_NAME = "dev_name";
-    private final static String DEVICE_PSK = "dev_psk";
-    private final static String SUB_PRODUCID = "sub_prodid";
-    private final static String SUB_DEVNAME = "sub_devname";
-    private final static String TEST_TOPIC  = "test_topic";
-
-    private final static String DEVICE_CERT = "dev_cert";
-    private final static String DEVICE_PRIV  = "dev_priv";
-    private final static String PRODUCT_KEY  = "product_key";
-    private final static String SUB_DEVICE_PSK = "sub_dev_psk";
 
     @SuppressLint("InvalidWakeLockTag")
     @Override
@@ -134,10 +126,11 @@ public class RemoteControl extends Activity {
         this.mContext = this;
         this.mActivity = this;
         rootView = getLayoutInflater().from(this).inflate(R.layout.activity_remote_control, null);
+
         setContentView(rootView);
 
 
-        while (!mIsConnected) {
+        if (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
             //轮询连接,万分感谢陈岩大佬
             mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
@@ -154,9 +147,11 @@ public class RemoteControl extends Activity {
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "liveTAG");
         wakeLock.acquire();
 
+        CompentOnTouch compentOnTouch = new CompentOnTouch();
 
         imageButton_forward=findViewById(R.id.forward);
-        imageButton_forward.setOnClickListener(new View.OnClickListener() {
+        imageButton_forward.setOnTouchListener(compentOnTouch);
+/*        imageButton_forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Forward");
@@ -164,10 +159,11 @@ public class RemoteControl extends Activity {
                 shiftGear(4);
                 moveVehicle(3.3,5.0,0.0);
             }
-        });
+        });*/
 
         imageButton_backward=findViewById(R.id.backward);
-        imageButton_backward.setOnTouchListener(new View.OnTouchListener() {
+        imageButton_backward.setOnTouchListener(compentOnTouch);
+/*        imageButton_backward.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()){
@@ -187,7 +183,7 @@ public class RemoteControl extends Activity {
                 }
                 return true;
             }
-        });
+        });*/
 
 
 
@@ -671,6 +667,7 @@ public class RemoteControl extends Activity {
 
     }
 
+
     /**
     1表示手刹释放，0表示手刹锁定
      **/
@@ -974,6 +971,125 @@ public class RemoteControl extends Activity {
             }
             return false;
         }
+
+    }
+
+
+    class CompentOnTouch implements View.OnTouchListener {
+
+        public boolean isOnLongClick=false;
+        int i = 0;
+
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            switch (view.getId()) {
+// 这是btnMius下的一个层，为了增强易点击性
+                case R.id.backward:
+                    onTouchChange("backward", motionEvent.getAction());
+                    break;
+// 这里也写，是为了增强易点击性
+                case R.id.forward:
+                    onTouchChange("forward", motionEvent.getAction());
+                    break;
+            }
+            return true;
+        }
+
+
+
+        private void onTouchChange(String methodName, int eventAction) {
+// 按下松开分别对应启动停止前进方法
+            if ("backward".equals(methodName)) {
+                MiusThread miusThread = null;
+                if (eventAction == MotionEvent.ACTION_DOWN) {
+                    miusThread = new MiusThread();
+                    isOnLongClick = true;
+                    miusThread.start();
+                } else if (eventAction == MotionEvent.ACTION_UP) {
+                    if (miusThread != null) {
+                        isOnLongClick = false;
+                    }
+                } else if (eventAction == MotionEvent.ACTION_MOVE) {
+                    if (miusThread != null) {
+                        isOnLongClick = true;
+                    }
+                }
+            }
+// 按下松开分别对应启动停止加线程方法
+            else if ("forward".equals(methodName)) {
+                PlusThread plusThread = null;
+                if (eventAction == MotionEvent.ACTION_DOWN) {
+                    plusThread = new PlusThread();
+                    isOnLongClick = true;
+                    plusThread.start();
+                } else if (eventAction == MotionEvent.ACTION_UP) {
+                    if (plusThread != null) {
+                        isOnLongClick = false;
+                    }
+                } else if (eventAction == MotionEvent.ACTION_MOVE) {
+                    if (plusThread != null) {
+                        isOnLongClick = true;
+                    }
+                }
+            }
+        }
+
+
+        // 后退操作
+        class MiusThread extends Thread {
+            @Override
+            public void run() {
+                while (isOnLongClick) {
+                    try {
+                        Thread.sleep(200);
+                        myHandler.sendEmptyMessage(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    super.run();
+                }
+            }
+        }
+
+
+        // 前进操作
+        class PlusThread extends Thread {
+            @Override
+            public void run() {
+                while (isOnLongClick) {
+                    try {
+                        Thread.sleep(200);
+                        myHandler.sendEmptyMessage(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    super.run();
+                }
+            }
+        }
+
+        Handler myHandler = new Handler() {
+            public void handleMessage(Message msg) {
+
+                switch (msg.what) {
+                    case 1:
+                        //前进操作
+                        shiftGear(4);
+                        Control mForward = new Control(5.0,3.3,wheelAngle);
+                        mqttSample.publishTopic("data", JSON.toJSONString(mForward));
+                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mForward));
+                        break;
+                    case 2:
+                        shiftGear(2);
+                        Control mBackward = new Control(-5.0,3.3,wheelAngle);
+                        mqttSample.publishTopic("data", JSON.toJSONString(mBackward));
+                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mBackward));
+                        Log.d("TAG","Backward:"+i--);
+                        break;
+                }
+            };
+        };
 
     }
 

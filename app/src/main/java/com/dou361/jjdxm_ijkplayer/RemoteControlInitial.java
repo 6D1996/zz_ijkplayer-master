@@ -8,15 +8,23 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class RemoteControlInitial extends Activity {
 
     private Context mContext;
     private Button StartRemove;
+    private ImageButton imageButton_forward,imageButton_backward;
+    private TextView speedTextView;
 
 
     @Override
@@ -28,6 +36,18 @@ public class RemoteControlInitial extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_controlinitial);
         this.mContext = this;
+        speedTextView=findViewById(R.id.speed);
+        speedTextView.setText("Hello");
+
+
+
+//        CompentOnTouch compentOnTouch = new CompentOnTouch();
+//
+//        imageButton_forward=findViewById(R.id.forward);
+//        imageButton_forward.setOnTouchListener(compentOnTouch);
+//
+//        imageButton_backward=findViewById(R.id.backward);
+//        imageButton_backward.setOnTouchListener(compentOnTouch);
 
         StartRemove= (Button)findViewById(R.id.startRemove);
         StartRemove.setOnClickListener(new View.OnClickListener(){
@@ -58,5 +78,118 @@ public class RemoteControlInitial extends Activity {
                     }
                  });
     }
+
+//    class CompentOnTouch implements View.OnTouchListener {
+//
+//        public boolean isOnLongClick=false;
+//        int i = 0;
+//
+//
+//        @Override
+//        public boolean onTouch(View view, MotionEvent motionEvent) {
+//            switch (view.getId()) {
+//// 这是btnMius下的一个层，为了增强易点击性
+//                case R.id.forward:
+//                    onTouchChange("mius", motionEvent.getAction());
+//                    break;
+//// 这里也写，是为了增强易点击性
+//                case R.id.backward:
+//                    onTouchChange("plus", motionEvent.getAction());
+//                    break;
+//            }
+//            return true;
+//        }
+//
+//
+//
+//        private void onTouchChange(String methodName, int eventAction) {
+//// 按下松开分别对应启动停止减线程方法
+//            if ("mius".equals(methodName)) {
+//                MiusThread miusThread = null;
+//                if (eventAction == MotionEvent.ACTION_DOWN) {
+//                    miusThread = new MiusThread();
+//                    isOnLongClick = true;
+//                    miusThread.start();
+//                } else if (eventAction == MotionEvent.ACTION_UP) {
+//                    if (miusThread != null) {
+//                        isOnLongClick = false;
+//                    }
+//                } else if (eventAction == MotionEvent.ACTION_MOVE) {
+//                    if (miusThread != null) {
+//                        isOnLongClick = true;
+//                    }
+//                }
+//            }
+//// 按下松开分别对应启动停止加线程方法
+//            else if ("plus".equals(methodName)) {
+//                PlusThread plusThread = null;
+//                if (eventAction == MotionEvent.ACTION_DOWN) {
+//                    plusThread = new PlusThread();
+//                    isOnLongClick = true;
+//                    plusThread.start();
+//                } else if (eventAction == MotionEvent.ACTION_UP) {
+//                    if (plusThread != null) {
+//                        isOnLongClick = false;
+//                    }
+//                } else if (eventAction == MotionEvent.ACTION_MOVE) {
+//                    if (plusThread != null) {
+//                        isOnLongClick = true;
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        // 减操作
+//        class MiusThread extends Thread {
+//            @Override
+//            public void run() {
+//                while (isOnLongClick) {
+//                    try {
+//                        Thread.sleep(200);
+//                        myHandler.sendEmptyMessage(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    super.run();
+//                }
+//            }
+//        }
+//
+//
+//        // 加操作
+//        class PlusThread extends Thread {
+//            @Override
+//            public void run() {
+//                while (isOnLongClick) {
+//                    try {
+//                        Thread.sleep(200);
+//                        myHandler.sendEmptyMessage(2);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    super.run();
+//                }
+//            }
+//        }
+//
+//        Handler myHandler = new Handler() {
+//            public void handleMessage(Message msg) {
+//
+//                switch (msg.what) {
+//                    case 1:
+//                        speedTextView.setText(i);
+//                        Log.d("TAG","Forward:"+i++);
+//                        break;
+//                    case 2:
+//
+//                        Log.d("TAG","Backward:"+i--);
+//                        break;
+//                }
+//            };
+//        };
+//
+//
+//    }
 }
 

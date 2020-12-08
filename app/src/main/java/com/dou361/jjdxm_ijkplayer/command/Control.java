@@ -8,6 +8,12 @@ public class Control {
     public Control() {
     }
 
+    public Control(Double speed, Double acceleration, Double wheel_angle) {
+        this.speed = speed;
+        this.acceleration = acceleration;
+        this.wheel_angle = wheel_angle;
+    }
+
     public long getTimestamp() {
         return timestamp;
     }
