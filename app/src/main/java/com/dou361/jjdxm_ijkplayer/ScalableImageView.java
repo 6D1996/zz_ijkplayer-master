@@ -13,6 +13,8 @@ import android.view.animation.RotateAnimation;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 
 /**
  * Fixed on 2020/9/17,which is a happy day!
@@ -24,14 +26,21 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     private Matrix matrix;
     private Matrix cacheMatrix;  //缓存的matrix ，同时记录上一次滑动的位置
     private float mPointDistinct = 1f;
-    public float mDegree;
+    public  double mDegree=0.0;// 旋转的ScalableImageView角度
     private Bitmap bitmap;
-    private float rotate = 0F;// 旋转的角度
 
-    List<Float> angleList= new ArrayList<>();//For story the angle data
+    public  Double getmDegree() {
+//        Log.d(TAG, "getmDegree: "+mDegree);
+        return mDegree;
+
+    }
+
+    List<Double> angleList= new ArrayList<>();//For story the angle data
     int circle =0;
-    float degree0=0;//按下角度
-    float degree=0;//转动角度
+    double degree0 = 0.0;//按下角度
+    double degree = 0.0;//转动角度
+
+
 
     enum Mode {
         NONE, DOWN, MOVE
@@ -59,8 +68,8 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     private void init() {
         circle =0;
-        degree=0;
-        degree0=0;
+        degree=0.0;
+        degree0=0.0;
         matrix = new Matrix();
         cacheMatrix = new Matrix();
         mode = Mode.NONE;
@@ -77,7 +86,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                 double delta_x0 = (event.getX()- bitmap.getWidth()/2);
                 double delta_y0 = (event.getY() - bitmap.getHeight()/ 2);
                 double radius0 = Math.atan2(delta_y0,delta_x0);
-                degree0= (float) Math.toDegrees(radius0);
+                degree0= (Double) Math.toDegrees(radius0);
                 mode = Mode.DOWN;
                 mStart.set(event.getX(), event.getY());
                 break;
@@ -89,7 +98,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                     double delta_x = (event.getX()- bitmap.getWidth()/2);
                     double delta_y = (event.getY() - bitmap.getHeight()/ 2);
                     double radius = Math.atan2(delta_y,delta_x);
-                    degree= (float) Math.toDegrees(radius)-degree0;
+                    degree= (Double) Math.toDegrees(radius)-degree0;
                     angleList.add(degree);
                     if(angleList.size()>100){
                         for(int i=0;i<angleList.size()-100;i++){
@@ -102,29 +111,29 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                         if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) < -350)
                             circle++;
                         degree = degree + 360 * circle;
-                        if(degree>900) degree = 900;
-                        if(degree<-900)degree =-900;
+                        if(degree>900) degree = 900.0;
+                        if(degree<-900)degree =-900.0;
                     }
-                    mDegree=degree;
-                    Log.d("Degree",mDegree+"");
+//                    Log.d("赋值Degree",mDegree+"");
+                    mDegree= degree;
 
-                    final RotateAnimation rotateAnimation = new RotateAnimation(0f, degree, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-                    matrix.postRotate(degree,bitmap.getWidth()/2, bitmap.getHeight()/ 2);
+
+                    final RotateAnimation rotateAnimation = new RotateAnimation(0f, (float)degree, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+                    matrix.postRotate((float) degree,bitmap.getWidth()/2, bitmap.getHeight()/ 2);
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 init();
-                Log.d("Degree",degree+"");
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_CANCEL:
                 mode = Mode.NONE;
                 break;
 
         }
-
         setImageMatrix(matrix);
         return true;
     }
+
 
 
 }

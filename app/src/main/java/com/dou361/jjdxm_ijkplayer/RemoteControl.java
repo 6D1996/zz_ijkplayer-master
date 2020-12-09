@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -74,11 +75,13 @@ public class RemoteControl extends Activity {
 
     private final static String mLogPath = Environment.getExternalStorageDirectory().getPath() + "/tencent/";
 
+    public CountDownTimer countDownTimer;
     private MainActivity mParent;
     private MQTTSample mqttSample;
 
     private PlayerView player;
     private Context mContext;
+    private TextView  Speed;
     private List<VideoijkBean> list;
     private PowerManager.WakeLock wakeLock;
     private View rootView;
@@ -93,8 +96,9 @@ public class RemoteControl extends Activity {
     private ImageView app_video_play;
     private Spinner Video_Modul_Spinner;
 
-    private Double wheelAngle=0.0;
-    private Double speed=0.0;
+    private double wheelAngle=0.0;
+    private double speed=0.0;
+
 
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
     private String mProductID = "2N8PWJAI0V";
@@ -116,7 +120,7 @@ public class RemoteControl extends Activity {
     private String mDevPriv = "";           // Priv String
 
     private volatile boolean mIsConnected=false;
-
+    ScalableImageView sImgView ;
 
     @SuppressLint("InvalidWakeLockTag")
     @Override
@@ -128,7 +132,6 @@ public class RemoteControl extends Activity {
         rootView = getLayoutInflater().from(this).inflate(R.layout.activity_remote_control, null);
 
         setContentView(rootView);
-
 
         if (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
@@ -151,41 +154,33 @@ public class RemoteControl extends Activity {
 
         imageButton_forward=findViewById(R.id.forward);
         imageButton_forward.setOnTouchListener(compentOnTouch);
-/*        imageButton_forward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: Forward");
-                //发送挂挡及前进指令
-                shiftGear(4);
-                moveVehicle(3.3,5.0,0.0);
-            }
-        });*/
 
         imageButton_backward=findViewById(R.id.backward);
         imageButton_backward.setOnTouchListener(compentOnTouch);
-/*        imageButton_backward.setOnTouchListener(new View.OnTouchListener() {
+        sImgView = findViewById(R.id.steering_wheel);
+
+        //方向盘角度在速度处显示
+        new Thread(new Runnable() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        shiftGear(2);
-                        moveVehicle(3.3,-5.0,0.0);
-                        Log.d(TAG, "onTouch: backwarDown");
-                    case MotionEvent.ACTION_POINTER_DOWN:
-                        moveVehicle(3.3,-5.0,0.0);
-                        Log.d(TAG, "onTouch: backward");
-                    case MotionEvent.ACTION_MOVE:
-                        moveVehicle(3.3,-5.0,0.0);
-                        Log.d(TAG, "onTouch: backwarding");
-                    case MotionEvent.ACTION_UP:
-                        moveVehicle(-3.4,0.0,0.0);
-                        Log.d(TAG, "onTouch: Up");
+            public void run() {
+                while(true){
+                    wheelAngle = sImgView.getmDegree();
                 }
-                return true;
             }
-        });*/
+        }).start();
 
 
+
+        countDownTimer=new CountDownTimer(100000,200) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Speed = findViewById(R.id.speed);
+                Speed.setText(String.valueOf((int)wheelAngle));
+            }
+            @Override
+            public void onFinish() {
+            }
+        }.start();
 
         //下拉单选按钮
         Video_Modul_Spinner = (Spinner)findViewById(R.id.Spinner_VIdeo_Model);
@@ -199,8 +194,6 @@ public class RemoteControl extends Activity {
                         case 0: {
                             /**前摄像*/
                             list = new ArrayList<VideoijkBean>();
-                            //有部分视频加载有问题，这个视频是有声音显示不出图像的，没有解决http://fzkt-biz.oss-cn-hangzhou.aliyuncs.com/vedio/2f58be65f43946c588ce43ea08491515.mp4
-                            //这里模拟一个本地视频的播放，视频需要将testvideo文件夹的视频放到安卓设备的内置sd卡根目录中
                             String url1 = "rtmp://202.69.69.180:443/webcast/bshdlive-pc";
                             String url2 = "http://ivi.bupt.edu.cn/hls/cctv1.m3u8";
                             VideoijkBean m1 = new VideoijkBean();
@@ -698,7 +691,6 @@ public class RemoteControl extends Activity {
         Log.d(TAG, "onClick: "+JSON.toJSONString(mGear));
     }
 
-
     /**
 
      @videoType
@@ -722,7 +714,6 @@ public class RemoteControl extends Activity {
      * @speed 目標速度
      * @wheelAngle 方向盤轉角
      */
-
     private void moveVehicle(Double acceleration,Double speed,Double wheelAngle){
         Control mMove = new Control();
         mMove.setTimestamp(System.currentTimeMillis());
@@ -734,7 +725,6 @@ public class RemoteControl extends Activity {
         mqttSample.publishTopic("data", JSON.toJSONString(mMove));
         Log.d(TAG, "onClick: "+JSON.toJSONString(mMove));
     }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -980,7 +970,6 @@ public class RemoteControl extends Activity {
         public boolean isOnLongClick=false;
         int i = 0;
 
-
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             switch (view.getId()) {
@@ -1059,7 +1048,7 @@ public class RemoteControl extends Activity {
             public void run() {
                 while (isOnLongClick) {
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(500);
                         myHandler.sendEmptyMessage(1);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
