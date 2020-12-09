@@ -1017,6 +1017,8 @@ public class RemoteControl extends Activity {
                     isOnLongClick = true;
                     plusThread.start();
                 } else if (eventAction == MotionEvent.ACTION_UP) {
+                    Log.d(TAG, "onTouchChange: 松开手指");
+                    isOnLongClick=false;
                     if (plusThread != null) {
                         isOnLongClick = false;
                     }
