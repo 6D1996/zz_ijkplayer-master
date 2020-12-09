@@ -26,7 +26,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     private Matrix matrix;
     private Matrix cacheMatrix;  //缓存的matrix ，同时记录上一次滑动的位置
     private float mPointDistinct = 1f;
-    public  double mDegree=0.0;// 旋转的ScalableImageView角度
+    private  double mDegree=0.0;// 旋转的ScalableImageView角度
     private Bitmap bitmap;
 
     public  Double getmDegree() {
