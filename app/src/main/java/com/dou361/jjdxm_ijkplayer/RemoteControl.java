@@ -985,9 +985,8 @@ public class RemoteControl extends Activity {
             return true;
         }
 
-
-
         private void onTouchChange(String methodName, int eventAction) {
+            Log.d(TAG, "onTouchChange: "+methodName+eventAction);
 // 按下松开分别对应启动停止前进方法
             if ("backward".equals(methodName)) {
                 MiusThread miusThread = null;
@@ -996,7 +995,12 @@ public class RemoteControl extends Activity {
                     isOnLongClick = true;
                     miusThread.start();
                 } else if (eventAction == MotionEvent.ACTION_UP) {
+                    Log.d(TAG, "onTouchChange: 松开手指");
+                    isOnLongClick=false;
+//                    Log.d(TAG, "onTouchChange: isOnLongClick=false"+miusThread.isInterrupted());
                     if (miusThread != null) {
+                        miusThread.interrupt();
+                        Log.d(TAG, "onTouchChange: 终止线程");
                         isOnLongClick = false;
                     }
                 } else if (eventAction == MotionEvent.ACTION_MOVE) {
@@ -1031,7 +1035,7 @@ public class RemoteControl extends Activity {
             public void run() {
                 while (isOnLongClick) {
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(500);
                         myHandler.sendEmptyMessage(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -1060,7 +1064,6 @@ public class RemoteControl extends Activity {
 
         Handler myHandler = new Handler() {
             public void handleMessage(Message msg) {
-
                 switch (msg.what) {
                     case 1:
                         //前进操作
@@ -1079,7 +1082,5 @@ public class RemoteControl extends Activity {
                 }
             };
         };
-
     }
-
 }
