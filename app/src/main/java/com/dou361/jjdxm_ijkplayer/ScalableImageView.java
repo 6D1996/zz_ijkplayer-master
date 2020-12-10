@@ -67,9 +67,10 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     }
 
     private void init() {
-        circle =0;
-        degree=0.0;
+        circle = 0;
+        degree = 0.0;
         degree0=0.0;
+        mDegree=0.0;
         matrix = new Matrix();
         cacheMatrix = new Matrix();
         mode = Mode.NONE;
