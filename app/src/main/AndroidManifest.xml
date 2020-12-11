@@ -17,18 +17,30 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RemoteControlInitial"
+        <activity android:name=".videomonitoring.VideoMonitor"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <activity
+            android:name=".autopark.AutoPark"
+            android:screenOrientation="portrait" />
+        <activity android:name=".autopark.AutoParkingOut">
+        </activity>
+        <activity android:name=".autopark.AutoParkingIn" />
+        <activity android:name=".autopark.FullOut" />
+        <activity android:name=".autopark.HalfOut" />
+        <activity android:name=".autopark.AutoParkOut" />
+
+        <activity android:name=".remotecontrol.RemoteControlInitial"
                   android:configChanges="keyboardHidden|orientation"
                   android:screenOrientation="landscape">
         </activity>
         <activity
-            android:name=".RemoteControl"
+            android:name=".remotecontrol.RemoteControl"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape">
         </activity>
-        <activity
-            android:name=".Parkin"
-            android:screenOrientation="portrait" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,27 +48,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".VideoMonitoring"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".PlayerLiveActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".HPlayerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".OriginPlayerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".PlayerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

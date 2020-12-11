@@ -4,65 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@drawable/bg"
+    tools:context=".MainActivity"
+    >
 
 
-    <Button
+    <ImageButton
         android:id="@+id/video"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Video"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        android:src="@drawable/videomonitor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.271"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.09">
+        app:layout_constraintVertical_bias="0.634">
 
-    </Button>
+    </ImageButton>
 
-    <Button
+    <ImageButton
         android:id="@+id/RemoteControl_remove"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/RemoteControl_remove"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        android:src="@drawable/removevehicle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.711"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.209">
+        app:layout_constraintVertical_bias="0.632">
 
-    </Button>
+    </ImageButton>
 
-
-    <Button
+    <ImageButton
         android:id="@+id/au_park"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/au_park"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        android:src="@drawable/autopark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.271"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.356">
+        app:layout_constraintVertical_bias="0.848">
 
-    </Button>
+    </ImageButton>
 
-    <Button
+    <ImageButton
         android:id="@+id/call"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/call"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        android:src="@drawable/callcar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.711"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.499">
+        app:layout_constraintVertical_bias="0.846">
 
-    </Button>
+    </ImageButton>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
