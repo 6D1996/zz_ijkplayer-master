@@ -1,7 +1,7 @@
-package com.dou361.jjdxm_ijkplayer.module;
+package com.dou361.jjdxm_ijkplayer.videomonitoring.module;
 
 import com.alibaba.fastjson.JSON;
-import com.dou361.jjdxm_ijkplayer.bean.LiveBean;
+import com.dou361.jjdxm_ijkplayer.videomonitoring.bean.LiveBean;
 
 import org.json.JSONObject;
 

@@ -22,7 +22,7 @@ import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
 import com.dou361.jjdxm_ijkplayer.R;
-import com.dou361.jjdxm_ijkplayer.utlis.MediaUtils;
+import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
