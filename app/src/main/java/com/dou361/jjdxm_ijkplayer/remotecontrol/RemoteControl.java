@@ -91,7 +91,7 @@ public class RemoteControl extends Activity {
     private static final String TAG = "FullscreenActivity";
     private boolean braking = true;
     private int gearGlobal=0;
-    private int flagget = 1;
+    private int handBrakeStatus = 0;
     private Button LlightingButton;
     private ImageButton imageButton_forward,imageButton_backward;
     private ImageView app_video_play;
@@ -437,15 +437,21 @@ public class RemoteControl extends Activity {
     1表示手刹释放，0表示手刹锁定
      **/
 
-    private void shiftHandbrake(int handbrakeStatus) {
-        Handbrake  mHandbrake = new Handbrake();
-        mHandbrake.setTimestamp(System.currentTimeMillis());
-        mHandbrake.setStatus(handbrakeStatus);
-        mHandbrake.setType(14);
-        mHandbrake.setTaskid("6D");
-        // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-        mqttSample.publishTopic("data", JSON.toJSONString(mHandbrake));
-        Log.d(TAG, "onClick: 手刹"+JSON.toJSONString(mHandbrake));
+    private void shiftHandbrake(int handbrakeToSet) {
+        if(handbrakeToSet!=handBrakeStatus){
+            for(int i=0;i<5;i++){
+                Handbrake mHandbrake = new Handbrake();
+                mHandbrake.setTimestamp(System.currentTimeMillis());
+                mHandbrake.setStatus(handbrakeToSet);
+                mHandbrake.setType(14);
+                mHandbrake.setTaskid("6D");
+                // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
+                mqttSample.publishTopic("data", JSON.toJSONString(mHandbrake));
+                Log.d(TAG, "onClick: 手刹"+JSON.toJSONString(mHandbrake));
+                sleep(50);
+            }
+            handBrakeStatus=handbrakeToSet;}
+        else return;
     }
 
     /**
