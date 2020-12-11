@@ -87,7 +87,7 @@ public class RemoteControl extends Activity {
 
     private static final String TAG = "FullscreenActivity";
     private boolean braking = true;
-    private int gearGlobal;
+    private int gearGlobal=0;
     private int flagget = 1;
     private Button LlightingButton;
     private ImageButton imageButton_forward,imageButton_backward;
@@ -103,10 +103,12 @@ public class RemoteControl extends Activity {
     private String mDevName = "OPPOA57t";
     private String mDevPSK  = "TbtnFhJDmRe7N41vDBRVtA=="; //若使用证书验证，设为null
     private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data";  */  // productID/DeviceName/TopicName
-            private String mProductID = "KM8UZXZOV9";
-            private String mDevName = "android_test";
-            private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
-            private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
+
+    /*真车配置*/
+    private String mProductID = "KM8UZXZOV9";
+    private String mDevName = "android_test";
+    private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
+    private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
@@ -150,8 +152,8 @@ public class RemoteControl extends Activity {
                  while (true) {
                      if(braking){
                     try {
-                        moveVehicle(-1.0,0.0,wheelAngle);
-                        sleep(20);
+                        moveVehicle(-0.1,0.0,wheelAngle);
+                        sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }}
@@ -182,8 +184,6 @@ public class RemoteControl extends Activity {
             }
         }).start();
 
-
-
         countDownTimer=new CountDownTimer(100000,200) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -201,8 +201,8 @@ public class RemoteControl extends Activity {
         Video_Modul_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                    String result = parent.getItemAtPosition(position).toString();
-//                    Toast.makeText(RemoteControl.this, result, Toast.LENGTH_SHORT).show();
+                    String result = parent.getItemAtPosition(position).toString();
+                    Toast.makeText(RemoteControl.this, result, Toast.LENGTH_SHORT).show();
                     switch (position) {
                         case 0: {
                             /**前摄像*/
@@ -1009,8 +1009,8 @@ public class RemoteControl extends Activity {
             braking =false;
 // 按下松开分别对应启动停止前进方法
             if ("backward".equals(methodName)) {
-//                if(gearGlobal!=2){
-//                shiftGear(2);}
+                if(gearGlobal!=2){
+                shiftGear(2);}
                 MiusThread miusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     miusThread = new MiusThread();
@@ -1034,8 +1034,8 @@ public class RemoteControl extends Activity {
             }
 // 按下松开分别对应启动停止加线程方法
             else if ("forward".equals(methodName)) {
-//                if(gearGlobal!=4){
-//                shiftGear(4);}
+                if(gearGlobal!=4){
+                shiftGear(4);}
                 PlusThread plusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     plusThread = new PlusThread();
@@ -1113,14 +1113,16 @@ public class RemoteControl extends Activity {
                 switch (msg.what) {
                     case 1:
                         //前进操作
-                        Control mForward = new Control(5.0,0.1,wheelAngle);
-                        mqttSample.publishTopic("data", JSON.toJSONString(mForward));
-                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mForward));
+//                        Control mForward = new Control(5.0,0.1,wheelAngle);
+//                        mqttSample.publishTopic("data", JSON.toJSONString(mForward));
+//                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mForward));
+                        moveVehicle(0.1,5.0,wheelAngle);
                         break;
                     case 2:
-                        Control mBackward = new Control(-5.0,0.1,wheelAngle);
-                        mqttSample.publishTopic("data", JSON.toJSONString(mBackward));
-                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mBackward));
+//                        Control mBackward = new Control(-5.0,0.1,wheelAngle);
+//                        mqttSample.publishTopic("data", JSON.toJSONString(mBackward));
+//                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mBackward));
+                        moveVehicle(0.1,-5.0,wheelAngle);
                         Log.d("TAG","Backward:"+i--);
                         break;
                     case 3:

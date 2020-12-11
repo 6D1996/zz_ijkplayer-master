@@ -295,8 +295,11 @@ public class MQTTSample {
         // MQTT消息
         MqttMessage message = new MqttMessage();
 
-
-        message.setQos(TXMqttConstants.QOS1);
+        //QoS=0，最多只往设备发一次
+        //对数据传输可靠性要求一般的场景，请在 Publish、Subscribe 时选择这个 QoS。
+        //QoS=1，至少让设备收到一次
+        //对数据传输可靠性要求高的场景，请在 Publish、Subscribe 时选择这个 Qos。
+        message.setQos(TXMqttConstants.QOS0);
         message.setPayload(data.getBytes());
 
         // 用户上下文（请求实例）

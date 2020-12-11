@@ -32,7 +32,6 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     private Bitmap bitmap;
 
     public  Double getmDegree() {
-//        Log.d(TAG, "getmDegree: "+mDegree);
         return mDegree;
 
     }
@@ -41,8 +40,6 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     int circle =0;
     double degree0 = 0.0;//按下角度
     double degree = 0.0;//转动角度
-
-
 
     enum Mode {
         NONE, DOWN, MOVE
@@ -71,8 +68,8 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     private void init() {
         circle = 0;
         degree = 0.0;
-        degree0=0.0;
-        mDegree=0.0;
+        degree0 = 0.0;
+        mDegree = 0.0;
         matrix = new Matrix();
         cacheMatrix = new Matrix();
         mode = Mode.NONE;
@@ -109,20 +106,19 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                         }
                     }
                     if(angleList.size()>2) {
-                        if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) > 350)
+                        if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) > 300)
                             circle--;
-                        if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) < -350)
+                        if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) < -300)
                             circle++;
                         degree = degree + 360 * circle;
-                        if(degree>900) degree = 900.0;
-                        if(degree<-900)degree =-900.0;
+                        if(degree>900) {degree = 900.0;}
+                        if(degree<-900){degree =-900.0;}
                     }
 //                    Log.d("赋值Degree",mDegree+"");
-                    mDegree= degree;
-
+                    mDegree = degree;
 
                     final RotateAnimation rotateAnimation = new RotateAnimation(0f, (float)degree, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-                    matrix.postRotate((float) degree,bitmap.getWidth()/2, bitmap.getHeight()/ 2);
+                    matrix.postRotate((float) mDegree,bitmap.getWidth()/2, bitmap.getHeight()/ 2);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -131,12 +127,9 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
             case MotionEvent.ACTION_CANCEL:
                 mode = Mode.NONE;
                 break;
-
         }
         setImageMatrix(matrix);
         return true;
     }
-
-
 
 }
