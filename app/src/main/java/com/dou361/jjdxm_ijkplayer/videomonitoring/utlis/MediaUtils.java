@@ -1,4 +1,4 @@
-package com.dou361.jjdxm_ijkplayer.utlis;
+package com.dou361.jjdxm_ijkplayer.videomonitoring.utlis;
 
 import android.annotation.TargetApi;
 import android.content.Context;

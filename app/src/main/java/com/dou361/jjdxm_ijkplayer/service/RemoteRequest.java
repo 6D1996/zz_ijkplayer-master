@@ -5,6 +5,7 @@ public class RemoteRequest {
 
     private int mRequestId;
 
+
     public RemoteRequest() {
     }
 

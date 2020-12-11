@@ -1,4 +1,4 @@
-package com.dou361.jjdxm_ijkplayer.bean;
+package com.dou361.jjdxm_ijkplayer.videomonitoring.bean;
 
 /**
  * ========================================
