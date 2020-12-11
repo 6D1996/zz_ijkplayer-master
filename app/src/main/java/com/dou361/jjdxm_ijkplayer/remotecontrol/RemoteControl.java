@@ -932,6 +932,7 @@ public class RemoteControl extends Activity {
         super.onDestroy();
         if (player != null) {
             player.onDestroy();
+
         }
     }
 
