@@ -132,7 +132,7 @@ public class RemoteControl extends Activity {
 
         setContentView(rootView);
 
-        if (!mIsConnected) {
+        while (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
             //轮询连接,万分感谢陈岩大佬
             mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
