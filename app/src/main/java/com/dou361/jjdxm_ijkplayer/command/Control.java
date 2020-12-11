@@ -3,7 +3,7 @@ package com.dou361.jjdxm_ijkplayer.command;
 public class Control {
     public long timestamp;
     public Double speed,acceleration,wheel_angle;
-    public int type;
+    public int type = 11;
 
     public Control() {
     }
