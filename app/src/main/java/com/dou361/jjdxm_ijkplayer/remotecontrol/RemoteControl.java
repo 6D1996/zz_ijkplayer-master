@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -41,6 +42,7 @@ import com.dou361.jjdxm_ijkplayer.command.Video;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoMonitor;
+import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
 import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
 import com.tencent.iot.hub.device.android.core.util.TXLog;
 import com.tencent.iot.hub.device.java.core.common.Status;
@@ -256,7 +258,7 @@ public class RemoteControl extends Activity {
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
                                         finish();
-                                        Intent intent=new Intent(RemoteControl.this, VideoMonitor.class);
+                                        Intent intent=new Intent(RemoteControl.this, MainActivity.class);
                                         startActivity(intent);
                                     }
                                 });
@@ -293,7 +295,7 @@ public class RemoteControl extends Activity {
                                                 @Override
                                                 public void onClick(DialogInterface arg0, int arg1) {
                                                     finish();
-                                                    Intent intent=new Intent(RemoteControl.this,VideoMonitor.class);
+                                                    Intent intent=new Intent(RemoteControl.this,MainActivity.class);
                                                     startActivity(intent);
                                                 }
                                             });
@@ -384,7 +386,7 @@ public class RemoteControl extends Activity {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
                                 finish();
-                                Intent intent = new Intent(RemoteControl.this, VideoMonitor.class);
+                                Intent intent = new Intent(RemoteControl.this, MainActivity.class);
                                 startActivity(intent);
                             }
                         });
@@ -420,7 +422,7 @@ public class RemoteControl extends Activity {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
                                 finish();
-                                Intent intent = new Intent(RemoteControl.this, VideoMonitor.class);
+                                Intent intent = new Intent(RemoteControl.this, MainActivity.class);
                                 startActivity(intent);
                             }
                         });
@@ -892,5 +894,58 @@ public class RemoteControl extends Activity {
                 }
             };
         };
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (player != null) {
+            player.onPause();
+        }
+        /**demo的内容，恢复系统其它媒体的状态*/
+        MediaUtils.muteAudioFocus(mContext, true);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (player != null) {
+            player.onResume();
+        }
+        /**demo的内容，暂停系统其它媒体的状态*/
+        MediaUtils.muteAudioFocus(mContext, false);
+        /**demo的内容，激活设备常亮状态*/
+        if (wakeLock != null) {
+            wakeLock.acquire();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.onDestroy();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (player != null) {
+            player.onConfigurationChanged(newConfig);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (player != null && player.onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
+        /**demo的内容，恢复设备亮度状态*/
+        if (wakeLock != null) {
+            wakeLock.release();
+        }
     }
 }
