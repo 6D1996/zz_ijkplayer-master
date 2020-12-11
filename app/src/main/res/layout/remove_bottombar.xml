@@ -11,7 +11,7 @@
     android:orientation="horizontal">
 
 
-    <com.dou361.jjdxm_ijkplayer.ScalableImageView
+    <com.dou361.jjdxm_ijkplayer.remotecontrol.ScalableImageView
         android:id="@+id/steering_wheel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             android:layout_height="200px"
             android:layout_alignTop="@id/steering_wheel"
             android:scaleType="fitXY"
-            android:src="@mipmap/forward">
+            android:src="@drawable/forward">
         </ImageButton>
 
         <ImageButton
@@ -50,7 +50,7 @@
             android:layout_below="@id/forward"
             android:layout_marginTop="10dp"
             android:scaleType="fitXY"
-            android:src="@mipmap/backward">
+            android:src="@drawable/backward">
         </ImageButton>
 
 

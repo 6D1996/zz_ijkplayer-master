@@ -25,7 +25,7 @@
             android:id="@+id/iv_trumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/shangbackground"
+            android:src="@drawable/pic_first"
             android:scaleType="fitXY"
             android:visibility="visible"/>
     </LinearLayout>
