@@ -25,6 +25,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.dou361.ijkplayer.bean.VideoijkBean;
@@ -516,6 +518,8 @@ public class RemoteControl extends Activity {
     }
 
 
+
+
     //ms为需要休眠的时长
     public static void sleep(long ms)
     {
@@ -931,9 +935,16 @@ public class RemoteControl extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         if (player != null) {
+            for(int i=1;i<7;i++){
+            shiftVideoType(i,0);}
             player.onDestroy();
-
         }
+        if(braking){braking=false;}
+        if(handBrakeStatus==1){shiftHandbrake(0);}
+        if(mIsConnected){mqttSample.disconnect();}
+
+        Log.d(TAG, "onDestroy: 斷開視頻以及MQTT連接");
+
     }
 
     @Override
