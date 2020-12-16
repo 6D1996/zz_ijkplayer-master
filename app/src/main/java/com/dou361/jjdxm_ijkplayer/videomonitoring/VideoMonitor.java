@@ -316,7 +316,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 //有部分视频加载有问题，这个视频是有声音显示不出图像的，没有解决http://fzkt-biz.oss-cn-hangzhou.aliyuncs.com/vedio/2f58be65f43946c588ce43ea08491515.mp4
                 //这里模拟一个本地视频的播放，视频需要将testvideo文件夹的视频放到安卓设备的内置sd卡根目录中
                 String url1 = "http://ivi.bupt.edu.cn/hls/cctv1.m3u8";//"rtmp://150.158.176.170/live/1";
-                String url2 = "rtmp://202.69.69.180:443/webcast/bshdlive-pc";
+                String url2 = "rtsp://150.158.176.170/test.mkv";
                 VideoijkBean m1 = new VideoijkBean();
                 m1.setStream("原始视频");
                 m1.setUrl(url1);
@@ -365,7 +365,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 break;
             case 3:
                 //左视角
-                playVideoUrl("http://ivi.bupt.edu.cn/hls/cctv3.m3u8");
+                playVideoUrl("rtsp://150.158.176.170/test.mkv");
                 break;
             case 4:
                 //右视角

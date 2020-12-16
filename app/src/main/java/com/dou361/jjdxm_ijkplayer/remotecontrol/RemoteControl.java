@@ -155,10 +155,10 @@ public class RemoteControl extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run: 刹车状态:"+ braking);
                  while (true) {
                      if(braking){
                     try {
+                        mqttSample.subscribeTopic();
                         moveVehicle(-0.1,0.0,wheelAngle);
                         sleep(50);
                     } catch (Exception e) {
@@ -462,6 +462,7 @@ public class RemoteControl extends Activity {
     1,2,3,4分別對應P,R,N,D四個檔位
      **/
     private void shiftGear(final int gear){
+        if(speed==0){
         for(int i=0;i<10;i++){
                 Gears mGear = new Gears();
                 mGear.setTimestamp(System.currentTimeMillis());
@@ -474,7 +475,11 @@ public class RemoteControl extends Activity {
                 Log.d(TAG, "onClick: "+JSON.toJSONString(mGear));
                 sleep(50);
         }
-        gearGlobal=gear;
+        gearGlobal=gear;}
+        else {
+            moveVehicle(-0.3,0.0,0.0);
+            shiftGear(gear);
+        }
     }
 
     /**
@@ -939,12 +944,13 @@ public class RemoteControl extends Activity {
             shiftVideoType(i,0);}
             player.onDestroy();
         }
+        if(speed!=0){moveVehicle(-0.3,0.0,0.0);}
         if(braking){braking=false;}
+        if(gearGlobal!=1){shiftGear(1);}
         if(handBrakeStatus==1){shiftHandbrake(0);}
         if(mIsConnected){mqttSample.disconnect();}
 
         Log.d(TAG, "onDestroy: 斷開視頻以及MQTT連接");
-
     }
 
     @Override
