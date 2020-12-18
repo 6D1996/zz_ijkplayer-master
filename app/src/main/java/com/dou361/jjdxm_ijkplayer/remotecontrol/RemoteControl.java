@@ -215,7 +215,7 @@ public class RemoteControl extends Activity {
                             /**前摄像*/
                             list = new ArrayList<VideoijkBean>();
                             String url1 = "rtmp://202.69.69.180:443/webcast/bshdlive-pc";
-                            String url2 = "http://ivi.bupt.edu.cn/hls/cctv1.m3u8";
+                            String url2 = "rtmp://150.158.176.170/live/test_vin_1";
                             VideoijkBean m1 = new VideoijkBean();
                             m1.setStream("原始视频");
                             m1.setUrl(url1);

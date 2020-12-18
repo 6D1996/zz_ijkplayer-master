@@ -24,7 +24,7 @@ import static android.content.ContentValues.TAG;
 public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageView{
 
 
-    private static final float MIN_POINT_DISTINCT = 10F;
+    private static final double MAX_DEGREE = 600.0;//方向盘最大转角
     private Matrix matrix;
     private Matrix cacheMatrix;  //缓存的matrix ，同时记录上一次滑动的位置
     private float mPointDistinct = 1f;
@@ -113,8 +113,8 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                         if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) < -300)
                             circle++;
                         degree = degree + 360 * circle;
-                        if(degree>900) {degree = 900.0;}
-                        if(degree<-900){degree =-900.0;}
+                        if(degree>MAX_DEGREE) {degree = MAX_DEGREE;}
+                        if(degree<-MAX_DEGREE){degree =-MAX_DEGREE;}
                     }
 //                    Log.d("赋值Degree",mDegree+"");
                     mDegree = degree;
