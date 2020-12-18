@@ -395,8 +395,10 @@ public class TXMqttConnection extends com.tencent.iot.hub.device.java.core.mqtt.
             return;
         }
 
-        TXLog.i(TAG, "Received topic: %s, id: %d, message: %s", topic, message.getId(), message);
+        TXLog.i(TAG, "Received topic接收到的數據: %s, id: %d, message: %s", topic, message.getId(), message);
+
         //有待操作TODO
+        //message 即爲接收到的消息
 
 
         if (topic != null && topic.contains("rrpc/rxd")) {

@@ -104,19 +104,26 @@ public class RemoteControl extends Activity {
     private double wheelAngle=0.0;
     private double speed=0.0;
 
-
+    /*虛擬機*/
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-   /* private String mProductID = "2N8PWJAI0V";
+    private String mProductID = "2N8PWJAI0V";
+    private String mDevName = "android_test_phone";
+    private String mDevPSK  = "KdV+RSnHAlmEpM75aWZQZg=="; //若使用证书验证，设为null
+    private String mTestTopic = "2N8PWJAI0V/android_test_phone/data";
+
+    /*OPPO A57t*/
+/*    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mProductID = "2N8PWJAI0V";
     private String mDevName = "OPPOA57t";
     private String mDevPSK  = "TbtnFhJDmRe7N41vDBRVtA=="; //若使用证书验证，设为null
-    private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data";  */  // productID/DeviceName/TopicName
+    private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data"; */   // productID/DeviceName/TopicName
 
     /*真车配置*/
-    private String mProductID = "KM8UZXZOV9";
+    /*private String mProductID = "KM8UZXZOV9";
     private String mDevName = "android_test";
     private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
     private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
-    private String mSubProductID = ""; // If you wont test gateway, let this to be null
+*/    private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
     private String mDevCertName = "YOUR_DEVICE_NAME_cert.crt";
@@ -147,6 +154,7 @@ public class RemoteControl extends Activity {
             Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
             mqttSample.connect();
             sleep(2000);}
+        mqttSample.subscribeTopic();
 
 
         shiftHandbrake(1);
@@ -158,7 +166,7 @@ public class RemoteControl extends Activity {
                  while (true) {
                      if(braking){
                     try {
-                        mqttSample.subscribeTopic();
+
                         moveVehicle(-0.1,0.0,wheelAngle);
                         sleep(50);
                     } catch (Exception e) {
@@ -214,7 +222,7 @@ public class RemoteControl extends Activity {
                         case 0: {
                             /**前摄像*/
                             list = new ArrayList<VideoijkBean>();
-                            String url1 = "rtmp://202.69.69.180:443/webcast/bshdlive-pc";
+                            String url1 = "http://ivi.bupt.edu.cn/hls/cctv13.m3u8";
                             String url2 = "rtmp://150.158.176.170/live/test_vin_1";
                             VideoijkBean m1 = new VideoijkBean();
                             m1.setStream("原始视频");
@@ -513,8 +521,8 @@ public class RemoteControl extends Activity {
         mMove.setType(11);
         mMove.setWheel_angle(wheelAngle);
         // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-        mqttSample.publishTopic("data", JSON.toJSONString(mMove));
-        Log.d(TAG, "onClick: 上传刹车"+JSON.toJSONString(mMove));
+        //mqttSample.publishTopic("data", JSON.toJSONString(mMove));
+        //Log.d(TAG, "onClick: 上传刹车"+JSON.toJSONString(mMove));
     }
 
     @Override
