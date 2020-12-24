@@ -90,22 +90,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         requestTextView=findViewById(R.id.requestTextView);
 
 
-//            /**虚拟按键的隐藏方法*/
-//        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                //比较Activity根布局与当前布局的大小
-//                int heightDiff = rootView.getRootView().getHeight() - rootView.getHeight();
-//                if (heightDiff > 100) {
-//                    //大小超过100时，一般为显示虚拟键盘事件
-//                    rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-//                } else {
-//                    //大小小于100时，为不显示虚拟键盘或虚拟键盘隐藏
-//                    rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-//                }
-//            }
-//        });
-
         /**常亮*/
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "liveTAG");

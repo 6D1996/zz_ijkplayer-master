@@ -50,15 +50,6 @@ public class RemoteControlInitial extends Activity {
         }.start();
 
 
-
-//        CompentOnTouch compentOnTouch = new CompentOnTouch();
-//
-//        imageButton_forward=findViewById(R.id.forward);
-//        imageButton_forward.setOnTouchListener(compentOnTouch);
-//
-//        imageButton_backward=findViewById(R.id.backward);
-//        imageButton_backward.setOnTouchListener(compentOnTouch);
-
         StartRemove= (Button)findViewById(R.id.startRemove);
         StartRemove.setOnClickListener(new View.OnClickListener(){
             @Override
