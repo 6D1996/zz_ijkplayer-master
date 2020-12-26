@@ -90,22 +90,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         requestTextView=findViewById(R.id.requestTextView);
 
 
-//            /**虚拟按键的隐藏方法*/
-//        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                //比较Activity根布局与当前布局的大小
-//                int heightDiff = rootView.getRootView().getHeight() - rootView.getHeight();
-//                if (heightDiff > 100) {
-//                    //大小超过100时，一般为显示虚拟键盘事件
-//                    rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-//                } else {
-//                    //大小小于100时，为不显示虚拟键盘或虚拟键盘隐藏
-//                    rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-//                }
-//            }
-//        });
-
         /**常亮*/
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "liveTAG");
@@ -316,7 +300,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 //有部分视频加载有问题，这个视频是有声音显示不出图像的，没有解决http://fzkt-biz.oss-cn-hangzhou.aliyuncs.com/vedio/2f58be65f43946c588ce43ea08491515.mp4
                 //这里模拟一个本地视频的播放，视频需要将testvideo文件夹的视频放到安卓设备的内置sd卡根目录中
                 String url1 = "http://ivi.bupt.edu.cn/hls/cctv1.m3u8";//"rtmp://150.158.176.170/live/1";
-                String url2 = "rtmp://202.69.69.180:443/webcast/bshdlive-pc";
+                String url2 = "rtsp://150.158.176.170/test.mkv";
                 VideoijkBean m1 = new VideoijkBean();
                 m1.setStream("原始视频");
                 m1.setUrl(url1);
@@ -365,7 +349,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 break;
             case 3:
                 //左视角
-                playVideoUrl("http://ivi.bupt.edu.cn/hls/cctv3.m3u8");
+                playVideoUrl("rtsp://150.158.176.170/test.mkv");
                 break;
             case 4:
                 //右视角

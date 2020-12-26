@@ -105,18 +105,28 @@ public class RemoteControl extends Activity {
     private double speed=0.0;
 
 
+
+    /*虛擬機*/
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-   /* private String mProductID = "2N8PWJAI0V";
+    private String mProductID = "2N8PWJAI0V";
+    private String mDevName = "android_test_phone";
+    private String mDevPSK  = "KdV+RSnHAlmEpM75aWZQZg=="; //若使用证书验证，设为null
+    private String mTestTopic = "2N8PWJAI0V/android_test_phone/data";
+
+    /*OPPO A57t*/
+/*    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mProductID = "2N8PWJAI0V";
     private String mDevName = "OPPOA57t";
     private String mDevPSK  = "TbtnFhJDmRe7N41vDBRVtA=="; //若使用证书验证，设为null
     private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data";  */  // productID/DeviceName/TopicName
 
     /*真车配置*/
+    /*private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";
     private String mProductID = "KM8UZXZOV9";
     private String mDevName = "android_test";
     private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
     private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
-    private String mSubProductID = ""; // If you wont test gateway, let this to be null
+*/    private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
     private String mDevCertName = "YOUR_DEVICE_NAME_cert.crt";
@@ -139,7 +149,7 @@ public class RemoteControl extends Activity {
 
         setContentView(rootView);
 
-        while (!mIsConnected) {
+        if (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
             //轮询连接,万分感谢陈岩大佬
             mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
@@ -147,6 +157,7 @@ public class RemoteControl extends Activity {
             Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
             mqttSample.connect();
             sleep(2000);}
+        mqttSample.subscribeTopic();
 
 
         shiftHandbrake(1);
@@ -155,10 +166,10 @@ public class RemoteControl extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run: 刹车状态:"+ braking);
                  while (true) {
                      if(braking){
                     try {
+
                         moveVehicle(-0.1,0.0,wheelAngle);
                         sleep(50);
                     } catch (Exception e) {
@@ -214,8 +225,8 @@ public class RemoteControl extends Activity {
                         case 0: {
                             /**前摄像*/
                             list = new ArrayList<VideoijkBean>();
-                            String url1 = "rtmp://202.69.69.180:443/webcast/bshdlive-pc";
-                            String url2 = "http://ivi.bupt.edu.cn/hls/cctv1.m3u8";
+                            String url1 = "http://ivi.bupt.edu.cn/hls/cctv13.m3u8";
+                            String url2 = "rtmp://150.158.176.170/live/test_vin_1";
                             VideoijkBean m1 = new VideoijkBean();
                             m1.setStream("原始视频");
                             m1.setUrl(url1);
@@ -242,8 +253,8 @@ public class RemoteControl extends Activity {
                                         public void onShowThumbnail(ImageView ivThumbnail) {
 //                                 加载前显示的缩略图
                                             Glide.with(mContext)
-                                                    .load("http://pic2.nipic.com/20090413/406638_125424003_2.jpg")
-                                                    .placeholder(R.color.cl_default) //加载成功之前占位图
+                                                    .load(R.drawable.pic_before_video)
+                                                    .placeholder(R.drawable.pic_before_video) //加载成功之前占位图
                                                     .error(R.color.cl_error)//加载错误之后的错误图
                                                     .into(ivThumbnail);
                                         }
@@ -370,8 +381,8 @@ public class RemoteControl extends Activity {
                     public void onShowThumbnail(ImageView ivThumbnail) {
 //                                 加载前显示的缩略图
                         Glide.with(mContext)
-                                .load("http://pic2.nipic.com/20090413/406638_125424003_2.jpg")
-                                .placeholder(R.color.cl_default) //加载成功之前占位图
+                                .load(R.drawable.pic_before_video)
+                                .placeholder(R.drawable.pic_before_video) //加载成功之前占位图
                                 .error(R.color.cl_error)//加载错误之后的错误图
                                 .into(ivThumbnail);
                     }
@@ -462,6 +473,7 @@ public class RemoteControl extends Activity {
     1,2,3,4分別對應P,R,N,D四個檔位
      **/
     private void shiftGear(final int gear){
+        if(speed==0){
         for(int i=0;i<10;i++){
                 Gears mGear = new Gears();
                 mGear.setTimestamp(System.currentTimeMillis());
@@ -474,7 +486,11 @@ public class RemoteControl extends Activity {
                 Log.d(TAG, "onClick: "+JSON.toJSONString(mGear));
                 sleep(50);
         }
-        gearGlobal=gear;
+        gearGlobal=gear;}
+        else {
+            moveVehicle(-0.3,0.0,0.0);
+            shiftGear(gear);
+        }
     }
 
     /**
@@ -508,8 +524,8 @@ public class RemoteControl extends Activity {
         mMove.setType(11);
         mMove.setWheel_angle(wheelAngle);
         // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-        mqttSample.publishTopic("data", JSON.toJSONString(mMove));
-        Log.d(TAG, "onClick: 上传刹车"+JSON.toJSONString(mMove));
+        //mqttSample.publishTopic("data", JSON.toJSONString(mMove));
+        //Log.d(TAG, "onClick: 上传刹车"+JSON.toJSONString(mMove));
     }
 
     @Override
@@ -939,12 +955,13 @@ public class RemoteControl extends Activity {
             shiftVideoType(i,0);}
             player.onDestroy();
         }
+        if(speed!=0){moveVehicle(-0.3,0.0,0.0);}
         if(braking){braking=false;}
+        if(gearGlobal!=1){shiftGear(1);}
         if(handBrakeStatus==1){shiftHandbrake(0);}
         if(mIsConnected){mqttSample.disconnect();}
 
         Log.d(TAG, "onDestroy: 斷開視頻以及MQTT連接");
-
     }
 
     @Override

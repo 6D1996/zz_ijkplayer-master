@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,6 +22,8 @@ public class RemoteControlInitial extends Activity {
     private Button StartRemove;
     private ImageButton imageButton_forward,imageButton_backward;
     private TextView speedTextView;
+    private double wheelAngle=0.0;
+
 
 
     @Override
@@ -29,21 +32,23 @@ public class RemoteControlInitial extends Activity {
 
         //一直连接Iothub
 
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_controlinitial);
         this.mContext = this;
-        speedTextView=findViewById(R.id.speed);
-        speedTextView.setText("Hello");
+        CountDownTimer countDownTimer = new CountDownTimer(100000, 200) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                speedTextView = findViewById(R.id.speed);
+                speedTextView.setText(String.valueOf((int) wheelAngle));
+            }
 
+            @Override
+            public void onFinish() {
+            }
+        }.start();
 
-
-//        CompentOnTouch compentOnTouch = new CompentOnTouch();
-//
-//        imageButton_forward=findViewById(R.id.forward);
-//        imageButton_forward.setOnTouchListener(compentOnTouch);
-//
-//        imageButton_backward=findViewById(R.id.backward);
-//        imageButton_backward.setOnTouchListener(compentOnTouch);
 
         StartRemove= (Button)findViewById(R.id.startRemove);
         StartRemove.setOnClickListener(new View.OnClickListener(){
