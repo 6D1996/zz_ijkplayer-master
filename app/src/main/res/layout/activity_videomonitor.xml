@@ -34,15 +34,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintlayout1">
-        <Button
-            android:id="@+id/lightController"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="測試"
-            android:background="@drawable/ratio_check"
-            tools:ignore="MissingConstraints">
+<!--        <Button-->
+<!--            android:id="@+id/lightController"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="測試"-->
+<!--            android:background="@drawable/ratio_check"-->
+<!--            tools:ignore="MissingConstraints">-->
 
-        </Button>
+<!--        </Button>-->
 
 
 
@@ -53,26 +53,27 @@
             android:layout_height="match_parent"
             android:gravity="center"
             >
-                <RadioButton
-                    android:id="@+id/front_Click"
-                    android:layout_width="80dp"
-                    android:layout_height="40dp"
-                    android:gravity="center"
-                    android:background="@drawable/ratio_check"
-                    android:text="@string/qian"
-                    android:layout_gravity="center"
-                    android:button="@null">
-                </RadioButton>
 
-            <TextView
-                android:id="@+id/requestTextView"
-                android:hint="發送數據"
+            <!--            <TextView-->
+<!--                android:id="@+id/requestTextView"-->
+<!--                android:hint="發送數據"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+
+<!--            </TextView>-->
+
+            <RadioButton
+                android:id="@+id/front_Click"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ratio_check"
+                android:button="@null"
                 android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </TextView>
+                android:text="@string/qian">
+            </RadioButton>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -114,27 +115,38 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/replyTextView"
-                android:hint="接收數據"
-                android:gravity="center"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </TextView>
+<!--            <TextView-->
+<!--                android:id="@+id/replyTextView"-->
+<!--                android:hint="接收數據"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+<!--            </TextView>-->
 
             <RadioButton
-                    android:id="@+id/back_Click"
+                android:id="@+id/back_Click"
                 android:layout_width="80dp"
                 android:layout_height="40dp"
                 android:gravity="center"
-                    android:background="@drawable/ratio_check"
-                    android:text="@string/hou"
-                    android:button="@null">
-                </RadioButton>
+                android:background="@drawable/ratio_check"
+                android:text="@string/hou"
+                android:button="@null">
+            </RadioButton>
+        </com.dou361.jjdxm_ijkplayer.videomonitoring.MyRadioGroup>
+
+        <ImageButton
+            android:id="@+id/light"
+            android:layout_width="200px"
+            android:layout_height="200px"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            android:src="@drawable/light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
 
-
-            </com.dou361.jjdxm_ijkplayer.videomonitoring.MyRadioGroup>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

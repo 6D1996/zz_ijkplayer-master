@@ -10,6 +10,7 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -53,7 +54,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     private MyRadioGroup videoRatioGroup;
     private RadioButton buttonFront, buttonBack, buttonLeft, buttonRight, channelGodPerspective;
     private HashMap<String, RadioButton> channels = new HashMap<>(5);
-    private Button lightControllerButton;
+    private ImageButton lightControllerButton;
 
     private TextView replyTextView,requestTextView;
 
@@ -67,7 +68,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
 //        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        lightControllerButton=(Button) findViewById(R.id.lightController);
+        lightControllerButton=(ImageButton) findViewById(R.id.light);
         lightControllerButton.setOnClickListener(this);
 
         buttonFront = (RadioButton) findViewById(R.id.front_Click);
@@ -86,8 +87,8 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         channels.put("Channel_Right",buttonRight);
         channels.put("Channel_God_Perspective", channelGodPerspective);
 
-        replyTextView=findViewById(R.id.replyTextView);
-        requestTextView=findViewById(R.id.requestTextView);
+//        replyTextView=findViewById(R.id.replyTextView);
+//        requestTextView=findViewById(R.id.requestTextView);
 
 
         /**常亮*/
@@ -370,12 +371,12 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     }
 
 
-    @OnClick({R.id.lightController})
+    @OnClick({R.id.light})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.lightController:
+            case R.id.light:
                 {   
-                    requestTextView.setText("請求開燈/關燈");
+//                    requestTextView.setText("請求開燈/關燈");
                     }
             break;
 

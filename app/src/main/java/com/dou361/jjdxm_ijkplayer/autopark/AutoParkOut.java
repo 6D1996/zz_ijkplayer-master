@@ -7,13 +7,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.dou361.jjdxm_ijkplayer.R;
 
 import butterknife.OnClick;
 
 public class AutoParkOut extends Activity implements View.OnClickListener{
-    ImageButton halfout,fullout;
+    private ImageButton halfout,fullout;
+    private TextView toptext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +27,12 @@ public class AutoParkOut extends Activity implements View.OnClickListener{
         halfout.setOnClickListener(this);
         fullout.setOnClickListener(this);
 
+        toptext = findViewById(R.id.Toptext);
+        toptext.setText("出车");
+
 
         //返回键
-        findViewById(R.id.back1).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.back2).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View V){
                 finish();

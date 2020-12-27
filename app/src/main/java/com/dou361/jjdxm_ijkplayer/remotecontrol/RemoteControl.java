@@ -185,6 +185,36 @@ public class RemoteControl extends Activity {
 
         CompentOnTouch compentOnTouch = new CompentOnTouch();
 
+        //返回键
+        findViewById(R.id.back2).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View V){
+                //对话框
+                AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+                builder.setTitle("结束挪车");//设置对话框的标题
+                builder.setMessage("您已确定车辆已经抵达目标位置并结束挪车操作吗？");//设置对话框的内容
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                        Intent intent=new Intent(RemoteControl.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {  //取消按钮
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        Toast.makeText(RemoteControl.this, "取消成功",Toast.LENGTH_SHORT).show();
+                        player.startPlay();
+                    }
+                });
+                AlertDialog b=builder.create();
+                b.show();
+                player.onPause();
+            }
+        });
+
         imageButton_forward=findViewById(R.id.forward);
         imageButton_forward.setOnTouchListener(compentOnTouch);
 
@@ -240,13 +270,14 @@ public class RemoteControl extends Activity {
                                     .setScaleType(PlayStateParams.fillparent) //视频界面剪裁设置
                                     .forbidTouch(false)
                                     .hideSteam(false)
-                                    .hideMenu(false)
+                                    .hideMenu(true)
                                     .hideCenterPlayer(true)
                                     .hideBack(false)
                                     .setOnlyFullScreen(true)
                                     .setNetWorkTypeTie(false)
                                     .hideRotation(true)
                                     .hideFullscreen(true)
+                                    .hideBack(true)
                                     .setChargeTie(true, 480)//设置最长播放时间
                                     .showThumbnail(new OnShowThumbnailListener() {
                                         @Override
@@ -259,42 +290,11 @@ public class RemoteControl extends Activity {
                                                     .into(ivThumbnail);
                                         }
                                     })
-                                    .setPlayerBackListener(new OnPlayerBackListener() {
-                            @Override
-                            public void onPlayerBack() {
-                                //对话框
-                                AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-                                builder.setIcon(R.drawable.shangbackground);
-                                builder.setTitle("结束挪车");//设置对话框的标题
-                                builder.setMessage("您已确定车辆已经抵达目标位置并结束挪车操作吗？");//设置对话框的内容
-                                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-                                        finish();
-                                        Intent intent=new Intent(RemoteControl.this, MainActivity.class);
-                                        startActivity(intent);
-                                    }
-                                });
-                                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {  //取消按钮
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-                                        Toast.makeText(RemoteControl.this, "取消成功",Toast.LENGTH_SHORT).show();
-                                        player.startPlay();
-                                    }
-                                });
-                                AlertDialog b=builder.create();
-                                b.show();
-                                player.onPause();
-
-                            }
-                        })
                                     .setPlayerStartOrPauseListener(new OnPlayerStartOrPauseListener() {
                                         @Override
                                         public void onStartOrPause() {
                                             //对话框
                                             AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-                                            builder.setIcon(R.drawable.shangbackground);
                                             builder.setTitle("暂停挪车");//设置对话框的标题
                                             builder.setMessage("挪车已暂停，是否继续挪车？");//设置对话框的内容
                                             builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
@@ -375,6 +375,7 @@ public class RemoteControl extends Activity {
                 .setNetWorkTypeTie(false)
                 .hideRotation(true)
                 .hideFullscreen(true)
+                .hideBack(true)
                 .setChargeTie(true, 480)//设置最长播放时间
                 .showThumbnail(new OnShowThumbnailListener() {
                     @Override
@@ -387,41 +388,11 @@ public class RemoteControl extends Activity {
                                 .into(ivThumbnail);
                     }
                 })
-                .setPlayerBackListener(new OnPlayerBackListener() {
-                    @Override
-                    public void onPlayerBack() {
-                        //对话框
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setIcon(R.drawable.shangbackground);
-                        builder.setTitle("结束挪车");//设置对话框的标题
-                        builder.setMessage("您已确定车辆已经抵达目标位置并结束挪车操作吗？");//设置对话框的内容
-                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                finish();
-                                Intent intent = new Intent(RemoteControl.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {  //取消按钮
-
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                Toast.makeText(RemoteControl.this, "取消成功", Toast.LENGTH_SHORT).show();
-                                player.startPlay();
-                            }
-                        });
-                        AlertDialog b = builder.create();
-                        b.show();
-                        player.onPause();
-                    }
-                })
                 .setPlayerStartOrPauseListener(new OnPlayerStartOrPauseListener() {
                     @Override
                     public void onStartOrPause() {
                         //对话框
                         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setIcon(R.drawable.shangbackground);
                         builder.setTitle("暂停挪车");//设置对话框的标题
                         builder.setMessage("挪车已暂停，是否继续挪车？");//设置对话框的内容
                         builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
@@ -980,7 +951,6 @@ public class RemoteControl extends Activity {
 //        super.onBackPressed();
         //对话框
         AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-        builder.setIcon(R.drawable.shangbackground);
         builder.setTitle("结束挪车");//设置对话框的标题
         builder.setMessage("您已确定车辆已经抵达目标位置并结束挪车操作吗？");//设置对话框的内容
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮

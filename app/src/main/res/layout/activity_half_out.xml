@@ -6,37 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".autopark.AutoParkOut">
 
-    <ImageButton
-        android:id="@+id/back3"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/back"
-        android:background="@color/cl_error"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.03"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.028" />
-
-    <TextView
-        android:layout_width="wrap_content"
+    <include
+        layout="@layout/remove_topbar_base"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="半出车"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.03" />
+        />
+
 
     <ImageView
         android:id="@+id/basicImageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/vehicle_basic"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/sensebg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -55,7 +37,9 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/basicImageView2">
+        app:layout_constraintTop_toBottomOf="@+id/basicImageView2"
+        android:layout_marginTop="60dp"
+        >
 
         <TextView
             android:id="@+id/sytle1"
@@ -72,49 +56,49 @@
 
         <ImageButton
             android:id="@+id/Leftforward"
-            android:layout_width="120dp"
-            android:layout_height="110dp"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
             android:background="#00000000"
             android:scaleType="fitXY"
-            android:src="@drawable/leftforward"
+            android:src="@drawable/left_forward"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.027"
+            app:layout_constraintHorizontal_bias="0.057"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.6">
+            app:layout_constraintVertical_bias="0.687">
 
         </ImageButton>
 
         <ImageButton
             android:id="@+id/Forwardahead"
-            android:layout_width="120dp"
-            android:layout_height="110dp"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
             android:background="#00000000"
             android:scaleType="fitXY"
-            android:src="@drawable/forwardahead"
+            android:src="@drawable/forward_ahead"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.6">
+            app:layout_constraintVertical_bias="0.687">
 
         </ImageButton>
 
         <ImageButton
             android:id="@+id/Rightforward"
-            android:layout_width="120dp"
-            android:layout_height="110dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/rightforward"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
             android:background="#00000000"
+            android:scaleType="fitXY"
+            android:src="@drawable/right_forward"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.976"
+            app:layout_constraintHorizontal_bias="0.942"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.6">
+            app:layout_constraintVertical_bias="0.687">
 
         </ImageButton>
 

@@ -6,37 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".autopark.AutoParkOut">
 
-    <ImageButton
-        android:id="@+id/back1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/back"
-        android:background="@color/cl_error"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.03"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.028" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <include
+        layout="@layout/remove_topbar_base"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="出车"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.03" />
+        />
+
 
     <ImageView
         android:id="@+id/basicImageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/vehicle_basic"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/sensebg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -54,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/basicImageView2"
-
+        android:layout_marginTop="60dp"
         >
 
         <TextView
@@ -72,26 +55,26 @@
 
         <ImageButton
             android:id="@+id/Halfout"
-            android:layout_width="130dp"
-            android:layout_height="110dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/halfout"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
             android:background="#00000000"
+            android:scaleType="fitXY"
+            android:src="@drawable/half_out"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.143"
+            app:layout_constraintHorizontal_bias="0.172"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.6">
+            app:layout_constraintVertical_bias="0.612">
 
         </ImageButton>
 
         <ImageButton
             android:id="@+id/Fullout"
-            android:layout_width="130dp"
-            android:layout_height="110dp"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
             android:scaleType="fitXY"
-            android:src="@drawable/fullout"
+            android:src="@drawable/full_out"
             android:background="#00000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

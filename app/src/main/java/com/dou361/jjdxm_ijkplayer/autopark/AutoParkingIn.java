@@ -5,41 +5,45 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import com.dou361.jjdxm_ijkplayer.R;
 
 
 public class AutoParkingIn extends Activity {
 
-    private Button pause;
+    private ImageButton pause ,back;
     private int flag = 0 ;
     private TextView outputfield,toptext ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auto_park_in);
-        pause= (Button)findViewById(R.id.Pause);
+        setContentView(R.layout.activity_auto_parking_in);
+        pause= (ImageButton)findViewById(R.id.Pause);
         outputfield = findViewById(R.id.Outputfield);
         toptext = findViewById(R.id.Toptext);
+        toptext.setText("正在寻找车位");
+        back =  findViewById(R.id.back2);
+        back.setVisibility(View.INVISIBLE);
 
         outputfield.setMovementMethod(ScrollingMovementMethod.getInstance());
         pause.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View V){
                 if(flag==0) {
-                    pause.setBackgroundColor(Color.RED);
                     toptext.setText("暂停中");
                     toptext.setTextColor(Color.RED);
                     flag = 1 ;
-                    refreshLogView( "\n暂停中..." );
+                    outputfield.setTextColor(Color.BLUE);
+                    refreshLogView( "暂停中...\n" );
                 }else{
                     pause.setBackgroundColor(Color.WHITE);
-                    toptext.setText("正在泊出车位");
+                    toptext.setText("正在寻找车位...");
                     toptext.setTextColor(Color.BLACK);
                     flag = 0;
-                    refreshLogView( "\n继续泊出..." );
+                    outputfield.setTextColor(Color.BLUE);
+                    refreshLogView( "继续正在寻找车位...\n" );
 
                 }
             }

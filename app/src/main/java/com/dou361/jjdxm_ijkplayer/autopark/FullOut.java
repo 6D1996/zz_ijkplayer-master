@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dou361.jjdxm_ijkplayer.R;
@@ -17,7 +18,9 @@ import butterknife.OnClick;
 
 public class FullOut extends Activity implements View.OnClickListener{
     private Context mContext;
-    ImageButton left,right;
+    private ImageButton left,right;
+    private TextView toptext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,9 @@ public class FullOut extends Activity implements View.OnClickListener{
         right=findViewById(R.id.Right);
         left.setOnClickListener(this);
         right.setOnClickListener(this);
+
+        toptext = findViewById(R.id.Toptext);
+        toptext.setText("完全出车");
 
         //返回键
         findViewById(R.id.back2).setOnClickListener(new View.OnClickListener(){
@@ -49,7 +55,6 @@ public class FullOut extends Activity implements View.OnClickListener{
                 /**半出车*/
                 //对话框
                 AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-                builder.setIcon(R.drawable.shangbackground);
                 builder.setTitle("确认出车");//设置对话框的标题
                 builder.setMessage("自动出车是由云端计算机控制车辆自动泊出车位，该功能有一定风险，一切后果将由车主承担泊出车位后，车主应尽快接受车辆以避免影响交通");//设置对话框的内容
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮

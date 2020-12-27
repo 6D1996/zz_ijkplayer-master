@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dou361.jjdxm_ijkplayer.R;
@@ -19,6 +20,7 @@ public class AutoPark extends Activity implements View.OnClickListener{
 
     ImageButton parkout,parkin;
     private Context mContext;
+    private TextView toptext;
 
 
 
@@ -32,6 +34,17 @@ public class AutoPark extends Activity implements View.OnClickListener{
         parkout=findViewById(R.id.Out);
         parkin.setOnClickListener(this);
         parkout.setOnClickListener(this);
+
+        toptext = findViewById(R.id.Toptext);
+        toptext.setText("自动泊车");
+
+        //返回键
+        findViewById(R.id.back2).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View V){
+                finish();
+            }
+        });
 
     }
 
@@ -47,7 +60,6 @@ public class AutoPark extends Activity implements View.OnClickListener{
                 /**泊车*/
                 //对话框
                 AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-                builder.setIcon(R.drawable.shangbackground);
                 builder.setTitle("确认泊车");//设置对话框的标题
                 builder.setMessage("自动泊车是由云端计算机控制车辆自动泊入车位，该功能有一定风险，一切后果将由车主承担");//设置对话框的内容
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮

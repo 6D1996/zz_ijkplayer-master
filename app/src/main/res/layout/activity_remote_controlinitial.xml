@@ -15,41 +15,42 @@
         android:layout_marginTop="10dp"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/startRemove"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:background="#00000000"
+        android:scaleType="fitXY"
+        android:src="@drawable/start_remove_btn"
         android:text="开始挪车"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.535"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95">
-
-    </Button>
+        android:layout_marginBottom="10dp">
+    </ImageButton>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/vehicle_basic"
+        android:id="@+id/basicImageView2"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/sensebg"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.55"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-    </ImageView>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.55" />
 
     <include
         layout="@layout/remove_bottombar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="10dp"
+       />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
