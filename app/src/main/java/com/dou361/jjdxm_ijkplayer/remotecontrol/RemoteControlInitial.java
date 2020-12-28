@@ -52,12 +52,18 @@ public class RemoteControlInitial extends Activity {
             }
         }.start();
 
+        //返回键
+        findViewById(R.id.back2).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View V){
+                finish();
+            }
+        });
 
         StartRemove= (ImageButton)findViewById(R.id.startRemove);
         StartRemove.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View V){
-
                         //IotHub连接成功弹出对话框，否则提示当前连接车辆失败
                         AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
                         builder.setTitle("开始挪车");//设置对话框的标题

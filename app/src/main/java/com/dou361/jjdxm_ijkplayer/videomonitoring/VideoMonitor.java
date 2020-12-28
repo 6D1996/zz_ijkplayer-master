@@ -167,7 +167,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 @Override
                 public void onTick(long millisUntilFinished) {
                     i=i+1;
-                    replyTextView.setText("执行第"+i+"次请求："+videoReply.toString());
+//                    replyTextView.setText("执行第"+i+"次请求："+videoReply.toString());
                     if (videoReply.getCode().equals("InitialString")){//原始視頻為初始數據
                         if (videoReply2.getCode().equals("InitialString")){//均為初始數據
                             String replyOriginalFront = postVideoRequest(videoNum+1);//VideoNum是0，请求的是原始视频1和融合视频6
@@ -215,7 +215,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                         if (videoReply2.getCode().equals("0030000")){
                             playVideo(6);//只播融合視頻
                         }else{
-                            replyTextView.setText("WRONG!");
+//                            replyTextView.setText("WRONG!");
                         }
                     }
                 }
