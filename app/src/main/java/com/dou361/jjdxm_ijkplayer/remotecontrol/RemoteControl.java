@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -193,28 +194,34 @@ public class RemoteControl extends Activity {
             @Override
             public void onClick(View V){
                 //对话框
-                AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-                builder.setTitle("结束挪车");//设置对话框的标题
-                builder.setMessage("您已确定车辆已经抵达目标位置并结束挪车操作吗？");//设置对话框的内容
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
+                View my_view = LayoutInflater.from(RemoteControl.this).inflate(R.layout.my_dialog,null,false);
+                final AlertDialog dialog = new AlertDialog.Builder(RemoteControl.this).setView(my_view).create();
+                TextView Title = my_view.findViewById(R.id.title);
+                TextView Context = my_view.findViewById(R.id.content);
+                Title.setText("结束挪车");
+                Context.setText("您已确定车辆已经抵达目标位置并结束挪车操作吗？");
+                ImageButton Confirm = my_view.findViewById(R.id.confirm);
+                ImageButton cancel = my_view.findViewById(R.id.cancel);
+                Confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+                    public void onClick(View v) {
                         finish();
                         Intent intent=new Intent(RemoteControl.this, MainActivity.class);
                         startActivity(intent);
+                        dialog.dismiss();
                     }
                 });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {  //取消按钮
-
+                cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+                    public void onClick(View v) {
                         Toast.makeText(RemoteControl.this, "取消成功",Toast.LENGTH_SHORT).show();
                         player.startPlay();
+                        dialog.dismiss();
                     }
                 });
-                AlertDialog b=builder.create();
-                b.show();
+                dialog.show();
                 player.onPause();
+                dialog.getWindow().setLayout(1000,600);
             }
         });
 

@@ -7,12 +7,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dou361.jjdxm_ijkplayer.R;
+import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControl;
+import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlInitial;
 
 import butterknife.OnClick;
 
@@ -54,28 +57,32 @@ public class FullOut extends Activity implements View.OnClickListener{
                 /**完全出车*/
                 /**半出车*/
                 //对话框
-                AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-                builder.setTitle("确认出车");//设置对话框的标题
-                builder.setMessage("自动出车是由云端计算机控制车辆自动泊出车位，该功能有一定风险，一切后果将由车主承担泊出车位后，车主应尽快接受车辆以避免影响交通");//设置对话框的内容
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
+                View my_view = LayoutInflater.from(FullOut.this).inflate(R.layout.my_dialog,null,false);
+                final AlertDialog dialog = new AlertDialog.Builder(FullOut.this).setView(my_view).create();
+                TextView Title = my_view.findViewById(R.id.title);
+                TextView Context = my_view.findViewById(R.id.content);
+                Title.setText("确认出车");
+                Context.setText("自动出车是由云端计算机控制车辆自动泊出车位，该功能有一定风险，一切后果将由车主承担泊出车位后，车主应尽快接受车辆以避免影响交通");
+                ImageButton Confirm = my_view.findViewById(R.id.confirm);
+                ImageButton cancel = my_view.findViewById(R.id.cancel);
+                Confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+                    public void onClick(View v) {
                         Intent intent=new Intent(FullOut.this,AutoParkingOut.class);
                         startActivity(intent);
+                        dialog.dismiss();
                     }
                 });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {  //取消按钮
-
+                cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+                    public void onClick(View v) {
                         Toast.makeText(FullOut.this, "取消成功",Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 });
-                AlertDialog b=builder.create();
-                b.show();
+                dialog.show();
+                dialog.getWindow().setLayout(1000,700);
                 break;
-
-
         }
     }
 }
