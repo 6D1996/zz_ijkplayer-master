@@ -104,7 +104,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 videoReply = new VideoReply("原始");
                 videoReply2 = new VideoReply("融合");
 
-                replyTextView.setText("当前选择"+checkedId);
+//                replyTextView.setText("当前选择"+checkedId);
                 switch (checkedId){
                     case R.id.left_Click:
                         try2play(3);
@@ -141,7 +141,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
             @Override
             public void onTick(long millisUntilFinished) {
                 i=i+1;
-                replyTextView.setText("执行第"+i+"次请求："+videoReply.toString());
+//                replyTextView.setText("执行第"+i+"次请求："+videoReply.toString());
                 if (videoReply.getCode().equals("InitialString")){
                     String replyOriginalString = postVideoRequest(videoNum);
                     if(replyOriginalString!=null){
