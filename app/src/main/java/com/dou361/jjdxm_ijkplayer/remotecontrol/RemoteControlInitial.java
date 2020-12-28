@@ -22,6 +22,8 @@ public class RemoteControlInitial extends Activity {
     private ImageButton imageButton_forward,imageButton_backward;
     private TextView speedTextView;
     private double wheelAngle=0.0;
+    ScalableImageView sImgView ;
+
 
 
 
@@ -34,9 +36,13 @@ public class RemoteControlInitial extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_controlinitial);
         this.mContext = this;
-        CountDownTimer countDownTimer = new CountDownTimer(100000, 200) {
+
+        sImgView = findViewById(R.id.steering_wheel);
+
+        CountDownTimer countDownTimer = new CountDownTimer(1000000, 200) {
             @Override
             public void onTick(long millisUntilFinished) {
+                wheelAngle=sImgView.getmDegree();
                 speedTextView = findViewById(R.id.speed);
                 speedTextView.setText(String.valueOf((int) wheelAngle));
             }

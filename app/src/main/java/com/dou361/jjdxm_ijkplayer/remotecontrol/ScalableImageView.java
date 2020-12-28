@@ -27,8 +27,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     private static final double MAX_DEGREE = 600.0;//方向盘最大转角
     private Matrix matrix;
     private Matrix cacheMatrix;  //缓存的matrix ，同时记录上一次滑动的位置
-    private float mPointDistinct = 1f;
-    private  double mDegree=0.0;// 旋转的ScalableImageView角度
+    private double mDegree=0.0;// 旋转的ScalableImageView角度
     double radius0 =0.0;
 
 
@@ -39,12 +38,10 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     }
 
-    List<Double> angleList= new ArrayList<>();//For story the angle data
-    List<PointF> pointFList = new ArrayList<>();
+    List<PointF> pointFList = new ArrayList<>();//儲存最近劃過的幾個點
     PointF point2store=new PointF();
-    int circle =0;
+
     double degree0 = 0.0;//按下角度
-    double degree = 0.0;//转动角度
     double radiusLast;
     double degreeLast;
     double radiusNow;
@@ -57,8 +54,6 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     private Mode mode; //当前mode
     private Context mContext;
-
-    private PointF mStart = new PointF();
 
     public ScalableImageView(Context context) {
         this(context, null);
@@ -75,8 +70,6 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
     }
 
     private void init() {
-        circle = 0;
-        degree = 0.0;
         degree0 = 0.0;
         mDegree = 0.0;
         radius0 = 0.0;
@@ -84,7 +77,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
         cacheMatrix = new Matrix();
         pointFList.clear();
         mode = Mode.NONE;
-        bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.steering_wheel);  //避免OOM
+        bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.steering_wheel_2);  //避免OOM
         setImageBitmap(bitmap);
     }
 
@@ -100,8 +93,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                 degree0= (Double) Math.toDegrees(radius0);
                 Log.d(TAG, "onTouchEvent: 初始角度"+degree0);
                 mode = Mode.DOWN;
-                mStart.set(delta_x0, delta_y0);
-                pointFList.add(mStart);
+                pointFList.add(new PointF(delta_x0,delta_y0));
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -118,9 +110,6 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                         }
                     }
                     if(pointFList.size()>=2){
-                        for(int i=0;i<pointFList.size();i++){
-                            Log.d(TAG, "onTouchEvent: \n第"+i+"个点："+pointFList.get(i).x+","+pointFList.get(i).y+"\n");
-                        }
                          radiusLast = Math.atan2(pointFList.get(pointFList.size()-2).y,pointFList.get(pointFList.size()-2).x);
                          degreeLast = Math.toDegrees(radiusLast);
                          radiusNow = Math.atan2(pointFList.get(pointFList.size()-1).y,pointFList.get(pointFList.size()-1).x);
@@ -140,46 +129,6 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                     if(mDegree>MAX_DEGREE) {mDegree = MAX_DEGREE;}
                     if(mDegree<-MAX_DEGREE){mDegree =-MAX_DEGREE;}
 
-                    /*double radius = Math.atan2(delta_y,delta_x);
-                    Log.d(TAG, "onTouchEvent: pass弧度"+(radius-radius0));
-                    //向量叉乘判斷正負
-                    if(event.getY()-mStart.y>0){
-                        Log.d(TAG, "onTouchEvent: 順時針"+Math.atan2(1,-1));
-//                        degree=degree+360;
-                    }else {
-                        Log.d(TAG, "onTouchEvent: 逆時針"+Math.atan2(-1,1));
-                    }
-
-                    Log.d(TAG, "onTouchEvent: 現在弧度"+radius);
-                    Log.d(TAG, "onTouchEvent: 現在角度"+Math.toDegrees(radius));
-                    degree= (Double) Math.toDegrees(radius)-degree0;
-                    Log.d(TAG, "onTouchEvent: 旋轉角度"+degree);
-                    angleList.add(degree);
-                    if(angleList.size()>5){
-                        for(int i=0;i<angleList.size()-5;i++){
-                            angleList.remove(i);
-                        }
-                    }
-                    if(angleList.size()>2) {
-                        //
-                        Log.d(TAG, "onTouchEvent: \n當前角度"+angleList.get(angleList.size() - 1)+"上次角度"+angleList.get(angleList.size() - 2));
-                        if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) > 300)
-                        {
-//                            circle--;
-                        Log.d(TAG, "onTouchEvent: 減了一圈"+circle);}
-                        if (angleList.get(angleList.size() - 1) - angleList.get(angleList.size() - 2) < -300)
-                        {
-//                            circle++;
-                        Log.d(TAG, "onTouchEvent: 加了一圈"+circle);}
-                        degree = degree + 360 * circle;
-
-                        if(degree>MAX_DEGREE) {degree = MAX_DEGREE;}
-                        if(degree<-MAX_DEGREE){degree =-MAX_DEGREE;}
-                    }
-                    Log.d("赋值Degree",mDegree+"");
-                    mDegree = degree;*/
-
-//                    final RotateAnimation rotateAnimation = new RotateAnimation(0f, (float)degree, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
                     matrix.postRotate((float) mDegree,bitmap.getWidth()/2, bitmap.getHeight()/ 2);
                 }
                 break;

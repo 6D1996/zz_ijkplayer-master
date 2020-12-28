@@ -108,11 +108,13 @@ public class RemoteControl extends Activity {
 
 
     /*虛擬機*/
+/*
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
     private String mProductID = "2N8PWJAI0V";
     private String mDevName = "android_test_phone";
     private String mDevPSK  = "KdV+RSnHAlmEpM75aWZQZg=="; //若使用证书验证，设为null
     private String mTestTopic = "2N8PWJAI0V/android_test_phone/data";
+*/
 
     /*OPPO A57t*/
 /*    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
@@ -122,12 +124,12 @@ public class RemoteControl extends Activity {
     private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data";  */  // productID/DeviceName/TopicName
 
     /*真车配置*/
-    /*private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";
+    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";
     private String mProductID = "KM8UZXZOV9";
     private String mDevName = "android_test";
     private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
     private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
-*/    private String mSubProductID = ""; // If you wont test gateway, let this to be null
+    private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
     private String mDevCertName = "YOUR_DEVICE_NAME_cert.crt";
@@ -158,6 +160,7 @@ public class RemoteControl extends Activity {
             Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
             mqttSample.connect();
             sleep(2000);}
+
         mqttSample.subscribeTopic();
 
 
@@ -170,7 +173,6 @@ public class RemoteControl extends Activity {
                  while (true) {
                      if(braking){
                     try {
-
                         moveVehicle(-0.1,0.0,wheelAngle);
                         sleep(50);
                     } catch (Exception e) {
@@ -224,18 +226,10 @@ public class RemoteControl extends Activity {
         sImgView = findViewById(R.id.steering_wheel);
 
         //方向盘角度在速度处显示
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    wheelAngle = sImgView.getmDegree();
-                }
-            }
-        }).start();
-
-        countDownTimer=new CountDownTimer(100000,200) {
+        countDownTimer=new CountDownTimer(1000000,200) {
             @Override
             public void onTick(long millisUntilFinished) {
+                wheelAngle = sImgView.getmDegree();
                 Speed = findViewById(R.id.speed);
                 Speed.setText(String.valueOf((int)wheelAngle));
             }
@@ -446,7 +440,7 @@ public class RemoteControl extends Activity {
     1,2,3,4分別對應P,R,N,D四個檔位
      **/
     private void shiftGear(final int gear){
-        if(speed==0){
+//        if(speed==0){
         for(int i=0;i<10;i++){
                 Gears mGear = new Gears();
                 mGear.setTimestamp(System.currentTimeMillis());
@@ -459,11 +453,12 @@ public class RemoteControl extends Activity {
                 Log.d(TAG, "onClick: "+JSON.toJSONString(mGear));
                 sleep(50);
         }
-        gearGlobal=gear;}
-        else {
-            moveVehicle(-0.3,0.0,0.0);
-            shiftGear(gear);
-        }
+        gearGlobal=gear;
+//    }
+//        else {
+//            moveVehicle(-0.3,0.0,0.0);
+//            shiftGear(gear);
+//        }
     }
 
     /**
@@ -769,8 +764,7 @@ public class RemoteControl extends Activity {
             braking =false;
 // 按下松开分别对应启动停止前进方法
             if ("backward".equals(methodName)) {
-                if(gearGlobal!=2){
-                shiftGear(2);}
+//                if(gearGlobal!=2){ shiftGear(2);}
                 MiusThread miusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     miusThread = new MiusThread();
@@ -794,8 +788,7 @@ public class RemoteControl extends Activity {
             }
 // 按下松开分别对应启动停止加线程方法
             else if ("forward".equals(methodName)) {
-                if(gearGlobal!=4){
-                shiftGear(4);}
+//                if(gearGlobal!=4){ shiftGear(4);}
                 PlusThread plusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     plusThread = new PlusThread();
@@ -930,7 +923,7 @@ public class RemoteControl extends Activity {
         }
         if(speed!=0){moveVehicle(-0.3,0.0,0.0);}
         if(braking){braking=false;}
-        if(gearGlobal!=1){shiftGear(1);}
+//        if(gearGlobal!=1){shiftGear(1);}
         if(handBrakeStatus==1){shiftHandbrake(0);}
         if(mIsConnected){mqttSample.disconnect();}
 
