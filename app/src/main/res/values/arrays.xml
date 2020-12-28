@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="Video_Model">
-        <item>前摄像</item>
-        <item>后摄像</item>
-        <item>左摄像</item>
-        <item>右摄像</item>
+        <item>前视角</item>
+        <item>后视角</item>
+        <item>左视角</item>
+        <item>右视角</item>
         <item>上帝视角</item>
     </string-array>
 

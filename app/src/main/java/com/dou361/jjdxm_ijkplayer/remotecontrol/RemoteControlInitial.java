@@ -31,8 +31,6 @@ public class RemoteControlInitial extends Activity {
 
         //一直连接Iothub
 
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_controlinitial);
         this.mContext = this;

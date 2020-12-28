@@ -24,7 +24,6 @@ import static android.content.ContentValues.TAG;
  */
 public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageView{
 
-
     private static final double MAX_DEGREE = 600.0;//方向盘最大转角
     private Matrix matrix;
     private Matrix cacheMatrix;  //缓存的matrix ，同时记录上一次滑动的位置

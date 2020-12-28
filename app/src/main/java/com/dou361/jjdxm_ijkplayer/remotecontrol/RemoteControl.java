@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -245,6 +246,7 @@ public class RemoteControl extends Activity {
 
         //下拉单选按钮
         Video_Modul_Spinner = (Spinner)findViewById(R.id.Spinner_VIdeo_Model);
+        Video_Modul_Spinner.setOutlineSpotShadowColor(Color.BLUE);
         Video_Modul_Spinner.setSelection(0);//进入不会自动播放
         Video_Modul_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
