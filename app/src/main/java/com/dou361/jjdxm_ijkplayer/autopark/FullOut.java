@@ -81,7 +81,7 @@ public class FullOut extends Activity implements View.OnClickListener{
                     }
                 });
                 dialog.show();
-                dialog.getWindow().setLayout(1000,700);
+                dialog.getWindow().setLayout(1000,750);
                 break;
         }
     }

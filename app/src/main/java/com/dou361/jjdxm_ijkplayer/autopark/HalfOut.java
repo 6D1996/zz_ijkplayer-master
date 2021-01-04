@@ -82,7 +82,7 @@ public class HalfOut extends Activity implements View.OnClickListener{
                     }
                 });
                 dialog.show();
-                dialog.getWindow().setLayout(1000,720);
+                dialog.getWindow().setLayout(1000,750);
                 break;
         }
     }
