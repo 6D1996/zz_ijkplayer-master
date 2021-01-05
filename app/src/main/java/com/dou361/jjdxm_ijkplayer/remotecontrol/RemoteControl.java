@@ -96,10 +96,11 @@ public class RemoteControl extends Activity {
 
     private static final String TAG = "FullscreenActivity";
     private boolean braking = true;
+    private boolean active_braking=false;
     private int gearGlobal=0;
     private int handBrakeStatus = 0;
     private Button LlightingButton;
-    private ImageButton imageButton_forward,imageButton_backward;
+    private ImageButton imageButton_forward,imageButton_backward,imageButton_brake;
     private ImageView app_video_play;
     private Spinner Video_Modul_Spinner;
 
@@ -153,7 +154,7 @@ public class RemoteControl extends Activity {
 
         setContentView(rootView);
 
-        if (!mIsConnected) {
+        while (!mIsConnected) {
             Log.d(TAG, "onCreate: Connecting Mqtt");
             //轮询连接,万分感谢陈岩大佬
             mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
@@ -174,7 +175,11 @@ public class RemoteControl extends Activity {
                  while (true) {
                      if(braking){
                     try {
-                        moveVehicle(-0.1,0.0,wheelAngle);
+                        if (active_braking){
+                            moveVehicle(-1.0,0.0,wheelAngle);
+                        }
+                        else {
+                        moveVehicle(-0.1,0.0,wheelAngle);}
                         sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -230,6 +235,9 @@ public class RemoteControl extends Activity {
 
         imageButton_backward=findViewById(R.id.backward);
         imageButton_backward.setOnTouchListener(compentOnTouch);
+
+        imageButton_brake=findViewById(R.id.brake);
+        imageButton_brake.setOnTouchListener(compentOnTouch);
         sImgView = findViewById(R.id.steering_wheel);
 
         //方向盘角度在速度处显示
@@ -247,7 +255,7 @@ public class RemoteControl extends Activity {
 
         //下拉单选按钮
         Video_Modul_Spinner = (Spinner)findViewById(R.id.Spinner_VIdeo_Model);
-        Video_Modul_Spinner.setOutlineSpotShadowColor(Color.BLUE);
+//        Video_Modul_Spinner.setOutlineSpotShadowColor(Color.BLUE);
         Video_Modul_Spinner.setSelection(0);//进入不会自动播放
         Video_Modul_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
@@ -258,8 +266,8 @@ public class RemoteControl extends Activity {
                         case 0: {
                             /**前摄像*/
                             list = new ArrayList<VideoijkBean>();
-                            String url1 = "http://ivi.bupt.edu.cn/hls/cctv13.m3u8";
-                            String url2 = "rtmp://150.158.176.170/live/test_vin_1";
+                            String url1 = "rtmp://150.158.176.170/live/test_vin_1";
+                            String url2 = "rtmp://150.158.176.170:1935/live/test";
                             VideoijkBean m1 = new VideoijkBean();
                             m1.setStream("原始视频");
                             m1.setUrl(url1);
@@ -326,21 +334,21 @@ public class RemoteControl extends Activity {
 
                         case 1: {
                             /**后摄像*/
-                            String url3 = "http://ivi.bupt.edu.cn/hls/cctv2.m3u8";
+                            String url3 = "rtmp://150.158.176.170/live/test_vin_2";
                             playVideoUrl(url3);
                         }
                         break;
 
                         case 2: {
                             /**左摄像*/
-                            String url4 = "http://ivi.bupt.edu.cn/hls/cctv3.m3u8";
+                            String url4 = "rtmp://150.158.176.170/live/test_vin_3";
                             playVideoUrl(url4);
                         }
                         break;
 
                         case 3: {
                             /**右摄像*/
-                            String url5 = "http://ivi.bupt.edu.cn/hls/cctv4.m3u8";
+                            String url5 = "rtmp://150.158.176.170/live/test_vin_4";
                             playVideoUrl(url5);
 
                         }
@@ -499,8 +507,8 @@ public class RemoteControl extends Activity {
         mMove.setType(11);
         mMove.setWheel_angle(wheelAngle);
         // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-        //mqttSample.publishTopic("data", JSON.toJSONString(mMove));
-        //Log.d(TAG, "onClick: 上传刹车"+JSON.toJSONString(mMove));
+        mqttSample.publishTopic("data", JSON.toJSONString(mMove));
+        Log.d(TAG, "onClick: 上传指令"+JSON.toJSONString(mMove));
     }
 
     @Override
@@ -752,7 +760,6 @@ public class RemoteControl extends Activity {
 
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-
             switch (view.getId()) {
 // 这是btnMius下的一个层，为了增强易点击性
                 case R.id.backward:
@@ -762,6 +769,9 @@ public class RemoteControl extends Activity {
                 case R.id.forward:
                     onTouchChange("forward", motionEvent.getAction());
                     break;
+                case R.id.brake:
+                    active_braking=true;
+                    break;
             }
             return true;
         }
@@ -769,9 +779,10 @@ public class RemoteControl extends Activity {
         private void onTouchChange(String methodName, int eventAction) {
             Log.d(TAG, "onTouchChange: "+methodName+eventAction);
             braking =false;
+            active_braking=false;
 // 按下松开分别对应启动停止前进方法
             if ("backward".equals(methodName)) {
-//                if(gearGlobal!=2){ shiftGear(2);}
+                if(gearGlobal!=2){ shiftGear(2);}
                 MiusThread miusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     miusThread = new MiusThread();
@@ -795,7 +806,7 @@ public class RemoteControl extends Activity {
             }
 // 按下松开分别对应启动停止加线程方法
             else if ("forward".equals(methodName)) {
-//                if(gearGlobal!=4){ shiftGear(4);}
+                if(gearGlobal!=4){ shiftGear(4);}
                 PlusThread plusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     plusThread = new PlusThread();
@@ -873,17 +884,16 @@ public class RemoteControl extends Activity {
                 switch (msg.what) {
                     case 1:
                         //前进操作
-//                        Control mForward = new Control(5.0,0.1,wheelAngle);
-//                        mqttSample.publishTopic("data", JSON.toJSONString(mForward));
-//                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mForward));
+                        Control mForward = new Control(5.0,0.1,wheelAngle);
+                        mqttSample.publishTopic("data", JSON.toJSONString(mForward));
+                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mForward));
                         moveVehicle(0.1,5.0,wheelAngle);
                         break;
                     case 2:
-//                        Control mBackward = new Control(-5.0,0.1,wheelAngle);
-//                        mqttSample.publishTopic("data", JSON.toJSONString(mBackward));
-//                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mBackward));
+                        Control mBackward = new Control(-5.0,0.1,wheelAngle);
+                        mqttSample.publishTopic("data", JSON.toJSONString(mBackward));
+                        Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mBackward));
                         moveVehicle(0.1,-5.0,wheelAngle);
-                        Log.d("TAG","Backward:"+i--);
                         break;
                     case 3:
                         Control mBreak = new Control(0.0,-0.1,wheelAngle);
@@ -930,7 +940,7 @@ public class RemoteControl extends Activity {
         }
         if(speed!=0){moveVehicle(-0.3,0.0,0.0);}
         if(braking){braking=false;}
-//        if(gearGlobal!=1){shiftGear(1);}
+        if(gearGlobal!=1){shiftGear(1);}
         if(handBrakeStatus==1){shiftHandbrake(0);}
         if(mIsConnected){mqttSample.disconnect();}
 
