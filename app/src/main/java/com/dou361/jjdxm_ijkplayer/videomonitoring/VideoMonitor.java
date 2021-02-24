@@ -41,7 +41,7 @@ import static android.content.ContentValues.TAG;
 
 public class VideoMonitor extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener {
 
-    public String hostURL="http://10.6.206.20:30549/appBackend/";
+    public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     public CountDownTimer countDownTimer;
     public VideoRequest videoRequest;
     public VideoReply videoReply,videoReply2,videoReplyMethod;
@@ -86,7 +86,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         channels.put("Channel_Left",buttonLeft);
         channels.put("Channel_Right",buttonRight);
         channels.put("Channel_God_Perspective", channelGodPerspective);
-
+//
 //        replyTextView=findViewById(R.id.replyTextView);
 //        requestTextView=findViewById(R.id.requestTextView);
 

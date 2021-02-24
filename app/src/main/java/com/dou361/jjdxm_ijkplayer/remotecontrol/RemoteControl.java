@@ -179,7 +179,7 @@ public class RemoteControl extends Activity {
                             moveVehicle(-1.0,0.0,wheelAngle);
                         }
                         else {
-                        moveVehicle(-0.1,0.0,wheelAngle);}
+                        moveVehicle(-0.2,0.0,wheelAngle);}
                         sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -884,19 +884,19 @@ public class RemoteControl extends Activity {
                 switch (msg.what) {
                     case 1:
                         //前进操作
-                        Control mForward = new Control(5.0,0.1,wheelAngle);
+                        Control mForward = new Control(5.0,0.2,wheelAngle);
                         mqttSample.publishTopic("data", JSON.toJSONString(mForward));
                         Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mForward));
                         moveVehicle(0.1,5.0,wheelAngle);
                         break;
                     case 2:
-                        Control mBackward = new Control(-5.0,0.1,wheelAngle);
+                        Control mBackward = new Control(-5.0,0.2,wheelAngle);
                         mqttSample.publishTopic("data", JSON.toJSONString(mBackward));
                         Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mBackward));
                         moveVehicle(0.1,-5.0,wheelAngle);
                         break;
                     case 3:
-                        Control mBreak = new Control(0.0,-0.1,wheelAngle);
+                        Control mBreak = new Control(0.0,-0.2,wheelAngle);
                         mqttSample.publishTopic("data", JSON.toJSONString(mBreak));
                         Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mBreak));
                         break;
