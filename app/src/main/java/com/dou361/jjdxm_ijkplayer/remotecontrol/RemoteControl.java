@@ -110,27 +110,22 @@ public class RemoteControl extends Activity {
 
 
     /*虛擬機*/
-/*
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-    private String mProductID = "2N8PWJAI0V";
-    private String mDevName = "android_test_phone";
-    private String mDevPSK  = "KdV+RSnHAlmEpM75aWZQZg=="; //若使用证书验证，设为null
-    private String mTestTopic = "2N8PWJAI0V/android_test_phone/data";
-*/
+    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mProductID = "XN03IY1B4J";
+    private String mDevName = "app_test";
+    private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
+    private String mTestTopic = "XN03IY1B4J/app_test/data";
 
-    /*OPPO A57t*/
-/*    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-    private String mProductID = "2N8PWJAI0V";
-    private String mDevName = "OPPOA57t";
-    private String mDevPSK  = "TbtnFhJDmRe7N41vDBRVtA=="; //若使用证书验证，设为null
-    private String mTestTopic = "2N8PWJAI0V/OPPOA57t/data";  */  // productID/DeviceName/TopicName
 
     /*真车配置*/
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-dev.faw.cn:8883";
-    private String mProductID = "KM8UZXZOV9";
-    private String mDevName = "android_test";
-    private String mDevPSK  = "+xRWqTlp0UPbwSKXVgiNxA=="; //若使用证书验证，设为null
-    private String mTestTopic = "KM8UZXZOV9/android_test/data";    // productID/DeviceName/TopicName
+/*
+    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";
+    private String mProductID = "XMDWPUVQIV";
+    private String mDevName = "app";
+    private String mDevPSK  = "HWN8bnMwqLsAPHY/3gFPZg=="; //若使用证书验证，设为null
+    private String mTestTopic = "XMDWPUVQIV/app/data";    // productID/DeviceName/TopicName
+*/
+
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
     private String mSubDevPsk = "BuildConfig.SUB_DEVICE_PSK";
