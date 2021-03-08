@@ -110,21 +110,19 @@ public class RemoteControl extends Activity {
 
 
     /*虛擬機*/
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+/*    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
     private String mProductID = "XN03IY1B4J";
     private String mDevName = "app_test";
     private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
-    private String mTestTopic = "XN03IY1B4J/app_test/data";
+    private String mTestTopic = "XN03IY1B4J/app_test/data";*/
 
 
     /*真车配置*/
-/*
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";
     private String mProductID = "XMDWPUVQIV";
     private String mDevName = "app";
     private String mDevPSK  = "HWN8bnMwqLsAPHY/3gFPZg=="; //若使用证书验证，设为null
     private String mTestTopic = "XMDWPUVQIV/app/data";    // productID/DeviceName/TopicName
-*/
 
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
@@ -262,7 +260,7 @@ public class RemoteControl extends Activity {
                             /**前摄像*/
                             list = new ArrayList<VideoijkBean>();
                             String url1 = "rtmp://150.158.176.170/live/test_vin_1";
-                            String url2 = "rtmp://150.158.176.170:1935/live/test";
+                            String url2 = "rtmp://150.158.176.170/live/test_vin_2";
                             VideoijkBean m1 = new VideoijkBean();
                             m1.setStream("原始视频");
                             m1.setUrl(url1);
@@ -765,7 +763,7 @@ public class RemoteControl extends Activity {
                     onTouchChange("forward", motionEvent.getAction());
                     break;
                 case R.id.brake:
-                    active_braking=true;
+                    onTouchChange("brake", motionEvent.getAction());
                     break;
             }
             return true;
@@ -820,6 +818,21 @@ public class RemoteControl extends Activity {
                     }
                 }
             }
+            else if ("brake".equals(methodName)) {
+                if (eventAction == MotionEvent.ACTION_DOWN) {
+                    moveVehicle(-1.0,0.0,0.0);
+                    isOnLongClick = true;
+                } else if (eventAction == MotionEvent.ACTION_UP) {
+                    Log.d(TAG, "onTouchChange: 松开手指");
+                    isOnLongClick=false;
+                    braking =true;
+                } else if (eventAction == MotionEvent.ACTION_MOVE) {
+                    isOnLongClick = true;
+                    moveVehicle(-1.0,0.0,0.0);
+                }
+            }
+
+            active_braking=true;
         }
 
 
