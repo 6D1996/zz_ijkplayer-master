@@ -56,7 +56,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     private HashMap<String, RadioButton> channels = new HashMap<>(5);
     private ImageButton lightControllerButton;
 
-    private TextView replyTextView,requestTextView;
 
     @SuppressLint("InvalidWakeLockTag")
     @Override
@@ -134,24 +133,36 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         //请求第videoNum的视频
         videoReply.initialVideoReply();
         videoReply2.initialVideoReply();
-        Log.d(TAG, "Initial: videoReply1："+videoReply.toString()+"\nvideoReply2："+videoReply2.toString());
 
         if (videoNum!=0){
+            //for循环关闭其他所有视频以节省流量
+            for(int i=2;i<6;i++){
+                if(i!=videoNum)
+                postVideoRequest(i,0);}
         countDownTimer=new CountDownTimer(10000,1000) {
             int i=0;
             @Override
             public void onTick(long millisUntilFinished) {
                 i=i+1;
 //                replyTextView.setText("执行第"+i+"次请求："+videoReply.toString());
+                Log.d(TAG, "onTick: "+"执行第"+i+"次请求："+videoReply.toString());
                 if (videoReply.getCode().equals("InitialString")){
                     String replyOriginalString = postVideoRequest(videoNum,1);
+                    Log.d(TAG, "onTick: replyOriginalString"+replyOriginalString);
                     if(replyOriginalString!=null){
                         //当请求数据不为空时，设置videoReply类，，，，，反序列化操作即 由字符串--->对象
-                        videoReply = JSON.parseObject(replyOriginalString, VideoReply.class);}
+                        videoReply = JSON.parseObject(replyOriginalString, VideoReply.class);
+                        Log.d(TAG, "返回: videoReply1："+videoReply.toString()+"\nvideoReply2："+videoReply2.toString());
+                        if(videoReply.getCode().equals("0030000")){
+                            playVideo(videoNum);
+                            cancel();
+                        }else Toast.makeText(VideoMonitor.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
+
+                    }
                 }
+//                else  Log.d(TAG, "返回: videoReply1："+videoReply.toString()+"\nvideoReply2："+videoReply2.toString());
 //                else if(videoReply.getCode().equals("0030000"))//请求成功播放视频取消轮询
-                {playVideo(videoNum);
-                    cancel();}
+
 //                else
 //                {
 //                    replyTextView.setText("播放错误");
@@ -159,7 +170,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
             }
             @Override
             public void onFinish() {
-                replyTextView.setText("请求超时!");
             }
         }.start();}
         else {//播放前视角视频时有四种情况
@@ -180,7 +190,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                             if(replyMergeFront!=null){
                             videoReply2 = JSON.parseObject(replyMergeFront, VideoReply.class);//兩個視頻都請求
                             Log.d(TAG, "onTick: replyMergeFront"+videoReply2.toString());}
-//                        videoReply.setCode("00"+i);
                         }else {//融合視頻有數據
                             String replyOriginalRetry = postVideoRequest(videoNum+1,1);
                             if(replyOriginalRetry!=null){
@@ -243,20 +252,17 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
             @Override
             public void run() {
                 try {
-                    requestTextView.setText(videoRequestJson);
-
+                    Log.d(TAG, "postVideoRequest: "+videoRequestJson);
                     OkHttpClient videoClient=new OkHttpClient();
                     Request videoRequest= new Request.Builder()
                             .url(hostURL+"videoRequest")
                             .post(RequestBody.create(MediaType.parse("application/json"),videoRequestJson))
                             .build();//创造HTTP请求
-
                     //执行发送的指令
                     Response videoResponse = videoClient.newCall(videoRequest).execute();
                     videoResponseString=videoResponse.body().string();
-                    Log.d("Reply",videoResponseString);
-                    replyTextView.setText(videoResponseString);
-                    videoReply = JSON.parseObject(videoResponseString,VideoReply.class);
+/*                    videoReply = JSON.parseObject(videoResponseString,VideoReply.class);
+                    Log.d("Reply",videoReply.toString());*/
                 }catch (Exception e){
                     e.printStackTrace();
                     Log.d("POST失敗", "onClick: "+e.toString());

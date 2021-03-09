@@ -1,7 +1,7 @@
 package com.dou361.jjdxm_ijkplayer.videomonitoring;
 
 public class VideoReply {
-    private String requestId,userId,vin,code,message,videoUrl;
+    private String requestId,userId,vin,code,message,videoUrl,timestamp;
 
     public VideoReply() {
     }
@@ -59,6 +59,14 @@ public class VideoReply {
         this.message = message;
     }
 
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String toString() {
         return "VideoReply{" +
@@ -68,6 +76,7 @@ public class VideoReply {
                 ", code='" + code + '\'' +
                 ", message='" + message + '\'' +
                 ", videoUrl='" + videoUrl + '\'' +
+                ", timestamp='" + timestamp + '\'' +
                 '}';
     }
     public void initialVideoReply(){
