@@ -102,8 +102,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
             public void onCheckedChanged(MyRadioGroup group, int checkedId) {
                 videoReply = new VideoReply("原始");
                 videoReply2 = new VideoReply("融合");
-//                Log.d(TAG, "onCheckedChanged: 原始"+videoReply.getUserId()+"融合"+videoReply2.getUserId());
-//                replyTextView.setText("当前选择"+checkedId);
                 switch (checkedId){
                     case R.id.left_Click:
                         try2play(3);
