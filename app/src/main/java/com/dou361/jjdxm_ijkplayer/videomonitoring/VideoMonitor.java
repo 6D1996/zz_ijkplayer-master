@@ -226,7 +226,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                             playVideo(6);//只播融合視頻
                         }else{
                             Toast.makeText(VideoMonitor.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
-
                         }
                     }
                 }

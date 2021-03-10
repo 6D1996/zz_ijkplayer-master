@@ -46,6 +46,7 @@ import com.dou361.jjdxm_ijkplayer.command.Video;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoMonitor;
+import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoReply;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
 import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
 import com.tencent.iot.hub.device.android.core.util.TXLog;
@@ -248,7 +249,6 @@ public class RemoteControl extends Activity {
 
         //下拉单选按钮
         Video_Modul_Spinner = (Spinner)findViewById(R.id.Spinner_VIdeo_Model);
-//        Video_Modul_Spinner.setOutlineSpotShadowColor(Color.BLUE);
         Video_Modul_Spinner.setSelection(0);//进入不会自动播放
         Video_Modul_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
@@ -349,7 +349,7 @@ public class RemoteControl extends Activity {
 
                         case 4: {
                             /**上帝*/
-                            String url6 = "http://ivi.bupt.edu.cn/hls/cctv13.m3u8";
+                            String url6 = "rtmp://150.158.176.170/live/test_vin_5";
                             playVideoUrl(url6);
                         }
                         break;
@@ -429,7 +429,7 @@ public class RemoteControl extends Activity {
 
     private void shiftHandbrake(int handbrakeToSet) {
         if(handbrakeToSet!=handBrakeStatus){
-            for(int i=0;i<5;i++){
+            for(int i=0;i<15;i++){
                 Handbrake mHandbrake = new Handbrake();
                 mHandbrake.setTimestamp(System.currentTimeMillis());
                 mHandbrake.setStatus(handbrakeToSet);
