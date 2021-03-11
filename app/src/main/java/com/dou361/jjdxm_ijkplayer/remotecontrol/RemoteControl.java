@@ -111,19 +111,21 @@ public class RemoteControl extends Activity {
 
 
     /*虛擬機*/
-/*    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-    private String mProductID = "XN03IY1B4J";
-    private String mDevName = "app_test";
-    private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
-    private String mTestTopic = "XN03IY1B4J/app_test/data";*/
+    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mProductID = "6WYMRTCPAM";
+    private String mDevName = "app_real";
+    private String mDevPSK  = "nrRI5+fuV1AczfwxAofd7Q=="; //若使用证书验证，设为null
+    private String mTestTopic = "6WYMRTCPAM/app_real/data";
 
 
     /*真车配置*/
+/*
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";
     private String mProductID = "XMDWPUVQIV";
     private String mDevName = "app";
     private String mDevPSK  = "HWN8bnMwqLsAPHY/3gFPZg=="; //若使用证书验证，设为null
     private String mTestTopic = "XMDWPUVQIV/app/data";    // productID/DeviceName/TopicName
+*/
 
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
@@ -173,7 +175,7 @@ public class RemoteControl extends Activity {
                             moveVehicle(-1.0,0.0,wheelAngle);
                         }
                         else {
-                        moveVehicle(-0.2,0.0,wheelAngle);}
+                        moveVehicle(-0.1,0.0,wheelAngle);}
                         sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -771,8 +773,9 @@ public class RemoteControl extends Activity {
 
         private void onTouchChange(String methodName, int eventAction) {
             Log.d(TAG, "onTouchChange: "+methodName+eventAction);
+            if("backward".equals(methodName)||"forward".equals(methodName)){
             braking =false;
-            active_braking=false;
+            active_braking=false;}
 // 按下松开分别对应启动停止前进方法
             if ("backward".equals(methodName)) {
                 if(gearGlobal!=2){ shiftGear(2);}
@@ -819,20 +822,21 @@ public class RemoteControl extends Activity {
                 }
             }
             else if ("brake".equals(methodName)) {
+                braking=true;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
+                    active_braking=true;
                     moveVehicle(-1.0,0.0,0.0);
                     isOnLongClick = true;
                 } else if (eventAction == MotionEvent.ACTION_UP) {
                     Log.d(TAG, "onTouchChange: 松开手指");
                     isOnLongClick=false;
-                    braking =true;
+                    active_braking=false;
                 } else if (eventAction == MotionEvent.ACTION_MOVE) {
                     isOnLongClick = true;
+                    active_braking=true;
                     moveVehicle(-1.0,0.0,0.0);
                 }
             }
-
-            active_braking=true;
         }
 
 
