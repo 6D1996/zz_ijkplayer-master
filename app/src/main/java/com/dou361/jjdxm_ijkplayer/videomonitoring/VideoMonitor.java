@@ -44,13 +44,14 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     public CountDownTimer countDownTimer;
     public VideoRequest videoRequest;
-    public VideoReply videoReply,videoReply2,videoReplyClass;
+    public VideoReply videoReply,videoReply2;
     public String videoResponseString,mergeVideoString;//视频Post请求返回数据
     private PlayerView player;
     private Context mContext;
     private List<VideoijkBean> list;
     private PowerManager.WakeLock wakeLock;
     View rootView;
+    private Integer videoPlayingNum=-1;
     private MyRadioGroup videoRatioGroup;
     private RadioButton buttonFront, buttonBack, buttonLeft, buttonRight, channelGodPerspective;
     private HashMap<String, RadioButton> channels = new HashMap<>(5);
@@ -129,12 +130,18 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
 
     private void try2play(final int videoNum) {
         //请求第videoNum的视频
+        Log.d(TAG, "嘗試播放: "+videoNum+"路視頻，正在播放"+videoPlayingNum+"路視頻");
+        if(videoPlayingNum==videoNum){return;}
+        else if((videoPlayingNum==1||videoPlayingNum==6)&&(videoNum==0)){
+            Log.d(TAG, "try2play: "+"當前播放視頻就是待播放視頻的時候，不需操作");
+            return;}
+        //當前播放視頻就是待播放視頻的時候，不需操作
         videoReply.initialVideoReply();
         videoReply2.initialVideoReply();
 
         if (videoNum!=0){
             //for循环关闭其他所有视频以节省流量
-            for(int i=2;i<6;i++){
+            for(int i=1;i<7;i++){
                 if(i!=videoNum)
                 postVideoRequest(i,0);}
         countDownTimer=new CountDownTimer(10000,1000) {
@@ -164,6 +171,9 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
             }
         }.start();}
         else {//播放前视角视频时有四种情况
+            for(int i=2;i<6;i++){//for循環關閉其他線路
+                if(i!=videoNum)
+                    postVideoRequest(i,0);}
             countDownTimer=new CountDownTimer(5000,1000) {
                 int i=0;
                 @Override
@@ -313,7 +323,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     }
 
     public void playVideo(int videoNum){
-
+        videoPlayingNum=videoNum;
         switch (videoNum){
             case 0:
                 //前视角原始视频与融合视频在一个按钮，通过视频窗口内部按钮切换
@@ -322,7 +332,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 //有部分视频加载有问题，这个视频是有声音显示不出图像的，没有解决http://fzkt-biz.oss-cn-hangzhou.aliyuncs.com/vedio/2f58be65f43946c588ce43ea08491515.mp4
                 //这里模拟一个本地视频的播放，视频需要将testvideo文件夹的视频放到安卓设备的内置sd卡根目录中
                 String url1 = "rtmp://150.158.176.170/live/test_vin_1";//"rtmp://150.158.176.170/live/1";
-                String url2 = "rtmp://150.158.176.170/live/test_vin_2";
+                String url2 = "rtmp://150.158.176.170/live/test_vin_6";
                 VideoijkBean m1 = new VideoijkBean();
                 m1.setStream("原始视频");
                 m1.setUrl(url1);

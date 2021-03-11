@@ -111,21 +111,21 @@ public class RemoteControl extends Activity {
 
 
     /*虛擬機*/
+/*
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
     private String mProductID = "6WYMRTCPAM";
     private String mDevName = "app_real";
     private String mDevPSK  = "nrRI5+fuV1AczfwxAofd7Q=="; //若使用证书验证，设为null
     private String mTestTopic = "6WYMRTCPAM/app_real/data";
+*/
 
 
     /*真车配置*/
-/*
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";
-    private String mProductID = "XMDWPUVQIV";
-    private String mDevName = "app";
-    private String mDevPSK  = "HWN8bnMwqLsAPHY/3gFPZg=="; //若使用证书验证，设为null
-    private String mTestTopic = "XMDWPUVQIV/app/data";    // productID/DeviceName/TopicName
-*/
+    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mProductID = "6WYMRTCPAM";
+    private String mDevName = "app_real";
+    private String mDevPSK  = "nrRI5+fuV1AczfwxAofd7Q=="; //若使用证书验证，设为null
+    private String mTestTopic = "6WYMRTCPAM/app_real/data";    // productID/DeviceName/TopicName
 
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
@@ -173,6 +173,7 @@ public class RemoteControl extends Activity {
                     try {
                         if (active_braking){
                             moveVehicle(-1.0,0.0,wheelAngle);
+                            sleep(50);
                         }
                         else {
                         moveVehicle(-0.1,0.0,wheelAngle);}
@@ -825,7 +826,7 @@ public class RemoteControl extends Activity {
                 braking=true;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     active_braking=true;
-                    moveVehicle(-1.0,0.0,0.0);
+//                    moveVehicle(-1.0,0.0,0.0);
                     isOnLongClick = true;
                 } else if (eventAction == MotionEvent.ACTION_UP) {
                     Log.d(TAG, "onTouchChange: 松开手指");
@@ -834,7 +835,7 @@ public class RemoteControl extends Activity {
                 } else if (eventAction == MotionEvent.ACTION_MOVE) {
                     isOnLongClick = true;
                     active_braking=true;
-                    moveVehicle(-1.0,0.0,0.0);
+//                    moveVehicle(-1.0,0.0,0.0);
                 }
             }
         }
@@ -846,7 +847,7 @@ public class RemoteControl extends Activity {
             public void run() {
                 while (isOnLongClick) {
                     try {
-                        Thread.sleep(40);
+                        Thread.sleep(50);
                         myHandler.sendEmptyMessage(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
