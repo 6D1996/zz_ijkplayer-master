@@ -152,7 +152,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 i=i+1;
 //                replyTextView.setText("执行第"+i+"次请求："+videoReply.toString());
 //                Log.d(TAG, "onTick: "+"执行第"+i+"次请求："+videoReply.toString());
-                if (videoReply.getCode().equals("InitialString")){
+                if ("InitialString".equals(videoReply.getCode())){
                     String replyOriginalString = postVideoRequest(videoNum,1);
                     Log.d(TAG, "onTick: replyOriginalString"+replyOriginalString);
                     if(replyOriginalString!=null){
