@@ -141,9 +141,10 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
 
         if (videoNum!=0){
             //for循环关闭其他所有视频以节省流量
-            for(int i=1;i<7;i++){
+            for(int i=1;i<7;i++){/*
                 if(i!=videoNum)
-                postVideoRequest(i,0);}
+                postVideoRequest(i,0);*/
+            }
         countDownTimer=new CountDownTimer(10000,1000) {
             int i=0;
             @Override
@@ -172,8 +173,8 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         }.start();}
         else {//播放前视角视频时有四种情况
             for(int i=2;i<6;i++){//for循環關閉其他線路
-                if(i!=videoNum)
-                    postVideoRequest(i,0);}
+                /*if(i!=videoNum)
+                    postVideoRequest(i,1);*/}
             countDownTimer=new CountDownTimer(5000,1000) {
                 int i=0;
                 @Override
@@ -270,10 +271,15 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                             .build();//创造HTTP请求
                     //执行发送的指令
                     Response videoResponse = videoClient.newCall(videoRequest).execute();
+                    Log.d(TAG, "run: 到了videoResponse");
                     if(videoNum!=6){
-                    videoResponseString=videoResponse.body().string();}
-                    else mergeVideoString=videoResponse.body().string();
-
+                    videoResponseString=videoResponse.body().string();
+                        Log.d(TAG, "run: videoResponseString:"+videoResponseString);
+                    }
+                    else {
+                        mergeVideoString = videoResponse.body().string();
+                        Log.d(TAG, "run: Merge");
+                    }
                     Log.d(TAG, "run: 返回结果"+videoNum+"路视频：\n"+videoResponseString+"\n"+mergeVideoString);
 
                 }catch (Exception e){

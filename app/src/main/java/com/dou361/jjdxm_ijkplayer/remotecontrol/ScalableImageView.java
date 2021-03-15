@@ -77,7 +77,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
         cacheMatrix = new Matrix();
         pointFList.clear();
         mode = Mode.NONE;
-        bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.steering_wheel_2);  //避免OOM
+        bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.wheel);  //避免OOM
         setImageBitmap(bitmap);
     }
 

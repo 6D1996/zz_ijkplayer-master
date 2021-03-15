@@ -158,9 +158,7 @@ public class RemoteControl extends Activity {
             Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
             mqttSample.connect();
             sleep(2000);}
-
         mqttSample.subscribeTopic();
-
 
         shiftHandbrake(1);
         Log.d(TAG, "onCreate: ");
@@ -512,9 +510,6 @@ public class RemoteControl extends Activity {
         super.onPostCreate(savedInstanceState);
     }
 
-
-
-
     //ms为需要休眠的时长
     public static void sleep(long ms)
     {
@@ -747,7 +742,6 @@ public class RemoteControl extends Activity {
 
     }
 
-
     class
     CompentOnTouch implements View.OnTouchListener {
 
@@ -927,7 +921,6 @@ public class RemoteControl extends Activity {
         /**demo的内容，恢复系统其它媒体的状态*/
         MediaUtils.muteAudioFocus(mContext, true);
     }
-
 
     @Override
     protected void onResume() {
