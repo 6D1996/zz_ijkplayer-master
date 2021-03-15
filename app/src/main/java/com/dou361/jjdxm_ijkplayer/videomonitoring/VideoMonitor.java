@@ -141,10 +141,10 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
 
         if (videoNum!=0){
             //for循环关闭其他所有视频以节省流量
-            for(int i=1;i<7;i++){/*
+            /*for(int i=1;i<7;i++){
                 if(i!=videoNum)
-                postVideoRequest(i,0);*/
-            }
+                postVideoRequest(i,0);
+            }*/
         countDownTimer=new CountDownTimer(10000,1000) {
             int i=0;
             @Override
@@ -172,17 +172,17 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
             }
         }.start();}
         else {//播放前视角视频时有四种情况
-            for(int i=2;i<6;i++){//for循環關閉其他線路
-                /*if(i!=videoNum)
-                    postVideoRequest(i,1);*/}
+            /*for(int i=2;i<6;i++){//for循環關閉其他線路
+                if(i!=videoNum)
+                    postVideoRequest(i,1);}*/
             countDownTimer=new CountDownTimer(5000,1000) {
                 int i=0;
                 @Override
                 public void onTick(long millisUntilFinished) {
                     i=i+1;
                     Log.d(TAG, "onTick: "+"执行第"+i+"次请求：原始"+videoReply.getCode()+"融合"+videoReply2.getCode());
-                    if(videoReply.getCode().equals("0030000")){//原始視頻已請求成功
-                        if(videoReply2.getCode().equals("0030000")){//全部成功
+                    if("0030000".equals(videoReply.getCode())){//原始視頻已請求成功
+                        if("0030000".equals(videoReply2.getCode())){//全部成功
                             Log.d(TAG, i+"onTick: videoReply1："+videoReply.toString()+"\nvideoReply2："+videoReply2.toString());
                             onFinish();//對code的四種狀態進行判斷
                             cancel();
@@ -195,7 +195,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                         }
                     }
                     else {//原始視頻未成功
-                        if (videoReply2.getCode().equals("0030000")){//融合视频成功
+                        if ("0030000".equals(videoReply2.getCode())){//融合视频成功
 
                             String replyOriginalRetry = postVideoRequest(videoNum+1,1);
                             if(replyOriginalRetry!=null){
@@ -220,8 +220,8 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
 
                 @Override
                 public void onFinish() {
-                    if(videoReply.getCode().equals("0030000")){//原始視頻可用
-                        if (videoReply2.getCode().equals("0030000")){
+                    if("0030000".equals(videoReply.getCode())){//原始視頻可用
+                        if ("0030000".equals(videoReply2.getCode())){
                             Log.d(TAG, "onFinish: 前视角与融合视频同时请求成功");
                             playVideo(0);//最理想情況，同時可播倆視頻
                         }else{
@@ -233,7 +233,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                     else{//原始視頻不可用
                         Toast.makeText(VideoMonitor.this,"原始視頻不可用，播放融合視頻",Toast.LENGTH_LONG).show();
                         Log.d(TAG, "onFinish: 原始視頻不可用，播放融合視頻");
-                        if (videoReply2.getCode().equals("0030000")){
+                        if ("0030000".equals(videoReply2.getCode())){
                             playVideo(6);//只播融合視頻
                         }else{
                             Toast.makeText(VideoMonitor.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
