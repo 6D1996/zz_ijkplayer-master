@@ -160,6 +160,7 @@ public class RemoteControl extends Activity {
             sleep(2000);}
         mqttSample.subscribeTopic();
 
+
         shiftHandbrake(1);
         Log.d(TAG, "onCreate: ");
 
@@ -174,7 +175,7 @@ public class RemoteControl extends Activity {
                             sleep(50);
                         }
                         else {
-                        moveVehicle(-0.1,0.0,wheelAngle);}
+                        moveVehicle(-0.2,0.0,wheelAngle);}
                         sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -344,7 +345,6 @@ public class RemoteControl extends Activity {
                             /**右摄像*/
                             String url5 = "rtmp://150.158.176.170/live/test_vin_4";
                             playVideoUrl(url5);
-
                         }
                         break;
 
@@ -586,6 +586,7 @@ public class RemoteControl extends Activity {
             }
             String logInfo = String.format("onSubscribeCompleted, status[%s], topics[%s], userContext[%s], errMsg[%s]",
                     status.name(), Arrays.toString(asyncActionToken.getTopics()), userContextInfo, errMsg);
+            Toast.makeText(RemoteControl.this, logInfo,Toast.LENGTH_SHORT).show();
             if (Status.ERROR == status) {
                 Log.d(TAG, "onConnectCompleted: "+logInfo);
             } else {
@@ -607,6 +608,7 @@ public class RemoteControl extends Activity {
         @Override
         public void onMessageReceived(final String topic, final MqttMessage message) {
             String logInfo = String.format("receive command, topic[%s], message[%s]", topic, message.toString());
+            Toast.makeText(RemoteControl.this, logInfo,Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onConnectCompleted: "+logInfo);
         }
     }
@@ -773,6 +775,7 @@ public class RemoteControl extends Activity {
             active_braking=false;}
 // 按下松开分别对应启动停止前进方法
             if ("backward".equals(methodName)) {
+//                Video_Modul_Spinner.setSelection(1);
                 if(gearGlobal!=2){ shiftGear(2);}
                 MiusThread miusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
@@ -797,6 +800,7 @@ public class RemoteControl extends Activity {
             }
 // 按下松开分别对应启动停止加线程方法
             else if ("forward".equals(methodName)) {
+//                Video_Modul_Spinner.setSelection(0);
                 if(gearGlobal!=4){ shiftGear(4);}
                 PlusThread plusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
@@ -894,7 +898,7 @@ public class RemoteControl extends Activity {
                         Control mForward = new Control(5.0,0.2,wheelAngle);
                         mqttSample.publishTopic("data", JSON.toJSONString(mForward));
                         Log.d(TAG, "第 "+(i++)+"次上传\n"+JSON.toJSONString(mForward));
-                        moveVehicle(0.1,5.0,wheelAngle);
+                        moveVehicle(0.2,5.0,wheelAngle);
                         break;
                     case 2:
                         Control mBackward = new Control(-5.0,0.2,wheelAngle);

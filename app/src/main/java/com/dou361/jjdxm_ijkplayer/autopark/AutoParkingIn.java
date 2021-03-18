@@ -4,10 +4,23 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
 import com.dou361.jjdxm_ijkplayer.R;
+import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoMonitor;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static android.content.ContentValues.TAG;
 
 
 public class AutoParkingIn extends Activity {

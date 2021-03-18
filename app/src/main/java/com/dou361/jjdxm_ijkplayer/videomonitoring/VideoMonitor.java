@@ -96,6 +96,9 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "liveTAG");
         wakeLock.acquire();
 
+        for(int i=1;i<7;i++){//for循環打開所有視頻流
+                postVideoRequest(i,1);}
+
 
         videoRatioGroup = (MyRadioGroup)findViewById(R.id.radiogroup);
         videoRatioGroup.setOnCheckedChangeListener(new MyRadioGroup.OnCheckedChangeListener() {
@@ -105,19 +108,25 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 videoReply2 = new VideoReply("融合");
                 switch (checkedId){
                     case R.id.left_Click:
-                        try2play(3);
+                        playVideo(3);
+//                        try2play(3);
                         break;
                     case R.id.right_Click:
-                        try2play(4);
+                        playVideo(4);
+//                        try2play(4);
                         break;
                     case R.id.front_Click:
-                        try2play(0);
+                        playVideo(0);
+//                        try2play(0);
                         break;
                     case R.id.back_Click:
-                        try2play(2);
+                        playVideo(2);
+//                        try2play(2);
                         break;
                     case R.id.god_perspective_Click:
-                        try2play(5);
+                        playVideo(5);
+//                        try2play(5);
+
                         break;
                     default:
                         Toast defualt =Toast.makeText(VideoMonitor.this, "上帝", Toast.LENGTH_SHORT);
@@ -329,7 +338,8 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     }
 
     public void playVideo(int videoNum){
-        videoPlayingNum=videoNum;
+        if(videoPlayingNum==videoNum)return;
+
         switch (videoNum){
             case 0:
                 //前视角原始视频与融合视频在一个按钮，通过视频窗口内部按钮切换
@@ -405,6 +415,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
             default:
                 break;
         }
+        videoPlayingNum=videoNum;
     }
 
 

@@ -1,14 +1,11 @@
 package com.dou361.jjdxm_ijkplayer.videomonitoring;
 
-public class VideoReply {
-    private String requestId,userId,vin,code,message,videoUrl,timestamp;
+public class VideoReply extends PublicRequest{
+    private String code,message,videoUrl,timestamp;
 
     public VideoReply() {
     }
-
-    public VideoReply(String userId) {
-        this.userId = userId;
-    }
+    public VideoReply(String Id){}
 
 
     public String getVideoUrl() {
@@ -19,29 +16,7 @@ public class VideoReply {
         this.videoUrl = videoUrl;
     }
 
-    public String getRequestId() {
-        return requestId;
-    }
 
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getVin() {
-        return vin;
-    }
-
-    public void setVin(String vin) {
-        this.vin = vin;
-    }
 
     public String getCode() {
         return code;
@@ -67,23 +42,12 @@ public class VideoReply {
         this.timestamp = timestamp;
     }
 
-    @Override
-    public String toString() {
-        return "VideoReply{" +
-                "requestId='" + requestId + '\'' +
-                ", userId='" + userId + '\'' +
-                ", vin='" + vin + '\'' +
-                ", code='" + code + '\'' +
-                ", message='" + message + '\'' +
-                ", videoUrl='" + videoUrl + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                '}';
-    }
+
     public void initialVideoReply(){
         String initialString="InitialString";
         this.code=initialString;
         this.message=initialString;
-        this.userId="6DAndroid";
+        setUserId("6DAndroid");
         this.videoUrl=initialString;
     }
 }

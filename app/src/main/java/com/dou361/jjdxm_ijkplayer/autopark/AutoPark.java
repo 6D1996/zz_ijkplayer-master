@@ -7,19 +7,33 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.dou361.jjdxm_ijkplayer.R;
 import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControl;
 import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlInitial;
 
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static com.tencent.iot.hub.device.java.core.mqtt.TXAlarmPingSender.TAG;
 
 public class AutoPark extends Activity implements View.OnClickListener{
+
+
+    public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
+    private AutoParkingRequest autoParkingRequest;
+    private AutoParkingReply autoParkingReply;
 
     ImageButton parkout,parkin;
     private Context mContext;
@@ -61,6 +75,44 @@ public class AutoPark extends Activity implements View.OnClickListener{
                 break;
             case R.id.In:
                 /**泊车*/
+                Log.d(TAG, "onClick: setParkingType1");
+        autoParkingRequest=new AutoParkingRequest();
+        autoParkingReply=new AutoParkingReply();
+        autoParkingRequest.setParkingType("1");
+        autoParkingRequest.setUserId("6DAndroid");
+        autoParkingRequest.setVin("123");
+
+        final String autoParkingRequestJson= JSON.toJSONString(autoParkingRequest);//序列化
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "postVideoRequest: "+autoParkingRequestJson);
+                    OkHttpClient videoClient=new OkHttpClient();
+                    Request videoRequest= new Request.Builder()
+                            .url(hostURL+"autoParking")
+                            .post(RequestBody.create(MediaType.parse("application/json"),autoParkingRequestJson))
+                            .build();//创造HTTP请求
+                    //执行发送的指令
+                    Response autoParkInResponse = videoClient.newCall(videoRequest).execute();
+                    String replyString=autoParkInResponse.body().string();
+                    Log.d(TAG, "run: 返回结果"+replyString);
+                    autoParkingReply=JSON.parseObject(replyString,AutoParkingReply.class);
+                    Log.d(TAG, "run: 返回类"+autoParkingReply.toString());
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.d("POST失敗", "onClick: "+e.toString());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AutoPark.this,"自動泊車失败！",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+
+
 
                 //对话框
                 View my_view = LayoutInflater.from(AutoPark.this).inflate(R.layout.my_dialog,null,false);
@@ -88,27 +140,6 @@ public class AutoPark extends Activity implements View.OnClickListener{
                 });
                 dialog.show();
                 dialog.getWindow().setLayout(1000,650);
-
-//                //对话框
-//                AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-//                builder.setTitle("确认泊车");//设置对话框的标题
-//                builder.setMessage("自动泊车是由云端计算机控制车辆自动泊入车位，该功能有一定风险，一切后果将由车主承担");//设置对话框的内容
-//                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//                        Intent intent=new Intent(AutoPark.this, AutoParkingIn.class);
-//                        startActivity(intent);
-//                    }
-//                });
-//                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {  //取消按钮
-//
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//                        Toast.makeText(AutoPark.this, "取消成功",Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//                AlertDialog b=builder.create();
-//                b.show();
 
         }
     }

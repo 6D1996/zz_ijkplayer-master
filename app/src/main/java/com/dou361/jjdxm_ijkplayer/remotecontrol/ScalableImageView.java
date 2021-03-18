@@ -124,7 +124,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                         }else if(delta_degree>0&&Math.abs(delta_degree)>=180){
                             mDegree= mDegree-360+Math.abs(delta_degree);
                         }
-                        Log.d(TAG, "onTouchEvent: 現在角度"+mDegree);
+//                        Log.d(TAG, "onTouchEvent: 現在角度"+mDegree);
                     }
                     if(mDegree>MAX_DEGREE) {mDegree = MAX_DEGREE;}
                     if(mDegree<-MAX_DEGREE){mDegree =-MAX_DEGREE;}
