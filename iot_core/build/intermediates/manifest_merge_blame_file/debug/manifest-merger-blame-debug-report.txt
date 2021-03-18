@@ -1,0 +1,42 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.tencent.iot.hub.device.android.core"
+4    android:versionCode="2"
+5    android:versionName="1.1" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="16"
+8-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="29" />
+9-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+11-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:10:5-80
+11-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:10:22-78
+12    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+12-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:11:5-76
+12-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:11:22-73
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:12:5-79
+13-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:12:22-76
+14    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+14-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:13:5-74
+14-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:13:22-72
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:14:5-67
+15-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:14:22-64
+16    <uses-permission android:name="android.permission.WAKE_LOCK" />
+16-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:15:5-68
+16-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:15:22-65
+17
+18    <application
+18-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:5:5-8:19
+19        android:allowBackup="true"
+19-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:5:18-44
+20        android:label="@string/app_name"
+20-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:5:45-77
+21        android:supportsRtl="true" >
+21-->D:\AndroidStudioProjects\zz_ijkplayer-master\iot_core\src\main\AndroidManifest.xml:6:9-35
+22    </application>
+23
+24</manifest>

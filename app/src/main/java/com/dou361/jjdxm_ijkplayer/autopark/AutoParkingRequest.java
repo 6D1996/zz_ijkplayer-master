@@ -20,11 +20,20 @@ public class AutoParkingRequest extends PublicRequest {
     public String parkingOutWay ;           //0半泊出/1完全泊出
     public String parkingDirection ;        //1左/2右/3前
     public String pathData;                 //自动叫车时，起止点数据
+    public String autoParkReplyString;
+    public AutoParkingReply autoParkingReply;
+
 
     public String getParkingType() {
         return parkingType;
     }
 
+    /**
+     * Sets parking type.
+     *
+     * @param parkingType the parking type
+     *                    //1泊入/2泊出/3叫车
+     */
     public void setParkingType(String parkingType) {
         this.parkingType = parkingType;
     }
@@ -33,6 +42,12 @@ public class AutoParkingRequest extends PublicRequest {
         return parkingOutWay;
     }
 
+    /**
+     * Sets parking out way.
+     *
+     * @param parkingOutWay the parking out way
+     *                      //0半泊出/1完全泊出
+     */
     public void setParkingOutWay(String parkingOutWay) {
         this.parkingOutWay = parkingOutWay;
     }
@@ -41,6 +56,12 @@ public class AutoParkingRequest extends PublicRequest {
         return parkingDirection;
     }
 
+    /**
+     * Sets parking direction.
+     *
+     * @param parkingDirection the parking direction
+     *                         //1左/2右/3前
+     */
     public void setParkingDirection(String parkingDirection) {
         this.parkingDirection = parkingDirection;
     }
@@ -53,8 +74,18 @@ public class AutoParkingRequest extends PublicRequest {
         this.pathData = pathData;
     }
 
-    public void AutoParkMethod(){
+
+    /**
+     * Auto park method.
+     *
+     * @param parkingType      the parking type
+     *                         //1泊入/2泊出/3叫车
+     */
+    public String getAutoParkingReply(String parkingType) {
+        this.parkingType=parkingType;
+
         final String autoParkingRequestJson= JSON.toJSONString(this);//序列化
+        Log.d(TAG, "getAutoParkingReply: "+autoParkReplyString);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -67,16 +98,24 @@ public class AutoParkingRequest extends PublicRequest {
                             .build();//创造HTTP请求
                     //执行发送的指令
                     Response autoParkInResponse = videoClient.newCall(videoRequest).execute();
-                    String replyString=autoParkInResponse.body().string();
-                    Log.d(TAG, "run: 返回结果"+replyString);
-                    AutoParkingReply autoParkingReply=new AutoParkingReply();
-                    autoParkingReply=JSON.parseObject(replyString,AutoParkingReply.class);
-                    Log.d(TAG, "run: 返回类"+autoParkingReply.toString());
+                    autoParkReplyString =autoParkInResponse.body().string();
+
+//                    autoParkingReply=JSON.parseObject(autoParkReplyString,AutoParkingReply.class);
+//                    reply =replyString;
+                    Log.d(TAG, "run: 返回结果"+ autoParkReplyString);
                 }catch (Exception e){
                     e.printStackTrace();
                     Log.d("POST失敗", "onClick: "+e.toString());
                 }
             }
         }).start();
+
+        Log.d(TAG, "run: 返回hanshu结果"+ autoParkReplyString);
+        if(autoParkingReply!=null)
+        return autoParkReplyString;
+        else
+            return getAutoParkingReply(parkingType);
     }
+
+
 }

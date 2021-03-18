@@ -1,0 +1,36 @@
+Index: hub-device-java/build/.transforms/05417fcbf482080afd3605bc6e0f77a1.bin
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- hub-device-java/build/.transforms/05417fcbf482080afd3605bc6e0f77a1.bin	(date 1606842845174)
++++ hub-device-java/build/.transforms/05417fcbf482080afd3605bc6e0f77a1.bin	(date 1606842845174)
+@@ -0,0 +1,1 @@
++o/jetified-hub-device-java
+Index: hub-device-java/build/.transforms/728abe638a800c1dbe659fecc8dcdcb0.bin
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- hub-device-java/build/.transforms/728abe638a800c1dbe659fecc8dcdcb0.bin	(date 1606843614681)
++++ hub-device-java/build/.transforms/728abe638a800c1dbe659fecc8dcdcb0.bin	(date 1606843614681)
+@@ -0,0 +1,1 @@
++o/jetified-hub-device-java.jar
+Index: hub-device-java/build/.transforms/49eef2857c2742f89f576142616c3529.bin
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- hub-device-java/build/.transforms/49eef2857c2742f89f576142616c3529.bin	(date 1606843688310)
++++ hub-device-java/build/.transforms/49eef2857c2742f89f576142616c3529.bin	(date 1606843688310)
+@@ -0,0 +1,1 @@
++o/jetified-hub-device-java
+Index: hub-device-java/build/.transforms/3bfddf997e76a6de6cb8d40ac69ed89c.bin
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- hub-device-java/build/.transforms/3bfddf997e76a6de6cb8d40ac69ed89c.bin	(date 1606843615665)
++++ hub-device-java/build/.transforms/3bfddf997e76a6de6cb8d40ac69ed89c.bin	(date 1606843615665)
+@@ -0,0 +1,1 @@
++i/

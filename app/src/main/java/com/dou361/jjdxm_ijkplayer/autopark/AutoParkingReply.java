@@ -1,6 +1,10 @@
 package com.dou361.jjdxm_ijkplayer.autopark;
 
+import android.util.Log;
+
 import com.dou361.jjdxm_ijkplayer.videomonitoring.PublicRequest;
+
+import static com.tencent.iot.hub.device.java.main.scenarized.Door.TAG;
 
 public class AutoParkingReply extends PublicRequest{
     private String timestamp,status,error,message,path,code;
@@ -51,6 +55,11 @@ public class AutoParkingReply extends PublicRequest{
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public void initial(){
+        this.code="Initial";
+        Log.d(TAG, "initial: ");
     }
 
     @Override
