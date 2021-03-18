@@ -4,26 +4,34 @@ package com.dou361.jjdxm_ijkplayer.autopark;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.dou361.jjdxm_ijkplayer.R;
-import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControl;
-import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlInitial;
 
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static com.tencent.iot.hub.device.java.core.mqtt.TXAlarmPingSender.TAG;
 
 public class FullOut extends Activity implements View.OnClickListener{
     private Context mContext;
     private ImageButton left,right;
     private TextView toptext;
 
+    private AutoParkingRequest autoParkOutRequest;
+    private AutoParkingReply autoParkOutReply;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,13 @@ public class FullOut extends Activity implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.Left:
+                autoParkOutRequest =new AutoParkingRequest();
+                autoParkOutReply =new AutoParkingReply();
+                autoParkOutRequest.setParkingType("2");
+                autoParkOutRequest.setParkingOutWay("1");
+                autoParkOutRequest.setParkingDirection("1");
+                autoParkOutRequest.AutoParkMethod();
+
             case R.id.Right:
                 /**完全出车*/
                 /**半出车*/

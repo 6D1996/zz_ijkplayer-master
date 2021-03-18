@@ -586,7 +586,7 @@ public class RemoteControl extends Activity {
             }
             String logInfo = String.format("onSubscribeCompleted, status[%s], topics[%s], userContext[%s], errMsg[%s]",
                     status.name(), Arrays.toString(asyncActionToken.getTopics()), userContextInfo, errMsg);
-            Toast.makeText(RemoteControl.this, logInfo,Toast.LENGTH_SHORT).show();
+//            Toast.makeText(RemoteControl.this, logInfo,Toast.LENGTH_SHORT).show();
             if (Status.ERROR == status) {
                 Log.d(TAG, "onConnectCompleted: "+logInfo);
             } else {
@@ -608,7 +608,7 @@ public class RemoteControl extends Activity {
         @Override
         public void onMessageReceived(final String topic, final MqttMessage message) {
             String logInfo = String.format("receive command, topic[%s], message[%s]", topic, message.toString());
-            Toast.makeText(RemoteControl.this, logInfo,Toast.LENGTH_SHORT).show();
+//            Toast.makeText(RemoteControl.this, logInfo,Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onConnectCompleted: "+logInfo);
         }
     }

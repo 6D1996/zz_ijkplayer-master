@@ -1,7 +1,10 @@
 package com.dou361.jjdxm_ijkplayer.videomonitoring;
 
 public class PublicRequest {
-    private String requestId,userId,vin;
+    public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
+    private String requestId;
+    private String userId="6DAndroid";
+    private String vin="test_car";
 
     public String getRequestId() {
         return requestId;

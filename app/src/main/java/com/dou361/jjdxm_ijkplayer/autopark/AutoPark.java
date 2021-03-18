@@ -79,39 +79,7 @@ public class AutoPark extends Activity implements View.OnClickListener{
         autoParkingRequest=new AutoParkingRequest();
         autoParkingReply=new AutoParkingReply();
         autoParkingRequest.setParkingType("1");
-        autoParkingRequest.setUserId("6DAndroid");
-        autoParkingRequest.setVin("123");
-
-        final String autoParkingRequestJson= JSON.toJSONString(autoParkingRequest);//序列化
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.d(TAG, "postVideoRequest: "+autoParkingRequestJson);
-                    OkHttpClient videoClient=new OkHttpClient();
-                    Request videoRequest= new Request.Builder()
-                            .url(hostURL+"autoParking")
-                            .post(RequestBody.create(MediaType.parse("application/json"),autoParkingRequestJson))
-                            .build();//创造HTTP请求
-                    //执行发送的指令
-                    Response autoParkInResponse = videoClient.newCall(videoRequest).execute();
-                    String replyString=autoParkInResponse.body().string();
-                    Log.d(TAG, "run: 返回结果"+replyString);
-                    autoParkingReply=JSON.parseObject(replyString,AutoParkingReply.class);
-                    Log.d(TAG, "run: 返回类"+autoParkingReply.toString());
-                }catch (Exception e){
-                    e.printStackTrace();
-                    Log.d("POST失敗", "onClick: "+e.toString());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(AutoPark.this,"自動泊車失败！",Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            }
-        }).start();
-
+        autoParkingRequest.AutoParkMethod();
 
 
                 //对话框

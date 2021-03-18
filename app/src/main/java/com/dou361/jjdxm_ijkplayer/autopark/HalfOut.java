@@ -22,6 +22,9 @@ public class HalfOut extends Activity implements View.OnClickListener{
     private ImageButton leftforward,forwardahead,rightforward;
     private TextView toptext;
 
+    private AutoParkingRequest autoParkingRequest;
+    private AutoParkingReply autoParkingReply;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
