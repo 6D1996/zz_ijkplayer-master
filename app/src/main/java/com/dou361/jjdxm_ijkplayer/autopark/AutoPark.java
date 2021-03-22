@@ -34,11 +34,9 @@ public class AutoPark extends Activity implements View.OnClickListener{
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     private AutoParkingRequest autoParkingRequest;
     private AutoParkingReply autoParkingReply;
-
     ImageButton parkout,parkin;
     private Context mContext;
     private TextView toptext;
-
 
 
     @Override
@@ -78,9 +76,9 @@ public class AutoPark extends Activity implements View.OnClickListener{
                 Log.d(TAG, "onClick: setParkingType1");
         autoParkingRequest=new AutoParkingRequest();
         autoParkingReply=new AutoParkingReply();
-        autoParkingRequest.setParkingType("1");
-        autoParkingRequest.AutoParkMethod();
-
+        String reply= autoParkingRequest.AutoParkMethod("1");
+//        autoParkingReply=JSON.parseObject(reply,AutoParkingReply.class);
+        Log.d(TAG, "onClick: 函数返回结果"+reply);
 
                 //对话框
                 View my_view = LayoutInflater.from(AutoPark.this).inflate(R.layout.my_dialog,null,false);

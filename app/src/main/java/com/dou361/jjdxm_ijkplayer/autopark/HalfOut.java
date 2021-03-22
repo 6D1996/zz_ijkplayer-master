@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,14 +17,16 @@ import com.dou361.jjdxm_ijkplayer.R;
 
 import butterknife.OnClick;
 
+import static com.tencent.iot.hub.device.java.core.mqtt.TXAlarmPingSender.TAG;
+
 public class HalfOut extends Activity implements View.OnClickListener{
 
     private Context mContext;
     private ImageButton leftforward,forwardahead,rightforward;
     private TextView toptext;
 
-    private AutoParkingRequest autoParkingRequest;
-    private AutoParkingReply autoParkingReply;
+    private AutoParkingRequest autoParkOutRequest;
+    private AutoParkingReply autoParkOutReply;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +58,25 @@ public class HalfOut extends Activity implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.Leftforward:
+                autoParkOutRequest =new AutoParkingRequest();
+                autoParkOutReply =new AutoParkingReply();
+                String replyString201=autoParkOutRequest.AutoParkMethod("2","0","1");
+                Log.d(TAG, "onClick: "+replyString201);
+
                 /**半出车*/
             case R.id.Forwardahead:
+                autoParkOutRequest =new AutoParkingRequest();
+                autoParkOutReply =new AutoParkingReply();
+                String replyString202=autoParkOutRequest.AutoParkMethod("2","0","2");
+                Log.d(TAG, "onClick: "+replyString202);
+
                 /**完全出车*/
             case R.id.Rightforward:
+                autoParkOutRequest =new AutoParkingRequest();
+                autoParkOutReply =new AutoParkingReply();
+                String replyString203=autoParkOutRequest.AutoParkMethod("2","0","2");
+                Log.d(TAG, "onClick: "+replyString203);
+
                 /**完全出车*/
                 //对话框
                 View my_view = LayoutInflater.from(HalfOut.this).inflate(R.layout.my_dialog,null,false);
