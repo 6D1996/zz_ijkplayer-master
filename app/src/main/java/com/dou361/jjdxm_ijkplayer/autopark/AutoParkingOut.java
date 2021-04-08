@@ -14,7 +14,7 @@ import com.dou361.jjdxm_ijkplayer.R;
 public class AutoParkingOut extends Activity {
 
     private ImageButton pause , back;
-    private int flag = 0 ;
+    private int flag= 0 ;
     private TextView outputfield,toptext ;
 
     @Override

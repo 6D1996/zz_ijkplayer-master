@@ -31,13 +31,12 @@ import static com.tencent.iot.hub.device.java.core.mqtt.TXAlarmPingSender.TAG;
 public class AutoPark extends Activity implements View.OnClickListener{
 
 
+    public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     private AutoParkingRequest autoParkingRequest;
     private AutoParkingReply autoParkingReply;
-
     ImageButton parkout,parkin;
     private Context mContext;
     private TextView toptext;
-
 
 
     @Override
@@ -75,12 +74,12 @@ public class AutoPark extends Activity implements View.OnClickListener{
             case R.id.In:
                 /**泊车*/
                 Log.d(TAG, "onClick: setParkingType1");
-                autoParkingRequest=new AutoParkingRequest();
-                autoParkingRequest.getAutoParkingReply("1");
-                autoParkingReply.initial();
+        autoParkingRequest=new AutoParkingRequest();
+        autoParkingReply=new AutoParkingReply();
+        String reply= autoParkingRequest.AutoParkMethod("1");
+//        autoParkingReply=JSON.parseObject(reply,AutoParkingReply.class);
+        Log.d(TAG, "onClick: 函数返回结果"+reply);
 
-//                autoParkingReply=JSON.parseObject(reply,AutoParkingReply.class);
-//                Log.d(TAG, "onClick: reply"+autoParkingReply.toString());
                 //对话框
                 View my_view = LayoutInflater.from(AutoPark.this).inflate(R.layout.my_dialog,null,false);
                 final AlertDialog dialog = new AlertDialog.Builder(AutoPark.this).setView(my_view).create();

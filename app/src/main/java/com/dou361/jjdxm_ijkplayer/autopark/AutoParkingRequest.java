@@ -20,20 +20,21 @@ public class AutoParkingRequest extends PublicRequest {
     public String parkingOutWay ;           //0半泊出/1完全泊出
     public String parkingDirection ;        //1左/2右/3前
     public String pathData;                 //自动叫车时，起止点数据
-    public String autoParkReplyString;
-    public AutoParkingReply autoParkingReply;
 
+    public String getAutoParkingReplyString() {
+        return autoParkingReplyString;
+    }
+
+    public void setAutoParkingReplyString(String autoParkingReplyString) {
+        this.autoParkingReplyString = autoParkingReplyString;
+    }
+
+    public String autoParkingReplyString="Initial";
 
     public String getParkingType() {
         return parkingType;
     }
 
-    /**
-     * Sets parking type.
-     *
-     * @param parkingType the parking type
-     *                    //1泊入/2泊出/3叫车
-     */
     public void setParkingType(String parkingType) {
         this.parkingType = parkingType;
     }
@@ -42,12 +43,6 @@ public class AutoParkingRequest extends PublicRequest {
         return parkingOutWay;
     }
 
-    /**
-     * Sets parking out way.
-     *
-     * @param parkingOutWay the parking out way
-     *                      //0半泊出/1完全泊出
-     */
     public void setParkingOutWay(String parkingOutWay) {
         this.parkingOutWay = parkingOutWay;
     }
@@ -56,12 +51,6 @@ public class AutoParkingRequest extends PublicRequest {
         return parkingDirection;
     }
 
-    /**
-     * Sets parking direction.
-     *
-     * @param parkingDirection the parking direction
-     *                         //1左/2右/3前
-     */
     public void setParkingDirection(String parkingDirection) {
         this.parkingDirection = parkingDirection;
     }
@@ -74,48 +63,144 @@ public class AutoParkingRequest extends PublicRequest {
         this.pathData = pathData;
     }
 
-
     /**
-     * Auto park method.
+     * Auto park method string
      *
-     * @param parkingType      the parking type
+     * @param parkingType      parking type
      *                         //1泊入/2泊出/3叫车
+     * @param parkingOutWay    parking out way
+     *                         //0半泊出/1完全泊出
+     * @param parkingDirection parking direction
+     *                         //1左/2右/3前
+     * @return the string
      */
-    public String getAutoParkingReply(String parkingType) {
-        this.parkingType=parkingType;
-
+    public String AutoParkMethod( String parkingType, String parkingOutWay,String parkingDirection){
+        this.setParkingType(parkingType);
+        this.setParkingOutWay(parkingOutWay);
+        this.setPathData(pathData);
         final String autoParkingRequestJson= JSON.toJSONString(this);//序列化
-        Log.d(TAG, "getAutoParkingReply: "+autoParkReplyString);
-        new Thread(new Runnable() {
+        Thread requestThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Log.d(TAG, "postVideoRequest: "+autoParkingRequestJson);
-                    OkHttpClient videoClient=new OkHttpClient();
+                    OkHttpClient autoParkClient=new OkHttpClient();
+                    Log.d(TAG, "postVideoRequest: new OkHttpClient()");
                     Request videoRequest= new Request.Builder()
                             .url(hostURL+"autoParking")
                             .post(RequestBody.create(MediaType.parse("application/json"),autoParkingRequestJson))
                             .build();//创造HTTP请求
                     //执行发送的指令
-                    Response autoParkInResponse = videoClient.newCall(videoRequest).execute();
-                    autoParkReplyString =autoParkInResponse.body().string();
-
-//                    autoParkingReply=JSON.parseObject(autoParkReplyString,AutoParkingReply.class);
-//                    reply =replyString;
-                    Log.d(TAG, "run: 返回结果"+ autoParkReplyString);
+                    Log.d(TAG, "postVideoRequest: 转换成功");
+                    Response autoParkResponse = autoParkClient.newCall(videoRequest).execute();
+                    String reply=autoParkResponse.body().string();
+                    autoParkingReplyString=reply;
+                    Log.d(TAG, "postVideoRequest: 返回结果"+autoParkingReplyString);
                 }catch (Exception e){
                     e.printStackTrace();
                     Log.d("POST失敗", "onClick: "+e.toString());
                 }
             }
-        }).start();
+        });
 
-        Log.d(TAG, "run: 返回hanshu结果"+ autoParkReplyString);
-        if(autoParkingReply!=null)
-        return autoParkReplyString;
-        else
-            return getAutoParkingReply(parkingType);
+        requestThread.start();
+        while (requestThread.isAlive()){
+            if("Initial".equals(autoParkingReplyString)){}
+            else
+                Log.d(TAG, "AutoParkMethod: "+autoParkingReplyString);
+        }
+/*        try {
+            requestThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
+        Log.d(TAG, "返回结果: "+autoParkingReplyString);
+        return autoParkingReplyString;
     }
+    public String AutoParkMethod( String parkingType){
+        this.setParkingType(parkingType);
+        final String autoParkingRequestJson= JSON.toJSONString(this);//序列化
+        Thread requestThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "postVideoRequest: "+autoParkingRequestJson);
+                    OkHttpClient autoParkClient=new OkHttpClient();
+                    Log.d(TAG, "postVideoRequest: new OkHttpClient()");
+                    Request videoRequest= new Request.Builder()
+                            .url(hostURL+"autoParking")
+                            .post(RequestBody.create(MediaType.parse("application/json"),autoParkingRequestJson))
+                            .build();//创造HTTP请求
+                    //执行发送的指令
+                    Log.d(TAG, "postVideoRequest: 转换成功");
+                    Response autoParkResponse = autoParkClient.newCall(videoRequest).execute();
+                    String reply=autoParkResponse.body().string();
+                    autoParkingReplyString=reply;
+                    Log.d(TAG, "postVideoRequest: 返回结果"+autoParkingReplyString);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.d("POST失敗", "onClick: "+e.toString());
+                }
+            }
+        });
 
+        requestThread.start();
+        while (requestThread.isAlive()){
+            if("Initial".equals(autoParkingReplyString)){}
+            else
+            Log.d(TAG, "AutoParkMethod: "+autoParkingReplyString);
+        }
+/*        try {
+            requestThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
 
+        Log.d(TAG, "返回结果: "+autoParkingReplyString);
+        return autoParkingReplyString;
+    }
+    public String AutoParkMethod( String parkingType,String pathData){
+        this.setParkingType(parkingType);
+        this.setPathData(pathData);
+        final String autoParkingRequestJson= JSON.toJSONString(this);//序列化
+        Thread requestThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "postVideoRequest: "+autoParkingRequestJson);
+                    OkHttpClient autoParkClient=new OkHttpClient();
+                    Log.d(TAG, "postVideoRequest: new OkHttpClient()");
+                    Request videoRequest= new Request.Builder()
+                            .url(hostURL+"autoParking")
+                            .post(RequestBody.create(MediaType.parse("application/json"),autoParkingRequestJson))
+                            .build();//创造HTTP请求
+                    //执行发送的指令
+                    Log.d(TAG, "postVideoRequest: 转换成功");
+                    Response autoParkResponse = autoParkClient.newCall(videoRequest).execute();
+                    String reply=autoParkResponse.body().string();
+                    autoParkingReplyString=reply;
+                    Log.d(TAG, "postVideoRequest: 返回结果"+autoParkingReplyString);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.d("POST失敗", "onClick: "+e.toString());
+                }
+            }
+        });
+
+        requestThread.start();
+        while (requestThread.isAlive()){
+            if("Initial".equals(autoParkingReplyString)){}
+            else
+                Log.d(TAG, "AutoParkMethod: "+autoParkingReplyString);
+        }
+/*        try {
+            requestThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
+        Log.d(TAG, "返回结果: "+autoParkingReplyString);
+        return autoParkingReplyString;
+    }
 }
