@@ -237,7 +237,7 @@ public class RemoteControl extends Activity {
         sImgView = findViewById(R.id.steering_wheel);
 
         //方向盘角度在速度处显示
-        countDownTimer=new CountDownTimer(1000000,200) {
+        countDownTimer=new CountDownTimer(100000000,200) {
             @Override
             public void onTick(long millisUntilFinished) {
                 wheelAngle = sImgView.getmDegree();

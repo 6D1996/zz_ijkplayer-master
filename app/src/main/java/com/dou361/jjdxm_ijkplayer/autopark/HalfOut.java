@@ -25,6 +25,7 @@ public class HalfOut extends Activity implements View.OnClickListener{
     private ImageButton leftforward,forwardahead,rightforward;
     private TextView toptext;
 
+
     private AutoParkingRequest autoParkOutRequest;
     private AutoParkingReply autoParkOutReply;
 
