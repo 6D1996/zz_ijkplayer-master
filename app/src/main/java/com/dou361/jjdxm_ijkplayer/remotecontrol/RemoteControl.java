@@ -45,6 +45,7 @@ import com.dou361.jjdxm_ijkplayer.command.Handbrake;
 import com.dou361.jjdxm_ijkplayer.command.Video;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
+import com.dou361.jjdxm_ijkplayer.service.NtpTime;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoMonitor;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoReply;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
@@ -99,6 +100,7 @@ public class RemoteControl extends Activity {
     private boolean braking = true;
     private boolean active_braking=false;
     private int gearGlobal=0;
+    private int connectMQTTTimes=0;
     private int handBrakeStatus = 0;
     private Button LlightingButton;
     private ImageButton imageButton_forward,imageButton_backward,imageButton_brake;
@@ -107,21 +109,23 @@ public class RemoteControl extends Activity {
 
     private double wheelAngle=0.0;
     private double speed=0.0;
+    private NtpTime ntpTime=new NtpTime();
 
 
 
     /*虛擬機*/
+//    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
 /*
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-    private String mProductID = "6WYMRTCPAM";
-    private String mDevName = "app_real";
-    private String mDevPSK  = "nrRI5+fuV1AczfwxAofd7Q=="; //若使用证书验证，设为null
-    private String mTestTopic = "6WYMRTCPAM/app_real/data";
+    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";
+    private String mProductID = "XN03IY1B4J";
+    private String mDevName = "app_test";
+    private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
+    private String mTestTopic = "XN03IY1B4J/app_test/data";
 */
 
 
     /*真车配置*/
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
     private String mProductID = "6WYMRTCPAM";
     private String mDevName = "app_real";
     private String mDevPSK  = "nrRI5+fuV1AczfwxAofd7Q=="; //若使用证书验证，设为null
@@ -150,15 +154,29 @@ public class RemoteControl extends Activity {
 
         setContentView(rootView);
 
-        while (!mIsConnected) {
-            Log.d(TAG, "onCreate: Connecting Mqtt");
-            //轮询连接,万分感谢陈岩大佬
-            mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
-                    mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
-            Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
-            mqttSample.connect();
-            sleep(2000);}
-        mqttSample.subscribeTopic();
+        mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
+                mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
+
+
+                while (!mIsConnected&&connectMQTTTimes<5) {
+                    Log.d(TAG, "onCreate: Connecting Mqtt");
+                    //轮询连接,万分感谢陈岩大佬
+                    Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
+                    mqttSample.connect();
+                    mqttSample.subscribeTopic();
+                    Log.d(TAG, "onCreate: Connet times:"+connectMQTTTimes++);
+                    sleep(1000);
+                }
+                if(mIsConnected){
+                    Toast.makeText(RemoteControl.this, "连接成功",Toast.LENGTH_SHORT).show();
+                }else {
+                    Log.d(TAG, "onCreate: 连接失败");
+//                    Toast.makeText(RemoteControl.this, "连接失败",Toast.LENGTH_SHORT).show();
+//                    finishActivity(1);
+                    this.finish();
+                }
+
+
 
 
         shiftHandbrake(1);
@@ -367,7 +385,7 @@ public class RemoteControl extends Activity {
     }
 
     //后四个视频播放器播放
-    public  void playVideoUrl( String url){
+    public void playVideoUrl( String url){
         player = new PlayerView(mActivity, rootView)
                 .setProcessDurationOrientation(PlayStateParams.PROCESS_PORTRAIT)
                 .setScaleType(PlayStateParams.fillparent) //视频界面剪裁设置
@@ -432,7 +450,7 @@ public class RemoteControl extends Activity {
         if(handbrakeToSet!=handBrakeStatus){
             for(int i=0;i<15;i++){
                 Handbrake mHandbrake = new Handbrake();
-                mHandbrake.setTimestamp(System.currentTimeMillis());
+                mHandbrake.setTimestamp(ntpTime.getNtpTime());
                 mHandbrake.setStatus(handbrakeToSet);
                 mHandbrake.setType(14);
                 mHandbrake.setTaskid("6D");
@@ -452,7 +470,7 @@ public class RemoteControl extends Activity {
 //        if(speed==0){
         for(int i=0;i<10;i++){
                 Gears mGear = new Gears();
-                mGear.setTimestamp(System.currentTimeMillis());
+                mGear.setTimestamp(ntpTime.getNtpTime());
                 Log.d(TAG, "onClick: "+System.currentTimeMillis());
                 mGear.setGear(gear);
                 mGear.setType(13);
@@ -479,7 +497,7 @@ public class RemoteControl extends Activity {
      */
     private void shiftVideoType(int videoType,int videoStatus){
         Video mVideo = new Video();
-        mVideo.setTimestamp(System.currentTimeMillis());
+        mVideo.setTimestamp(ntpTime.getNtpTime());
         mVideo.setVideo_type(videoType);
         mVideo.setOperation(videoStatus);
         mVideo.setType(12);
@@ -495,7 +513,7 @@ public class RemoteControl extends Activity {
      */
     private void moveVehicle(Double acceleration,Double speed,Double wheelAngle){
         Control mMove = new Control();
-        mMove.setTimestamp(System.currentTimeMillis());
+        mMove.setTimestamp(ntpTime.getNtpTime());
         mMove.setAcceleration(acceleration);
         mMove.setSpeed(speed);
         mMove.setType(11);

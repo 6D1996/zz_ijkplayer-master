@@ -10,7 +10,9 @@ import android.widget.ImageButton;
 
 import com.dou361.jjdxm_ijkplayer.autopark.AutoPark;
 import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlInitial;
+import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoEZplayer;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoMonitor;
+import com.videogo.openapi.EZOpenSDK;
 
 import butterknife.OnClick;
 
@@ -23,6 +25,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        ButterKnife.bind(this);
+
+
 
         imagebutton_video= findViewById(R.id.video);
         imagebutton_prak = findViewById(R.id.au_park);
@@ -40,7 +44,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.video:
                 /**视频监控*/
-                startActivity(VideoMonitor.class);
+                startActivity(VideoEZplayer.class);
                 break;
             case R.id.RemoteControl_remove:
                 /**遥控挪车*/
