@@ -82,6 +82,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 //        EZOpenSDK.initLib(this,"fb74f1db939a476dbd768a4705f5129f");
 //        ezOpenSDK.getInstance().setAccessToken(accessToken);
 
+        Log.d(TAG, "onCreate: EZplayer Creating");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hcplay);
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceview);
@@ -100,7 +101,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 
 
         this.mContext = this;
-        rootView = getLayoutInflater().from(this).inflate(R.layout.activity_videomonitor, null);
+        rootView = getLayoutInflater().from(this).inflate(R.layout.activity_hcplay, null);
         setContentView(rootView);
 //        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
