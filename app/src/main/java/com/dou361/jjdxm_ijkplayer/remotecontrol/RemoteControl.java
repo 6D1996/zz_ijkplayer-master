@@ -100,6 +100,7 @@ public class RemoteControl extends Activity {
     private boolean braking = true;
     private boolean active_braking=false;
     private int gearGlobal=0;
+    private int connectMQTTTimes=0;
     private int handBrakeStatus = 0;
     private Button LlightingButton;
     private ImageButton imageButton_forward,imageButton_backward,imageButton_brake;
@@ -113,7 +114,8 @@ public class RemoteControl extends Activity {
 
 
     /*虛擬機*/
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+//    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";
     private String mProductID = "XN03IY1B4J";
     private String mDevName = "app_test";
     private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
@@ -122,7 +124,7 @@ public class RemoteControl extends Activity {
 
     /*真车配置*/
 /*
-    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
     private String mProductID = "6WYMRTCPAM";
     private String mDevName = "app_real";
     private String mDevPSK  = "nrRI5+fuV1AczfwxAofd7Q=="; //若使用证书验证，设为null
@@ -152,15 +154,29 @@ public class RemoteControl extends Activity {
 
         setContentView(rootView);
 
-        while (!mIsConnected) {
-            Log.d(TAG, "onCreate: Connecting Mqtt");
-            //轮询连接,万分感谢陈岩大佬
-            mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
-                    mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
-            Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
-            mqttSample.connect();
-            sleep(2000);}
-        mqttSample.subscribeTopic();
+        mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
+                mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
+
+
+                while (!mIsConnected&&connectMQTTTimes<5) {
+                    Log.d(TAG, "onCreate: Connecting Mqtt");
+                    //轮询连接,万分感谢陈岩大佬
+                    Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
+                    mqttSample.connect();
+                    mqttSample.subscribeTopic();
+                    Log.d(TAG, "onCreate: Connet times:"+connectMQTTTimes++);
+                    sleep(1000);
+                }
+                if(mIsConnected){
+                    Toast.makeText(RemoteControl.this, "连接成功",Toast.LENGTH_SHORT).show();
+                }else {
+                    Log.d(TAG, "onCreate: 连接失败");
+//                    Toast.makeText(RemoteControl.this, "连接失败",Toast.LENGTH_SHORT).show();
+//                    finishActivity(1);
+                    this.finish();
+                }
+
+
 
 
         shiftHandbrake(1);

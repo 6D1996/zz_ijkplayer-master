@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -24,6 +26,7 @@ import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
 import com.dou361.jjdxm_ijkplayer.R;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
+import com.videogo.openapi.EZPlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +43,10 @@ import okhttp3.Response;
 import static android.content.ContentValues.TAG;
 
 public class VideoMonitor extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener {
+
+    private SurfaceView mSurfaceView;
+    private SurfaceHolder mSurfaceHolder;
+    EZPlayer mEZPlayer;
 
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     public CountDownTimer countDownTimer;

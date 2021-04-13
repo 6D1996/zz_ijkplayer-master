@@ -51,8 +51,13 @@ android {
         vectorDrawables.useSupportLibrary = true
 
 //        ndk {
-//            abiFilters "armeabi-v7a"  // 指定要ndk需要兼容的架构(这样其他依赖包里mips,x86,armeabi,arm-v8之类的so会被过滤掉)
+//            abiFilters "armeabi-v7a" //自4.8.8版本开始支持arm64-v8a，按需使用
 //        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
     }
     buildTypes {
 
@@ -77,11 +82,14 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
 
+
     testImplementation 'junit:junit:4.13.1'
     implementation rootProject.ext.jjdxm_v7
     implementation 'com.jakewharton:butterknife:7.0.1'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation project(':jjdxm-ijkplayer')
+
+    implementation 'com.ezviz.sdk:ezviz-sdk:4.16.1'
 
 //    根据需要支持去拓展，在jjdxm-ijkplayer中默认加入了armv7a的了
     implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
