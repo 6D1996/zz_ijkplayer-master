@@ -2,7 +2,9 @@ package com.dou361.jjdxm_ijkplayer.videomonitoring;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -11,12 +13,12 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
@@ -26,6 +28,7 @@ import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.PlayerView;
 import com.dou361.jjdxm_ijkplayer.R;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
+import com.videogo.openapi.EZOpenSDK;
 import com.videogo.openapi.EZPlayer;
 
 import java.util.ArrayList;
@@ -42,11 +45,17 @@ import okhttp3.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class VideoMonitor extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener {
+public class VideoEZplayer extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener,SurfaceHolder.Callback {
 
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
     EZPlayer mEZPlayer;
+    EZOpenSDK ezOpenSDK;
+
+    private int mUserId;
+    private int mChannelNo;
+    private int count = 0;
+    private String accessToken;
 
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     public CountDownTimer countDownTimer;
@@ -68,7 +77,28 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+//        accessToken=ezOpenSDK.getInstance().getEZAccessToken().getAccessToken();
+//        EZOpenSDK.initLib(this,"fb74f1db939a476dbd768a4705f5129f");
+//        ezOpenSDK.getInstance().setAccessToken(accessToken);
+
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_hcplay);
+        mSurfaceView = (SurfaceView) findViewById(R.id.surfaceview);
+        mSurfaceView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (count++%2 == 0){
+                    mEZPlayer.stopRealPlay();
+                }else{
+                    mEZPlayer.startRealPlay();
+                }
+            }
+        });
+        mSurfaceHolder = mSurfaceView.getHolder();
+        mSurfaceHolder.addCallback(this);
+
+
         this.mContext = this;
         rootView = getLayoutInflater().from(this).inflate(R.layout.activity_videomonitor, null);
         setContentView(rootView);
@@ -104,7 +134,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         wakeLock.acquire();
 
         for(int i=1;i<7;i++){//for循環打開所有視頻流
-                postVideoRequest(i,1);}
+            postVideoRequest(i,1);}
 
 
         videoRatioGroup = (MyRadioGroup)findViewById(R.id.radiogroup);
@@ -136,7 +166,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
 
                         break;
                     default:
-                        Toast defualt =Toast.makeText(VideoMonitor.this, "上帝", Toast.LENGTH_SHORT);
+                        Toast defualt =Toast.makeText(VideoEZplayer.this, "上帝", Toast.LENGTH_SHORT);
                         new ShowMyToast().showMyToast(defualt,100);
                         break;
                 }
@@ -161,32 +191,32 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                 if(i!=videoNum)
                 postVideoRequest(i,0);
             }*/
-        countDownTimer=new CountDownTimer(10000,1000) {
-            int i=0;
-            @Override
-            public void onTick(long millisUntilFinished) {
-                i=i+1;
+            countDownTimer=new CountDownTimer(10000,1000) {
+                int i=0;
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    i=i+1;
 //                replyTextView.setText("执行第"+i+"次请求："+videoReply.toString());
 //                Log.d(TAG, "onTick: "+"执行第"+i+"次请求："+videoReply.toString());
-                if ("InitialString".equals(videoReply.getCode())){
-                    String replyOriginalString = postVideoRequest(videoNum,1);
-                    Log.d(TAG, "onTick: replyOriginalString"+replyOriginalString);
-                    if(replyOriginalString!=null){
-                        //当请求数据不为空时，设置videoReply类，，，，，反序列化操作即 由字符串--->对象
-                        videoReply = JSON.parseObject(replyOriginalString, VideoReply.class);
-                        Log.d(TAG, "返回: videoReply1："+videoReply.toString()+"\nvideoReply2："+videoReply2.toString());
-                        if(videoReply.getCode().equals("0030000")){
-                            playVideo(videoNum);
-                            cancel();
-                        }else Toast.makeText(VideoMonitor.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
+                    if ("InitialString".equals(videoReply.getCode())){
+                        String replyOriginalString = postVideoRequest(videoNum,1);
+                        Log.d(TAG, "onTick: replyOriginalString"+replyOriginalString);
+                        if(replyOriginalString!=null){
+                            //当请求数据不为空时，设置videoReply类，，，，，反序列化操作即 由字符串--->对象
+                            videoReply = JSON.parseObject(replyOriginalString, VideoReply.class);
+                            Log.d(TAG, "返回: videoReply1："+videoReply.toString()+"\nvideoReply2："+videoReply2.toString());
+                            if(videoReply.getCode().equals("0030000")){
+                                playVideo(videoNum);
+                                cancel();
+                            }else Toast.makeText(VideoEZplayer.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
 
+                        }
                     }
                 }
-            }
-            @Override
-            public void onFinish() {
-            }
-        }.start();}
+                @Override
+                public void onFinish() {
+                }
+            }.start();}
         else {//播放前视角视频时有四种情况
             /*for(int i=2;i<6;i++){//for循環關閉其他線路
                 if(i!=videoNum)
@@ -218,19 +248,19 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                                 videoReply = JSON.parseObject(replyOriginalRetry, VideoReply.class);//繼續請求原始視頻
                                 Log.d(TAG, "onTick: 融合视频成功，原始失败");}
 
-                            }
+                        }
                         else {//均未成功
-                        String replyOriginalFront = postVideoRequest(videoNum+1,1);//VideoNum是0，请求的是原始视频1和融合视频6
-                        if(replyOriginalFront!=null){
-                            videoReply = JSON.parseObject(replyOriginalFront, VideoReply.class);
-                            Log.d(TAG, "onTick: replyOriginalFront1"+videoReply.toString());}
+                            String replyOriginalFront = postVideoRequest(videoNum+1,1);//VideoNum是0，请求的是原始视频1和融合视频6
+                            if(replyOriginalFront!=null){
+                                videoReply = JSON.parseObject(replyOriginalFront, VideoReply.class);
+                                Log.d(TAG, "onTick: replyOriginalFront1"+videoReply.toString());}
 
-                        String replyMergeFront=postVideoRequest(videoNum+6,1);//VideoNum是0，请求的是原始视频1和融合视频6
-                        Log.d(TAG, "onTick: replyMergeFront"+replyMergeFront);
-                        if(replyMergeFront!=null){
-                            videoReply2 = JSON.parseObject(replyMergeFront, VideoReply.class);//兩個視頻都請求
-                            Log.d(TAG, "onTick: replyMergeFront1"+videoReply2.toString());
-                        }}
+                            String replyMergeFront=postVideoRequest(videoNum+6,1);//VideoNum是0，请求的是原始视频1和融合视频6
+                            Log.d(TAG, "onTick: replyMergeFront"+replyMergeFront);
+                            if(replyMergeFront!=null){
+                                videoReply2 = JSON.parseObject(replyMergeFront, VideoReply.class);//兩個視頻都請求
+                                Log.d(TAG, "onTick: replyMergeFront1"+videoReply2.toString());
+                            }}
                     }
                 }
 
@@ -241,18 +271,18 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                             Log.d(TAG, "onFinish: 前视角与融合视频同时请求成功");
                             playVideo(0);//最理想情況，同時可播倆視頻
                         }else{
-                            Toast.makeText(VideoMonitor.this,"融合視頻不可用，播放原始視頻",Toast.LENGTH_LONG).show();
+                            Toast.makeText(VideoEZplayer.this,"融合視頻不可用，播放原始視頻",Toast.LENGTH_LONG).show();
                             Log.d(TAG, "onFinish: 融合視頻不可用，播放原始視頻");
                             playVideo(1);//融合視頻不可用，播放原始視頻
                         }
                     }
                     else{//原始視頻不可用
-                        Toast.makeText(VideoMonitor.this,"原始視頻不可用，播放融合視頻",Toast.LENGTH_LONG).show();
+                        Toast.makeText(VideoEZplayer.this,"原始視頻不可用，播放融合視頻",Toast.LENGTH_LONG).show();
                         Log.d(TAG, "onFinish: 原始視頻不可用，播放融合視頻");
                         if ("0030000".equals(videoReply2.getCode())){
                             playVideo(6);//只播融合視頻
                         }else{
-                            Toast.makeText(VideoMonitor.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
+                            Toast.makeText(VideoEZplayer.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -289,7 +319,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                     Response videoResponse = videoClient.newCall(videoRequest).execute();
                     Log.d(TAG, "run: 到了videoResponse");
                     if(videoNum!=6){
-                    videoResponseString=videoResponse.body().string();
+                        videoResponseString=videoResponse.body().string();
                         Log.d(TAG, "run: videoResponseString:"+videoResponseString);
                     }
                     else {
@@ -304,7 +334,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(VideoMonitor.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
+                            Toast.makeText(VideoEZplayer.this,"請求視頻失败！",Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -312,36 +342,36 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         }).start();
         Log.d(TAG, "run: 返回结果"+videoNum+"路视频：\n"+videoResponseString);
         if (videoNum!=6){
-        return videoResponseString;}
+            return videoResponseString;}
         else return mergeVideoString;
     }
 
     public void playVideoUrl( String url){
 //      Toast.makeText(VideoMonitor.this, "請求成功！", Toast.LENGTH_SHORT).show();
-      player = new PlayerView(VideoMonitor.this, rootView)
-              //.setTitle("前摄像")
-              .setProcessDurationOrientation(PlayStateParams.PROCESS_PORTRAIT)
-              .setScaleType(PlayStateParams.fillparent) //视频界面剪裁设置
-              .forbidTouch(false)
-              .hideSteam(true)
-              .hideMenu(true)
-              .hideCenterPlayer(false)
-              .setNetWorkTypeTie(false)
-              .hideRotation(true) //隐藏旋转按钮
-              .setChargeTie(true, 480)//设置最长播放时间
-              .showThumbnail(new OnShowThumbnailListener() {
-                  @Override
-                  public void onShowThumbnail(ImageView ivThumbnail) {
+        player = new PlayerView(VideoEZplayer.this, rootView)
+                //.setTitle("前摄像")
+                .setProcessDurationOrientation(PlayStateParams.PROCESS_PORTRAIT)
+                .setScaleType(PlayStateParams.fillparent) //视频界面剪裁设置
+                .forbidTouch(false)
+                .hideSteam(true)
+                .hideMenu(true)
+                .hideCenterPlayer(false)
+                .setNetWorkTypeTie(false)
+                .hideRotation(true) //隐藏旋转按钮
+                .setChargeTie(true, 480)//设置最长播放时间
+                .showThumbnail(new OnShowThumbnailListener() {
+                    @Override
+                    public void onShowThumbnail(ImageView ivThumbnail) {
 //                                 加载前显示的缩略图
-                      Glide.with(mContext)
-                              .load(R.drawable.pic_before_video)//"http://cn.bing.com/az/hprichbg/rb/Dongdaemun_ZH-CN10736487148_1920x1080.jpg"
-                              .placeholder(R.drawable.pic_before_video) //加载成功之前占位图
-                              .error(R.color.cl_error)//加载错误之后的错误图
-                              .into(ivThumbnail);
-                  }
-              })
-             .setPlaySource(url)
-              .startPlay();
+                        Glide.with(mContext)
+                                .load(R.drawable.pic_before_video)//"http://cn.bing.com/az/hprichbg/rb/Dongdaemun_ZH-CN10736487148_1920x1080.jpg"
+                                .placeholder(R.drawable.pic_before_video) //加载成功之前占位图
+                                .error(R.color.cl_error)//加载错误之后的错误图
+                                .into(ivThumbnail);
+                    }
+                })
+                .setPlaySource(url)
+                .startPlay();
     }
 
     public void playVideo(int videoNum){
@@ -350,7 +380,7 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         switch (videoNum){
             case 0:
                 //前视角原始视频与融合视频在一个按钮，通过视频窗口内部按钮切换
-                Toast.makeText(VideoMonitor.this,"請求成功！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(VideoEZplayer.this,"請求成功！",Toast.LENGTH_SHORT).show();
                 list = new ArrayList<VideoijkBean>();
                 //有部分视频加载有问题，这个视频是有声音显示不出图像的，没有解决http://fzkt-biz.oss-cn-hangzhou.aliyuncs.com/vedio/2f58be65f43946c588ce43ea08491515.mp4
                 //这里模拟一个本地视频的播放，视频需要将testvideo文件夹的视频放到安卓设备的内置sd卡根目录中
@@ -430,9 +460,9 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.light:
-                {   
+            {
 //                    requestTextView.setText("請求開燈/關燈");
-                    }
+            }
             break;
 
         }
@@ -496,5 +526,29 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
     @Override
     public void onCheckedChanged(MyRadioGroup group, int checkedId) {
 
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mSurfaceHolder = holder;
+        Intent intent =  getIntent();
+        mUserId = intent.getIntExtra("iUserId",-1);
+        mChannelNo = intent.getIntExtra("iChannelNumber",1);
+//        mEZPlayer = EzvizApplication.getOpenSDK().createPlayerWithUserId(mUserId,mChannelNo,1);
+        mEZPlayer.setSurfaceHold(mSurfaceHolder);
+//        mEZPlayer.setHandler(mHandler);
+        mEZPlayer.startRealPlay();
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        if (mEZPlayer != null) {
+            mEZPlayer.setSurfaceHold(null);
+        }
     }
 }
