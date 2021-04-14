@@ -50,9 +50,9 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
-//        ndk {
-//            abiFilters "armeabi-v7a" //自4.8.8版本开始支持arm64-v8a，按需使用
-//        }
+        ndk {
+            abiFilters "armeabi-v7a", "armeabi", "x86", "armeabi-v8a"//自4.8.8版本开始支持arm64-v8a，按需使用
+        }
     }
     sourceSets {
         main {
@@ -88,9 +88,14 @@ dependencies {
     implementation 'com.jakewharton:butterknife:7.0.1'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation project(':jjdxm-ijkplayer')
-
+/*萤石SDK核心模块，必须依赖*/
     implementation 'com.ezviz.sdk:ezviz-sdk:4.16.1'
 
+    /*视频通话模块，按需使用*/
+    implementation 'com.ezviz.sdk:videotalk:1.2.0'
+
+    /*码流获取模块，按需使用*/
+    implementation 'com.ezviz.sdk:streamctrl:1.2.0'
 //    根据需要支持去拓展，在jjdxm-ijkplayer中默认加入了armv7a的了
     implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
     implementation 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
