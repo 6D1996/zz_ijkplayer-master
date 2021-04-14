@@ -60,6 +60,11 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape">
         </activity>
+        <activity
+            android:name=".remotecontrol.RemoteControlEZPlayer"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="landscape">
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

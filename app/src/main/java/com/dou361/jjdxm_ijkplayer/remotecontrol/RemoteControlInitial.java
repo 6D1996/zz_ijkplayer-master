@@ -75,7 +75,7 @@ public class RemoteControlInitial extends Activity {
                         Confirm.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Intent intent=new Intent(RemoteControlInitial.this, RemoteControl.class);
+                                Intent intent=new Intent(RemoteControlInitial.this, RemoteControlEZPlayer.class);
                                 startActivity(intent);
                                 dialog.dismiss();
                             }
@@ -88,7 +88,7 @@ public class RemoteControlInitial extends Activity {
                             }
                         });
                         dialog.show();
-                        dialog.getWindow().setLayout(1000,600);
+                        dialog.getWindow().setLayout(1000,800);
                     }
                  });
     }

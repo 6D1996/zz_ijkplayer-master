@@ -46,18 +46,16 @@ import okhttp3.Response;
 
 import static android.content.ContentValues.TAG;
 
-public class VideoEZplayer extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener,SurfaceHolder.Callback {
+public class VideoEZplayer extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener ,SurfaceHolder.Callback{
 
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mSurfaceHolder;
-    EZPlayer mEZPlayer;
+//    private SurfaceView mSurfaceView1,mSurfaceView2;
+//    private SurfaceHolder mSurfaceHolder1,mSurfaceHolder2;
+    EZPlayer mEZPlayer1,mEZPlayer2;
 
-    private int mUserId;
-    private int mChannelNo;
     private int count = 0;
-    private String accessToken;
 
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
+    private String testURL="ezopen://open.ys7.com/231236707/1.live";
     public CountDownTimer countDownTimer;
     public VideoRequest videoRequest;
     public VideoReply videoReply,videoReply2;
@@ -80,12 +78,13 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hcplay);
 
-        mEZPlayer=new EZPlayer();
-        Log.d(TAG, "onCreate: "+mEZPlayer.getPlayPort());
-//        ezOpenSDK.getInstance().setAccessToken(accessToken);
-//        Log.d(TAG, "onCreate: "+ezOpenSDK.getEZAccessToken());
-        Log.d(TAG, "onCreate: EZplayer Creating");
 
+        Log.d(TAG, "onCreate: EZplayer Creating");
+        mEZPlayer1 = EZOpenSDK.getInstance().createPlayerWithUrl("https://hls01open.ys7.com/openlive/6e0b2be040a943489ef0b9bb344b96b8.hd.m3u8");
+//        SurfaceView mSurfaceView1 = (SurfaceView) findViewById(R.id.surfaceview);
+//        SurfaceHolder mSurfaceHolder1 = mSurfaceView1.getHolder();
+//        Log.d(TAG, "playViaDevSerial: 播放器绑定界面"+mEZPlayer1.setSurfaceHold(mSurfaceHolder1));
+//        mSurfaceHolder1.addCallback(this);
 
 
         new Thread(new Runnable() {
@@ -102,14 +101,15 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
         }).start();
 
 
-//        mEZPlayer=EZOpenSDK.getInstance().createPlayer("E40958484",1);
-//        mEZPlayer = EZOpenSDK.getInstance().createPlayerWithUrl("https://hls01open.ys7.com/openlive/6e0b2be040a943489ef0b9bb344b96b8.hd.m3u8");
 
-        mSurfaceView = (SurfaceView) findViewById(R.id.surfaceview);
-        mSurfaceHolder = mSurfaceView.getHolder();
-        mEZPlayer.setSurfaceHold(mSurfaceHolder);
-        mSurfaceHolder.addCallback(this);
-        mSurfaceView.setOnClickListener(new View.OnClickListener() {
+//        mEZPlayer=EZOpenSDK.getInstance().createPlayer("E40958484",1);
+
+
+//        mSurfaceView2 = (SurfaceView) findViewById(R.id.surfaceview);
+//        mSurfaceHolder2 = mSurfaceView2.getHolder();
+//        mEZPlayer2.setSurfaceHold(mSurfaceHolder2);
+//        mSurfaceHolder2.addCallback(this);
+/*        mSurfaceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (count++%2 == 0){
@@ -119,7 +119,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
                     mEZPlayer.startRealPlay();
                 }
             }
-        });
+        });*/
 
 
         this.mContext = this;
@@ -267,28 +267,29 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
             case 1:
                 //只播原始視頻
                 Log.d(TAG, "playVideo: 前视角");
-                playViaDevSerial("E40958703",mSurfaceHolder);
-                mEZPlayer.stopRealPlay();
+//                playViaDevSerial(testURL);
+                playViaDevSerial("E40958703");
+//                playViaDevSerial("E40958703",mSurfaceHolder);
+//                mEZPlayer1.stopRealPlay();
                 break;
             case 2:
                 //后视角
-                surfaceCreated(mSurfaceHolder);
+                playViaDevSerial("E40958817");
+//                surfaceCreated(mSurfaceHolder);
                 break;
             case 3:
                 //左视角
-                Log.d(TAG, "playVideo: 左视角");
-                mEZPlayer=EZOpenSDK.getInstance().createPlayer("E40958484",1);
-                mEZPlayer.startRealPlay();
+                playViaDevSerial("E40958558");
+//                mEZPlayer1=EZOpenSDK.getInstance().createPlayer("E40958484",1);
+//                mEZPlayer1.startRealPlay();
                 break;
             case 4:
                 //右视角
-                mEZPlayer=EZOpenSDK.getInstance().createPlayer("E40958558",1);
-                mEZPlayer.startRealPlay();
+                playViaDevSerial("E40958484");
                 break;
             case 5:
                 //上帝视角
-                mEZPlayer=EZOpenSDK.getInstance().createPlayer("231236707",1);
-                mEZPlayer.startRealPlay();
+                playViaDevSerial("231236707");
                 break;
             case 6:
                 //只有融合視頻
@@ -300,16 +301,27 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
         videoPlayingNum=videoNum;
     }
 
-    public void playViaDevSerial(String deviceSerial,SurfaceHolder holder){
-        mEZPlayer=EZOpenSDK.getInstance().createPlayer(deviceSerial,1);
-//        mEZPlayer=EZOpenSDK.getInstance().createPlayer("E40958484",1);
+    public void playViaDevSerial(final String deviceSerial){
+       SurfaceView mSurfaceView1 = (SurfaceView) findViewById(R.id.surfaceview);
+       SurfaceHolder mSurfaceHolder1 = mSurfaceView1.getHolder();
+       mEZPlayer1.release();
+       if(testURL.equals(deviceSerial)){
+           mEZPlayer1=EZOpenSDK.getInstance().createPlayerWithUrl(testURL);}
+       else{
+            mEZPlayer1 = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+        }
 
+        Log.d(TAG, "playViaDevSerial: 播放器绑定界面"+mEZPlayer1.setSurfaceHold(mSurfaceHolder1));
 
-        mEZPlayer.setSurfaceHold(holder);
+        mSurfaceHolder1.addCallback(this);
+
+        Log.d(TAG, "playViaDevSerial: 播放器设备"+deviceSerial);
+
+//        mEZPlayer1.setSurfaceHold(holder);
 //        mEZPlayer.setHandler(mHandler);
 
-        holder.addCallback(this);
-        mEZPlayer.startRealPlay();
+//        holder.addCallback(this);
+        Log.d(TAG, "playViaDevSerial: 播放成功？"+mEZPlayer1.startRealPlay());
     }
 
 
@@ -390,15 +402,16 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d(TAG, "surfaceCreated: 播放器创建");
-//        mSurfaceHolder = holder;
+/*//        mSurfaceHolder = holder;
 //        Intent intent =  getIntent();
-        mEZPlayer=EZOpenSDK.getInstance().createPlayer("231236707",1);
+//        mEZPlayer1=EZOpenSDK.getInstance().createPlayer("231236707",1);
 //        mEZPlayer=EZOpenSDK.getInstance().createPlayer("E40958484",1);
 
 
-        mEZPlayer.setSurfaceHold(holder);
+        mEZPlayer1.setSurfaceHold(holder);
 //        mEZPlayer.setHandler(mHandler);
-        mEZPlayer.startRealPlay();
+        mEZPlayer1.startRealPlay();*/
+//        mEZPlayer1.startRealPlay();
     }
 
     @Override
@@ -408,8 +421,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        if (mEZPlayer != null) {
-            mEZPlayer.setSurfaceHold(null);
-        }
+
+
     }
 }

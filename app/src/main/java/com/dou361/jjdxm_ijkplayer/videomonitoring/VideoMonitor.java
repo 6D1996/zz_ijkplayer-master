@@ -44,9 +44,7 @@ import static android.content.ContentValues.TAG;
 
 public class VideoMonitor extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener {
 
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mSurfaceHolder;
-    EZPlayer mEZPlayer;
+
 
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     public CountDownTimer countDownTimer;
