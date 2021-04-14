@@ -307,6 +307,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 
         mEZPlayer.setSurfaceHold(holder);
 //        mEZPlayer.setHandler(mHandler);
+
         holder.addCallback(this);
         mEZPlayer.startRealPlay();
     }
