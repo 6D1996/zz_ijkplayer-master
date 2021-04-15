@@ -17,6 +17,8 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -25,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
@@ -47,6 +51,8 @@ import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
 import com.tencent.iot.hub.device.android.core.util.TXLog;
 import com.tencent.iot.hub.device.java.core.common.Status;
 import com.tencent.iot.hub.device.java.core.mqtt.TXMqttActionCallBack;
+import com.videogo.openapi.EZOpenSDK;
+import com.videogo.openapi.EZPlayer;
 
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -64,12 +70,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
 import static android.os.SystemClock.uptimeMillis;
 
 /**
  遥控车辆进行移动
  */
 public class RemoteControlEZPlayer extends Activity {
+
+    EZPlayer mEZPlayer1;
+    private String testURL="ezopen://open.ys7.com/231236707/1.live";
 
     public String hostIP = /*"192.168.0.108:18081";*/"10.6.206.20:30549";
     public String userId = "6D的安卓測試機";
@@ -81,7 +91,7 @@ public class RemoteControlEZPlayer extends Activity {
     private MainActivity mParent;
     private MQTTSample mqttSample;
 
-    private PlayerView player;
+
     private Context mContext;
     private TextView  Speed;
     private List<VideoijkBean> list;
@@ -143,11 +153,14 @@ public class RemoteControlEZPlayer extends Activity {
         super.onCreate(savedInstanceState);
         this.mContext = this;
         this.mActivity = this;
-        rootView = getLayoutInflater().from(this).inflate(R.layout.activity_remote_control, null);
+        rootView = getLayoutInflater().from(this).inflate(R.layout.activity_remote_control_ezplayer, null);
 
         setContentView(rootView);
 
-        mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
+        mEZPlayer1= EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
+
+
+    mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
                 mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
 
 
@@ -164,13 +177,9 @@ public class RemoteControlEZPlayer extends Activity {
                     Toast.makeText(RemoteControlEZPlayer.this, "连接成功",Toast.LENGTH_SHORT).show();
                 }else {
                     Log.d(TAG, "onCreate: 连接失败");
-//                    Toast.makeText(RemoteControl.this, "连接失败",Toast.LENGTH_SHORT).show();
-//                    finishActivity(1);
+                    Toast.makeText(RemoteControlEZPlayer.this, "连接失败",Toast.LENGTH_SHORT).show();
                     this.finish();
                 }
-
-
-
 
         shiftHandbrake(1);
         Log.d(TAG, "onCreate: ");
@@ -227,12 +236,11 @@ public class RemoteControlEZPlayer extends Activity {
                     @Override
                     public void onClick(View v) {
                         Toast.makeText(RemoteControlEZPlayer.this, "取消成功",Toast.LENGTH_SHORT).show();
-                        player.startPlay();
+
                         dialog.dismiss();
                     }
                 });
                 dialog.show();
-                player.onPause();
                 dialog.getWindow().setLayout(1000,600);
             }
         });
@@ -271,98 +279,31 @@ public class RemoteControlEZPlayer extends Activity {
                     switch (position) {
                         case 0: {
                             /**前摄像*/
-                            list = new ArrayList<VideoijkBean>();
-                            String url1 = "rtmp://150.158.176.170/live/test_vin_1";
-                            String url2 = "rtmp://150.158.176.170/live/test_vin_2";
-                            VideoijkBean m1 = new VideoijkBean();
-                            m1.setStream("原始视频");
-                            m1.setUrl(url1);
-                            VideoijkBean m2 = new VideoijkBean();
-                            m2.setStream("融合视频");
-                            m2.setUrl(url2);
-                            list.add(m1);
-                            list.add(m2);
-                            player = new PlayerView(mActivity, rootView)
-                                    .setProcessDurationOrientation(PlayStateParams.PROCESS_PORTRAIT)
-                                    .setScaleType(PlayStateParams.fillparent) //视频界面剪裁设置
-                                    .forbidTouch(false)
-                                    .hideSteam(false)
-                                    .hideMenu(true)
-                                    .hideCenterPlayer(true)
-                                    .hideBack(false)
-                                    .setOnlyFullScreen(true)
-                                    .setNetWorkTypeTie(false)
-                                    .hideRotation(true)
-                                    .hideFullscreen(true)
-                                    .hideBack(true)
-                                    .setChargeTie(true, 480)//设置最长播放时间
-                                    .showThumbnail(new OnShowThumbnailListener() {
-                                        @Override
-                                        public void onShowThumbnail(ImageView ivThumbnail) {
-//                                 加载前显示的缩略图
-                                            Glide.with(mContext)
-                                                    .load(R.drawable.pic_before_video)
-                                                    .placeholder(R.drawable.pic_before_video) //加载成功之前占位图
-                                                    .error(R.color.cl_error)//加载错误之后的错误图
-                                                    .into(ivThumbnail);
-                                        }
-                                    })
-                                    .setPlayerStartOrPauseListener(new OnPlayerStartOrPauseListener() {
-                                        @Override
-                                        public void onStartOrPause() {
-                                            //对话框
-                                            AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-                                            builder.setTitle("暂停挪车");//设置对话框的标题
-                                            builder.setMessage("挪车已暂停，是否继续挪车？");//设置对话框的内容
-                                            builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
-                                                @Override
-                                                public void onClick(DialogInterface arg0, int arg1) {
-                                                    player.startPlay();
-                                                }
-                                            });
-                                            builder.setNegativeButton("结束", new DialogInterface.OnClickListener() {  //取消按钮
-
-                                                @Override
-                                                public void onClick(DialogInterface arg0, int arg1) {
-                                                    finish();
-                                                    Intent intent=new Intent(RemoteControlEZPlayer.this,MainActivity.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            AlertDialog b=builder.create();
-                                            b.show();
-                                        }
-                                    })
-                                    .setPlaySource(list)
-                                    .startPlay();
+                            playViaDevSerial("E40958703");
                         }
                         break;
 
                         case 1: {
                             /**后摄像*/
-                            String url3 = "rtmp://150.158.176.170/live/test_vin_2";
-                            playVideoUrl(url3);
+                            playViaDevSerial("E40958817");
                         }
                         break;
 
                         case 2: {
                             /**左摄像*/
-                            String url4 = "rtmp://150.158.176.170/live/test_vin_3";
-                            playVideoUrl(url4);
+                            playViaDevSerial("E40958558");
                         }
                         break;
 
                         case 3: {
                             /**右摄像*/
-                            String url5 = "rtmp://150.158.176.170/live/test_vin_4";
-                            playVideoUrl(url5);
+                            playViaDevSerial("E40958484");
                         }
                         break;
 
                         case 4: {
                             /**上帝*/
-                            String url6 = "rtmp://150.158.176.170/live/test_vin_5";
-                            playVideoUrl(url6);
+                            playViaDevSerial("231236707");
                         }
                         break;
 
@@ -377,62 +318,46 @@ public class RemoteControlEZPlayer extends Activity {
 
     }
 
-    //后四个视频播放器播放
-    public void playVideoUrl( String url){
-        player = new PlayerView(mActivity, rootView)
-                .setProcessDurationOrientation(PlayStateParams.PROCESS_PORTRAIT)
-                .setScaleType(PlayStateParams.fillparent) //视频界面剪裁设置
-                .forbidTouch(false)
-                .hideSteam(true)
-                .hideMenu(true)
-                .hideCenterPlayer(true)
-                .hideBack(false)
-                .setOnlyFullScreen(true)
-                .setNetWorkTypeTie(false)
-                .hideRotation(true)
-                .hideFullscreen(true)
-                .hideBack(true)
-                .setChargeTie(true, 480)//设置最长播放时间
-                .showThumbnail(new OnShowThumbnailListener() {
-                    @Override
-                    public void onShowThumbnail(ImageView ivThumbnail) {
-//                                 加载前显示的缩略图
-                        Glide.with(mContext)
-                                .load(R.drawable.pic_before_video)
-                                .placeholder(R.drawable.pic_before_video) //加载成功之前占位图
-                                .error(R.color.cl_error)//加载错误之后的错误图
-                                .into(ivThumbnail);
-                    }
-                })
-                .setPlayerStartOrPauseListener(new OnPlayerStartOrPauseListener() {
-                    @Override
-                    public void onStartOrPause() {
-                        //对话框
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setTitle("暂停挪车");//设置对话框的标题
-                        builder.setMessage("挪车已暂停，是否继续挪车？");//设置对话框的内容
-                        builder.setPositiveButton("继续", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                player.startPlay();
-                            }
-                        });
-                        builder.setNegativeButton("结束", new DialogInterface.OnClickListener() {  //取消按钮
+    public void playViaDevSerial(final String deviceSerial){
+        SurfaceView mSurfaceView1 = (SurfaceView) findViewById(R.id.ezplayerSurfaceview);
+        SurfaceHolder mSurfaceHolder1 = mSurfaceView1.getHolder();
+        mEZPlayer1.release();
+        if(testURL.equals(deviceSerial)){
+            mEZPlayer1= EZOpenSDK.getInstance().createPlayerWithUrl(testURL);}
+        else{
+            mEZPlayer1 = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+//            mEZPlayer1=EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
+        }
 
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                finish();
-                                Intent intent = new Intent(RemoteControlEZPlayer.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-                        AlertDialog b = builder.create();
-                        b.show();
-                    }
-                })
-                .setPlaySource(url)
-                .startPlay();
+        Log.d(TAG, "playViaDevSerial: 播放器绑定界面"+mEZPlayer1.setSurfaceHold(mSurfaceHolder1));
+
+        mSurfaceHolder1.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
+
+            }
+
+            @Override
+            public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
+
+            }
+        });
+
+        Log.d(TAG, "playViaDevSerial: 播放器设备"+deviceSerial);
+
+//        mEZPlayer1.setSurfaceHold(holder);
+//        mEZPlayer.setHandler(mHandler);
+
+//        holder.addCallback(this);
+        Log.d(TAG, "playViaDevSerial: 播放成功？"+mEZPlayer1.startRealPlay());
     }
+
+
 
 
     /**
@@ -766,10 +691,12 @@ public class RemoteControlEZPlayer extends Activity {
             switch (view.getId()) {
 // 这是btnMius下的一个层，为了增强易点击性
                 case R.id.backward:
+                    Video_Modul_Spinner.setSelection(1);
                     onTouchChange("backward", motionEvent.getAction());
                     break;
 // 这里也写，是为了增强易点击性
                 case R.id.forward:
+                    Video_Modul_Spinner.setSelection(0);
                     onTouchChange("forward", motionEvent.getAction());
                     break;
                 case R.id.brake:
@@ -863,15 +790,6 @@ public class RemoteControlEZPlayer extends Activity {
                     }
                     super.run();
                 }
-//                while (!isOnLongClick) {
-//                    try {
-//                        Thread.sleep(100);
-//                        myHandler.sendEmptyMessage(3);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    super.run();
-//                }
             }
         }
 
@@ -889,15 +807,6 @@ public class RemoteControlEZPlayer extends Activity {
                     }
                     super.run();
                 }
-//                while (!isOnLongClick) {
-//                    try {
-//                        Thread.sleep(100);
-//                        myHandler.sendEmptyMessage(3);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    super.run();
-//                }
             }
         }
 
@@ -930,9 +839,6 @@ public class RemoteControlEZPlayer extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (player != null) {
-            player.onPause();
-        }
         /**demo的内容，恢复系统其它媒体的状态*/
         MediaUtils.muteAudioFocus(mContext, true);
     }
@@ -940,9 +846,6 @@ public class RemoteControlEZPlayer extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (player != null) {
-            player.onResume();
-        }
         /**demo的内容，暂停系统其它媒体的状态*/
         MediaUtils.muteAudioFocus(mContext, false);
         /**demo的内容，激活设备常亮状态*/
@@ -955,11 +858,6 @@ public class RemoteControlEZPlayer extends Activity {
     protected void onDestroy() {
         if(mIsConnected){
         super.onDestroy();
-        if (player != null) {
-            for(int i=1;i<7;i++){
-            shiftVideoType(i,0);}
-            player.onDestroy();
-        }
         if(speed!=0){moveVehicle(-0.3,0.0,0.0);}
         if(braking){braking=false;}
         if(gearGlobal!=1){shiftGear(1);}
@@ -972,16 +870,11 @@ public class RemoteControlEZPlayer extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (player != null) {
-            player.onConfigurationChanged(newConfig);
-        }
+
     }
 
     @Override
     public void onBackPressed() {
-        if (player != null && player.onBackPressed()) {
-            return;
-        }
 //        super.onBackPressed();
         //对话框
         AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
@@ -1000,12 +893,11 @@ public class RemoteControlEZPlayer extends Activity {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 Toast.makeText(RemoteControlEZPlayer.this, "取消成功",Toast.LENGTH_SHORT).show();
-                player.startPlay();
+
             }
         });
         AlertDialog b=builder.create();
         b.show();
-        player.onPause();
         /**demo的内容，恢复设备亮度状态*/
         if (wakeLock != null) {
             wakeLock.release();

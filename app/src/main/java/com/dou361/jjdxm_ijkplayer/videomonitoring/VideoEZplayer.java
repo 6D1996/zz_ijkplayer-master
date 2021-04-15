@@ -48,9 +48,8 @@ import static android.content.ContentValues.TAG;
 
 public class VideoEZplayer extends Activity implements View.OnClickListener , MyRadioGroup.OnCheckedChangeListener ,SurfaceHolder.Callback{
 
-//    private SurfaceView mSurfaceView1,mSurfaceView2;
-//    private SurfaceHolder mSurfaceHolder1,mSurfaceHolder2;
-    EZPlayer mEZPlayer1,mEZPlayer2;
+
+    EZPlayer mEZPlayer1;
 
     private int count = 0;
 
@@ -60,7 +59,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     public VideoRequest videoRequest;
     public VideoReply videoReply,videoReply2;
     public String videoResponseString,mergeVideoString;//视频Post请求返回数据
-    private PlayerView player;
+
     private Context mContext;
     private List<VideoijkBean> list;
     private PowerManager.WakeLock wakeLock;
@@ -343,9 +342,6 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     @Override
     protected void onPause() {
         super.onPause();
-        if (player != null) {
-            player.onPause();
-        }
         /**demo的内容，恢复系统其它媒体的状态*/
         MediaUtils.muteAudioFocus(mContext, true);
     }
@@ -354,9 +350,6 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     @Override
     protected void onResume() {
         super.onResume();
-        if (player != null) {
-            player.onResume();
-        }
         /**demo的内容，暂停系统其它媒体的状态*/
         MediaUtils.muteAudioFocus(mContext, false);
         /**demo的内容，激活设备常亮状态*/
@@ -368,24 +361,15 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (player != null) {
-            player.onDestroy();
-        }
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (player != null) {
-            player.onConfigurationChanged(newConfig);
-        }
     }
 
     @Override
     public void onBackPressed() {
-        if (player != null && player.onBackPressed()) {
-            return;
-        }
         super.onBackPressed();
         /**demo的内容，恢复设备亮度状态*/
         if (wakeLock != null) {

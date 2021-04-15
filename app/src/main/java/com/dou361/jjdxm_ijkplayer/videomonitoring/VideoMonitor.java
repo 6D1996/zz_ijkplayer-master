@@ -70,7 +70,6 @@ public class VideoMonitor extends Activity implements View.OnClickListener , MyR
         this.mContext = this;
         rootView = getLayoutInflater().from(this).inflate(R.layout.activity_videomonitor, null);
         setContentView(rootView);
-//        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         lightControllerButton=(ImageButton) findViewById(R.id.light);
