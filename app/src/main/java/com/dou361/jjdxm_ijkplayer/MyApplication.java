@@ -24,7 +24,7 @@ EZOpenSDK ezOpenSDK;
         EZOpenSDK.initLib(this, APP_KEY);
 
 
-        ezOpenSDK.getInstance().setAccessToken("at.8q82facgdj87vddi64cj7dwqdjj4i1wf-8hf27wibc9-0saik8n-m9umptouf");
+        EZOpenSDK.getInstance().setAccessToken("at.cge630o03g6j59x2cl66huzu4lx353xb-2dnaidb58y-136ks1b-bjcfjj3zj");
         Log.d(TAG, "onCreate: "+EZOpenSDK.getInstance().getEZAccessToken());
 
     }
