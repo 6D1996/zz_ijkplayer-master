@@ -61,21 +61,21 @@ public class HalfOut extends Activity implements View.OnClickListener{
             case R.id.Leftforward:
                 autoParkOutRequest =new AutoParkingRequest();
                 autoParkOutReply =new AutoParkingReply();
-                String replyString201=autoParkOutRequest.AutoParkMethod("2","0","1");
+                String replyString201=autoParkOutRequest.AutoParkMethod(2,0,1,"");
                 Log.d(TAG, "onClick: "+replyString201);
 
                 /**半出车*/
             case R.id.Forwardahead:
                 autoParkOutRequest =new AutoParkingRequest();
                 autoParkOutReply =new AutoParkingReply();
-                String replyString202=autoParkOutRequest.AutoParkMethod("2","0","2");
+                String replyString202=autoParkOutRequest.AutoParkMethod(2,0,2,"");
                 Log.d(TAG, "onClick: "+replyString202);
 
                 /**完全出车*/
             case R.id.Rightforward:
                 autoParkOutRequest =new AutoParkingRequest();
                 autoParkOutReply =new AutoParkingReply();
-                String replyString203=autoParkOutRequest.AutoParkMethod("2","0","2");
+                String replyString203=autoParkOutRequest.AutoParkMethod(2,0,3,"");
                 Log.d(TAG, "onClick: "+replyString203);
 
                 /**完全出车*/

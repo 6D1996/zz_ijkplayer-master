@@ -23,7 +23,6 @@ EZOpenSDK ezOpenSDK;
         /** * APP_KEY请替换成自己申请的 */
         EZOpenSDK.initLib(this, APP_KEY);
 
-
         EZOpenSDK.getInstance().setAccessToken("at.cge630o03g6j59x2cl66huzu4lx353xb-2dnaidb58y-136ks1b-bjcfjj3zj");
         Log.d(TAG, "onCreate: "+EZOpenSDK.getInstance().getEZAccessToken());
 

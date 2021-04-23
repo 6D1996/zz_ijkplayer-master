@@ -63,6 +63,7 @@ public class AutoPark extends Activity implements View.OnClickListener{
 
     }
 
+    @Override
     @OnClick({R.id.Out, R.id.In})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -74,11 +75,6 @@ public class AutoPark extends Activity implements View.OnClickListener{
             case R.id.In:
                 /**泊车*/
                 Log.d(TAG, "onClick: setParkingType1");
-        autoParkingRequest=new AutoParkingRequest();
-        autoParkingReply=new AutoParkingReply();
-        String reply= autoParkingRequest.AutoParkMethod("1");
-//        autoParkingReply=JSON.parseObject(reply,AutoParkingReply.class);
-        Log.d(TAG, "onClick: 函数返回结果"+reply);
 
                 //对话框
                 View my_view = LayoutInflater.from(AutoPark.this).inflate(R.layout.my_dialog,null,false);
@@ -92,6 +88,7 @@ public class AutoPark extends Activity implements View.OnClickListener{
                 Confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        requestParkIn();
                         Intent intent=new Intent(AutoPark.this, AutoParkingIn.class);
                         startActivity(intent);
                         dialog.dismiss();
@@ -106,8 +103,17 @@ public class AutoPark extends Activity implements View.OnClickListener{
                 });
                 dialog.show();
                 dialog.getWindow().setLayout(1000,650);
-
+            default:
+                break;
         }
+
+    }
+    public void requestParkIn(){
+        autoParkingRequest=new AutoParkingRequest();
+        autoParkingReply=new AutoParkingReply();
+        String reply= autoParkingRequest.AutoParkMethod(1,0,0,"");
+        autoParkingReply=JSON.parseObject(reply,AutoParkingReply.class);
+        Log.d(TAG, "onClick: 函数返回结果"+reply);
     }
 }
 

@@ -63,12 +63,12 @@ public class FullOut extends Activity implements View.OnClickListener{
             case R.id.Left:
                 autoParkOutRequest =new AutoParkingRequest();
                 autoParkOutReply =new AutoParkingReply();
-                String replyString211= autoParkOutRequest.AutoParkMethod("2","1","1");
+                String replyString211= autoParkOutRequest.AutoParkMethod(2,1,1,"");
                 Log.d(TAG, "onClick: "+replyString211);
             case R.id.Right:
                 autoParkOutRequest =new AutoParkingRequest();
                 autoParkOutReply =new AutoParkingReply();
-                String replyString212=autoParkOutRequest.AutoParkMethod("2","1","2");
+                String replyString212=autoParkOutRequest.AutoParkMethod(2,1,2,"");
                 Log.d(TAG, "onClick: "+replyString212);
 
                 /**完全出车*/
