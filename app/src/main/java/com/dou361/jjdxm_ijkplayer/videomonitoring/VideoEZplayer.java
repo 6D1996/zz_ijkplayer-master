@@ -127,8 +127,8 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 //        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        lightControllerButton=(ImageButton) findViewById(R.id.light);
-        lightControllerButton.setOnClickListener(this);
+//        lightControllerButton=(ImageButton) findViewById(R.id.light);
+//        lightControllerButton.setOnClickListener(this);
 
         buttonFront = (RadioButton) findViewById(R.id.front_Click);
         buttonBack = (RadioButton)findViewById(R.id.back_Click);
@@ -251,13 +251,17 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
         Log.d(TAG, "run: 返回结果"+videoNum+"路视频：\n"+videoResponseString);
         if (videoNum!=6){
             return videoResponseString;}
-        else return mergeVideoString;
+        else {
+            return mergeVideoString;
+        }
     }
 
 
 
     public void playVideo(int videoNum){
-        if(videoPlayingNum==videoNum)return;
+        if(videoPlayingNum==videoNum) {
+            return;
+        }
 
         switch (videoNum){
             //E40958484 E40958558 E40958703 E40958817 右左前后序列号

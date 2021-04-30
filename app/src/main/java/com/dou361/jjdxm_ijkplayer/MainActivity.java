@@ -39,6 +39,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
+    @Override
     @OnClick({R.id.video, R.id.au_park, R.id.call,R.id.RemoteControl_remove})
     public void onClick(View view) {
         switch (view.getId()) {

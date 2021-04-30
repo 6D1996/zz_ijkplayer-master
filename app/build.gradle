@@ -6,19 +6,12 @@ Properties props = new Properties()
 props.load(new FileInputStream(file(rootProject.file("signing.properties"))))
 
 def getVersionCode() {// 获取版本号
-    def versionFile = file('version.properties')// 读取第一步新建的文件
-    if (versionFile.canRead()) {// 判断文件读取异常
-        Properties versionProps = new Properties()
-        versionProps.load(new FileInputStream(versionFile))
-        def versionCode = versionProps['VERSION_CODE'].toInteger()// 读取文件里面的版本号
-        versionProps['VERSION_CODE'] = (++versionCode).toString()
+
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         System.out.println(df.format(new Date()));// new Date()为获取当前系统时间
-        versionProps.store(versionFile.newWriter(), null)
+
         return df.format(new Date()) // 返回自增之后的版本号
-    } else {
-        throw new GradleException("Could not find version.properties!")
-    }
+
 }
 
 android {

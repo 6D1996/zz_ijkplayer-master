@@ -7,17 +7,7 @@
     tools:context=".remotecontrol.RemoteControl">
 
 
-    <ImageButton
-        android:id="@+id/light"
-        android:layout_width="200px"
-        android:layout_height="200px"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="#00000000"
-        android:scaleType="fitXY"
-        android:src="@drawable/light"
-        app:layout_constraintTop_toBottomOf="@id/remove_topbar_2"
-        app:layout_constraintEnd_toEndOf="parent" />
+
     <ImageButton
         android:id="@+id/brake"
         android:layout_width="200px"

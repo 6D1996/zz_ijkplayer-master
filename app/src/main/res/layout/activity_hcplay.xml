@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintlayout1">
+        app:layout_constraintTop_toBottomOf="@+id/surfaceview">
 
 
         <com.dou361.jjdxm_ijkplayer.videomonitoring.MyRadioGroup
@@ -37,17 +37,6 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <!--            <TextView-->
-            <!--                android:id="@+id/requestTextView"-->
-            <!--                android:hint="發送數據"-->
-            <!--                android:gravity="center"-->
-            <!--                android:layout_gravity="center_horizontal"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content">-->
-
-            <!--            </TextView>-->
-
 
             <RadioButton
                 android:id="@+id/front_Click"
@@ -96,19 +85,10 @@
                     android:background="@drawable/ratio_check"
                     android:button="@null"
                     android:gravity="center"
-                    android:text="@string/you">
-                </RadioButton>
+                    android:text="@string/you"></RadioButton>
 
             </LinearLayout>
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/replyTextView"-->
-            <!--                android:hint="接收數據"-->
-            <!--                android:gravity="center"-->
-            <!--                android:layout_gravity="center_horizontal"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content">-->
-            <!--            </TextView>-->
 
             <RadioButton
                 android:id="@+id/back_Click"
@@ -122,19 +102,6 @@
             </RadioButton>
 
         </com.dou361.jjdxm_ijkplayer.videomonitoring.MyRadioGroup>
-
-        <ImageButton
-            android:id="@+id/light"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="#00000000"
-            android:scaleType="fitXY"
-            android:src="@drawable/light"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radiogroup"
-            android:layout_marginTop="10dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
