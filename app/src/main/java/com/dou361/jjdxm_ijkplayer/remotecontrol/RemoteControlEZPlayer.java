@@ -31,12 +31,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
-import com.bumptech.glide.Glide;
-import com.dou361.ijkplayer.bean.VideoijkBean;
-import com.dou361.ijkplayer.listener.OnPlayerStartOrPauseListener;
-import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
-import com.dou361.ijkplayer.widget.PlayStateParams;
-import com.dou361.ijkplayer.widget.PlayerView;
 import com.dou361.jjdxm_ijkplayer.MainActivity;
 import com.dou361.jjdxm_ijkplayer.R;
 import com.dou361.jjdxm_ijkplayer.command.Control;
@@ -94,7 +88,6 @@ public class RemoteControlEZPlayer extends Activity {
 
     private Context mContext;
     private TextView  Speed;
-    private List<VideoijkBean> list;
     private PowerManager.WakeLock wakeLock;
     private View rootView;
     private Activity mActivity;

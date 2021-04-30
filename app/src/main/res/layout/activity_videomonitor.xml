@@ -16,12 +16,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/constraintlayout2"
         >
-        <include
-            layout="@layout/simple_player_view_player"
-            android:layout_width="match_parent"
-            app:layout_constraintDimensionRatio="16:9"
-            android:layout_height="0dp"
-            />
+<!--        <include-->
+<!--            layout="@layout/simple_player_view_player"-->
+<!--            android:layout_width="match_parent"-->
+<!--            app:layout_constraintDimensionRatio="16:9"-->
+<!--            android:layout_height="0dp"-->
+<!--            />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

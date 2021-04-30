@@ -22,10 +22,6 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
-import com.dou361.ijkplayer.bean.VideoijkBean;
-import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
-import com.dou361.ijkplayer.widget.PlayStateParams;
-import com.dou361.ijkplayer.widget.PlayerView;
 import com.dou361.jjdxm_ijkplayer.R;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
 import com.videogo.exception.BaseException;
@@ -61,7 +57,6 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     public String videoResponseString,mergeVideoString;//视频Post请求返回数据
 
     private Context mContext;
-    private List<VideoijkBean> list;
     private PowerManager.WakeLock wakeLock;
     View rootView;
     private Integer videoPlayingNum=5;
@@ -330,17 +325,6 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 
 
 
-    @OnClick({R.id.light})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.light:
-            {
-//                    requestTextView.setText("請求開燈/關燈");
-            }
-            break;
-
-        }
-    }
 
 
     @Override
@@ -410,6 +394,11 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
 
+
+    }
+
+    @Override
+    public void onClick(View view) {
 
     }
 }

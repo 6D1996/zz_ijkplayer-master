@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 //import androidx.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.dou361.jjdxm_ijkplayer.autopark.AutoPark;
 import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlInitial;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoEZplayer;
-import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoMonitor;
-import com.videogo.openapi.EZOpenSDK;
 
 import butterknife.OnClick;
 

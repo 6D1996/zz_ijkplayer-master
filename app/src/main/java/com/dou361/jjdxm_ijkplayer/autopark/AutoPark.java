@@ -4,7 +4,6 @@ package com.dou361.jjdxm_ijkplayer.autopark;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,15 +15,8 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.dou361.jjdxm_ijkplayer.R;
-import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControl;
-import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlInitial;
 
 import butterknife.OnClick;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import static com.tencent.iot.hub.device.java.core.mqtt.TXAlarmPingSender.TAG;
 

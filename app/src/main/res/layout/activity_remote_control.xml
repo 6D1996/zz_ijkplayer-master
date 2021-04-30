@@ -41,16 +41,16 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <include
-        layout="@layout/simple_player_view_player"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="200dp"
-        android:layout_marginRight="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--    <include-->
+<!--        layout="@layout/simple_player_view_player"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginLeft="200dp"-->
+<!--        android:layout_marginRight="100dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
     <include
         android:id="@+id/remove_topbar_2"
         layout="@layout/remove_topbar"
