@@ -16,7 +16,6 @@
             <option value="$PROJECT_DIR$/hub-device-android/iot_core" />
             <option value="$PROJECT_DIR$/hub-device-android/iot_service" />
             <option value="$PROJECT_DIR$/hub-device-java" />
-            <option value="$PROJECT_DIR$/jjdxm-ijkplayer" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

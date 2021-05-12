@@ -56,6 +56,17 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="landscape">
         </activity>
+
+        <activity android:name=".callcar.activity.CallCarActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".callcar.activity.RMTPPlayerActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait">
+        </activity>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

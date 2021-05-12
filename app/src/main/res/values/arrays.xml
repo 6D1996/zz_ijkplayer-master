@@ -7,6 +7,14 @@
         <item>右视角</item>
         <item>上帝视角</item>
     </string-array>
+    <string-array name="speedArray" >
+        <item>5 km/h</item>
+        <item>10 km/h</item>
+        <item>15 km/h</item>
+        <item>20 km/h</item>
+        <item>25 km/h</item>
+        <item>30 km/h</item>
+    </string-array>
 
     <declare-styleable name="ButtonBarContainerTheme">
         <attr name="metaButtonBarStyle" format="reference" />

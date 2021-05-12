@@ -22,7 +22,6 @@ public class MyApplication extends Application {
 
     private EZPlayerToken ezPlayerToken;
 
-//    private static final String APP_KEY = "fb74f1db939a476dbd768a4705f5129f";
 private static final String APP_KEY = "be31b2172a7f4e94a1541b91a5823aa4";
 EZOpenSDK ezOpenSDK;
     @Override

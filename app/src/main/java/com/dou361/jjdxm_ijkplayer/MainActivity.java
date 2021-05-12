@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.dou361.jjdxm_ijkplayer.autopark.AutoPark;
+import com.dou361.jjdxm_ijkplayer.callcar.activity.CallCarActivity;
 import com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlInitial;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.VideoEZplayer;
 
@@ -53,10 +54,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 startActivity(AutoPark.class);
                 break;
 
-//            case R.id.call:
-//                /**叫车*/
-//                startActivity(PlayerActivity.class);
-//                break;
+            case R.id.call:
+                /**叫车*/
+                startActivity(CallCarActivity.class);
+                break;
         }
     }
 
