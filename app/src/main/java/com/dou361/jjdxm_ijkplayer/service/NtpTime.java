@@ -14,14 +14,14 @@ public class NtpTime {
             public void run() {
                 SntpClient sntpClient = new SntpClient();
                 sntpClient.requestTime(ntpServer,3000);
-                Log.d(TAG, "run:Thread "+sntpClient.getNtpTime());
+//                Log.d(TAG, "run:Thread "+sntpClient.getNtpTime());
                 ntpTime=sntpClient.getNtpTime();
             }
         });
         thread.start();
         while (!ntpFlag){
             if(ntpTime!=0){
-                Log.d(TAG, "onCreate: 线程结束，ntp时间："+ntpTime);
+//                Log.d(TAG, "onCreate: 线程结束，ntp时间："+ntpTime);
                 ntpFlag=true;}
         }
         return ntpTime;

@@ -91,7 +91,7 @@ public class ScalableImageView extends androidx.appcompat.widget.AppCompatImageV
                 float delta_y0 = (event.getY() - bitmap.getHeight()/ 2);
                 radius0 = Math.atan2(delta_y0,delta_x0);
                 degree0= (Double) Math.toDegrees(radius0);
-                Log.d(TAG, "onTouchEvent: 初始角度"+degree0);
+//                Log.d(TAG, "onTouchEvent: 初始角度"+degree0);
                 mode = Mode.DOWN;
                 pointFList.add(new PointF(delta_x0,delta_y0));
                 break;
