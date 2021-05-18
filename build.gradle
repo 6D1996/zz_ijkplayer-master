@@ -34,10 +34,10 @@ allprojects {
 
 
 ext {
-    compileSdkVersion = 30
+    compileSdkVersion = 28
     buildToolsVersion = '30.0.2'
 
-    targetSdkVersion = 30
+    targetSdkVersion = 28
     //主程序版本
     minSdkVersion = 21
     versionCode = 1

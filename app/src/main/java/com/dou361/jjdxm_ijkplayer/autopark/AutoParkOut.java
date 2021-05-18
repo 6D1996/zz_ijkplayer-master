@@ -41,6 +41,7 @@ public class AutoParkOut extends Activity implements View.OnClickListener{
 
     }
 
+    @Override
     @OnClick({R.id.Halfout, R.id.Fullout})
     public void onClick(View view) {
         switch (view.getId()) {

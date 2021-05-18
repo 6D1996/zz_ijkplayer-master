@@ -203,6 +203,7 @@ public class MQTTSample {
     public void disconnect() {
         MQTTRequest mqttRequest = new MQTTRequest("disconnect", requestID.getAndIncrement());
         mMqttConnection.disConnect(mqttRequest);
+
     }
 
     public void setSubdevOnline() {

@@ -50,7 +50,9 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
     private int count = 0;
 
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
-    private String testURL="ezopen://open.ys7.com/231236707/1.live";
+    private String testURL=
+            "ezopen://open.ys7.com/C78957921/1.live";
+//            "ezopen://open.ys7.com/231236707/1.live";
     public CountDownTimer countDownTimer;
     public VideoRequest videoRequest;
     public VideoReply videoReply,videoReply2;
@@ -287,7 +289,10 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
                 break;
             case 5:
                 //上帝视角
-                playViaDevSerial("231236707");
+//                playViaDevSerial("231236707");
+                playViaDevSerial(testURL);
+//                mEZPlayer1=EZOpenSDK.getInstance().createPlayerWithUrl("ezopen://open.ys7.com/C78957921/1.live");
+
                 break;
             case 6:
                 //只有融合視頻

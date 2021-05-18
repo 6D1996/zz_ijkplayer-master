@@ -55,6 +55,7 @@ public class HalfOut extends Activity implements View.OnClickListener{
 
     }
 
+    @Override
     @OnClick({R.id.Leftforward, R.id.Forwardahead,R.id.Rightforward})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -63,49 +64,52 @@ public class HalfOut extends Activity implements View.OnClickListener{
                 autoParkOutReply =new AutoParkingReply();
                 String replyString201=autoParkOutRequest.AutoParkMethod(2,0,1,"");
                 Log.d(TAG, "onClick: "+replyString201);
-
+                break;
                 /**半出车*/
             case R.id.Forwardahead:
                 autoParkOutRequest =new AutoParkingRequest();
                 autoParkOutReply =new AutoParkingReply();
                 String replyString202=autoParkOutRequest.AutoParkMethod(2,0,2,"");
                 Log.d(TAG, "onClick: "+replyString202);
-
+                break;
                 /**完全出车*/
             case R.id.Rightforward:
                 autoParkOutRequest =new AutoParkingRequest();
                 autoParkOutReply =new AutoParkingReply();
                 String replyString203=autoParkOutRequest.AutoParkMethod(2,0,3,"");
                 Log.d(TAG, "onClick: "+replyString203);
-
-                /**完全出车*/
-                //对话框
-                View my_view = LayoutInflater.from(HalfOut.this).inflate(R.layout.my_dialog,null,false);
-                final AlertDialog dialog = new AlertDialog.Builder(HalfOut.this).setView(my_view).create();
-                TextView Title = my_view.findViewById(R.id.title);
-                TextView Context = my_view.findViewById(R.id.content);
-                Title.setText("确认出车");
-                Context.setText("自动出车是由云端计算机控制车辆自动泊出车位，该功能有一定风险，一切后果将由车主承担泊出车位后，车主应尽快接受车辆以避免影响交通");
-                ImageButton Confirm = my_view.findViewById(R.id.confirm);
-                ImageButton cancel = my_view.findViewById(R.id.cancel);
-                Confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent=new Intent(HalfOut.this,AutoParkingOut.class);
-                        startActivity(intent);
-                        dialog.dismiss();
-                    }
-                });
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(HalfOut.this, "取消成功",Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-                dialog.getWindow().setLayout(1000,750);
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + view.getId());
         }
+
+        /**完全出车*/
+        //对话框
+        View my_view = LayoutInflater.from(HalfOut.this).inflate(R.layout.my_dialog,null,false);
+        final AlertDialog dialog = new AlertDialog.Builder(HalfOut.this).setView(my_view).create();
+        TextView Title = my_view.findViewById(R.id.title);
+        TextView Context = my_view.findViewById(R.id.content);
+        Title.setText("确认出车");
+        Context.setText("自动出车是由云端计算机控制车辆自动泊出车位，该功能有一定风险，一切后果将由车主承担泊出车位后，车主应尽快接受车辆以避免影响交通");
+        ImageButton Confirm = my_view.findViewById(R.id.confirm);
+        ImageButton cancel = my_view.findViewById(R.id.cancel);
+        Confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(HalfOut.this,AutoParkingOut.class);
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(HalfOut.this, "取消成功",Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        dialog.getWindow().setLayout(1000,750);
+
     }
 }

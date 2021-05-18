@@ -125,16 +125,15 @@ public class RemoteControlEZPlayer extends Activity {
 
 
     /*虛擬機*/
-//    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";
-    private String mProductID = "XN03IY1B4J";
-    private String mDevName = "app_test";
-    private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
-    private String mTestTopic = "XN03IY1B4J/app_test/data";
+////    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
+//    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";
+//    private String mProductID = "XN03IY1B4J";
+//    private String mDevName = "app_test";
+//    private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
+//    private String mTestTopic = "XN03IY1B4J/app_test/data";
 
 
     /*真车配置*/
-/*
     private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
 //    private String mBrokerURL = "ssl://10.112.16.22:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
 
@@ -142,7 +141,6 @@ public class RemoteControlEZPlayer extends Activity {
     private String mDevName = "app_real";
     private String mDevPSK  = "nrRI5+fuV1AczfwxAofd7Q=="; //若使用证书验证，设为null
     private String mTestTopic = "6WYMRTCPAM/app_real/data";    // productID/DeviceName/TopicName
-*/
 
     private String mSubProductID = ""; // If you wont test gateway, let this to be null
     private String mSubDevName = "";
@@ -169,14 +167,14 @@ public class RemoteControlEZPlayer extends Activity {
 
         setContentView(rootView);
 
-        mEZPlayer1= EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
+
 
         Speed=findViewById(R.id.speed);
 
-         mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
+        mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
                 mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
 
-                while (!mIsConnected&&connectMQTTTimes<5) {
+                while (!mIsConnected&&connectMQTTTimes<3) {
                     Log.d(TAG, "onCreate: Connecting Mqtt");
                     //轮询连接,万分感谢陈岩大佬
                     Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
@@ -189,141 +187,124 @@ public class RemoteControlEZPlayer extends Activity {
                     Toast.makeText(RemoteControlEZPlayer.this, "连接成功",Toast.LENGTH_SHORT).show();
                 }else {
                     Log.d(TAG, "onCreate: 连接失败");
-                    Toast.makeText(RemoteControlEZPlayer.this, "连接失败",Toast.LENGTH_SHORT).show();
-                    this.finish();
+                    Toast.makeText(RemoteControlEZPlayer.this, "连接IOT失败",Toast.LENGTH_SHORT).show();
+//                    this.finish();
                 }
+        if(mIsConnected) {
+            for(int i=0;i<3;i++){
+            shiftHandbrake(1);
+            sleep(300);}
+            Log.d(TAG, "onCreate: ");
 
-        shiftHandbrake(1);
-        Log.d(TAG, "onCreate: ");
+            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 10, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
 
-        ThreadPoolExecutor threadPoolExecutor=new ThreadPoolExecutor(3,10,10,TimeUnit.SECONDS,new LinkedBlockingDeque<Runnable>());
+            Thread brakeThread, getCarInfoThread;
 
-        Thread brakeThread,getCarInfoThread;
-
-        brakeThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                 while (true) {
-                     if(braking){
-                    try {
-                        if (active_braking){
-                            moveVehicle(-1.0,0.0,wheelAngle);
-                            sleep(50);
+            brakeThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        if (braking) {
+                            try {
+                                if (active_braking) {
+                                    moveVehicle(-1.0, 0.0, wheelAngle);
+                                    sleep(50);
+                                } else {
+                                    moveVehicle(-0.2, 0.0, wheelAngle);
+                                }
+                                sleep(50);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                        else {
-                        moveVehicle(-0.2,0.0,wheelAngle);}
-                        sleep(50);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }}
-            }
-        }});
-
-        getCarInfoThread=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    if(braking){
-                        try {
-                            wheelAngle = sImgView.getmDegree();
-                            requestCarInfo();
-                            if (!"Initial".equals(dataResult.getSpeed3d())){
-                                gearGlobal=Integer.parseInt(dataResult.getGears());
-                                String []speed=dataResult.getSpeed3d().split(",");
-                                speedGlobal=Double.parseDouble(speed[0]);
-                                Speed.setText(speed[0]);}
-                            sleep(50);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }}
+                    }
                 }
-            }
-        });
-        /*//方向盘角度在速度处显示
-        countDownTimer=new CountDownTimer(100000000,50) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                wheelAngle = sImgView.getmDegree();
-                Speed = findViewById(R.id.speed);
-                if (!dataResult.getSpeed3d().equals("Initial")){
-                    String []speed=dataResult.getSpeed3d().split(",");
-                    Speed.setText(""+speed);}
-            }
-            @Override
-            public void onFinish() {
-            }
-        }.start();*/
-        threadPoolExecutor.execute(brakeThread);
-        threadPoolExecutor.execute(getCarInfoThread);
+            });
 
-        /**常亮*/
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "liveTAG");
-        wakeLock.acquire();
-
-        CompentOnTouch compentOnTouch = new CompentOnTouch();
-
-        //返回键
-        findViewById(R.id.back2).setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View V){
-                //对话框
-                View my_view = LayoutInflater.from(RemoteControlEZPlayer.this).inflate(R.layout.my_dialog,null,false);
-                final AlertDialog dialog = new AlertDialog.Builder(RemoteControlEZPlayer.this).setView(my_view).create();
-                TextView Title = my_view.findViewById(R.id.title);
-                TextView Context = my_view.findViewById(R.id.content);
-                Title.setText("结束挪车");
-                Context.setText("您已确定车辆已经抵达目标位置并结束挪车操作吗？");
-                ImageButton Confirm = my_view.findViewById(R.id.confirm);
-                ImageButton cancel = my_view.findViewById(R.id.cancel);
-                Confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finish();
-                        Intent intent=new Intent(RemoteControlEZPlayer.this, MainActivity.class);
-                        startActivity(intent);
-                        dialog.dismiss();
+            getCarInfoThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        if (braking) {
+                            try {
+                                wheelAngle = sImgView.getmDegree();
+                                requestCarInfo();
+                                if (!"Initial".equals(dataResult.getSpeed3d())) {
+                                    gearGlobal = Integer.parseInt(dataResult.getGears());
+                                    String[] speed = dataResult.getSpeed3d().split(",");
+                                    speedGlobal = Double.parseDouble(speed[0]);
+                                    Speed.setText(speed[0]);
+                                }
+                                sleep(50);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                });
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(RemoteControlEZPlayer.this, "取消成功",Toast.LENGTH_SHORT).show();
-
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-                Objects.requireNonNull(dialog.getWindow()).setLayout(1000,600);
-            }
-        });
-
-        imageButton_forward=findViewById(R.id.forward);
-        imageButton_forward.setOnTouchListener(compentOnTouch);
-
-        imageButton_backward=findViewById(R.id.backward);
-        imageButton_backward.setOnTouchListener(compentOnTouch);
-
-        imageButton_brake=findViewById(R.id.brake);
-        imageButton_brake.setOnTouchListener(compentOnTouch);
-        sImgView = findViewById(R.id.steering_wheel);
-        dataResult=new DataResult();
+                }
+            });
+            threadPoolExecutor.execute(brakeThread);
+            threadPoolExecutor.execute(getCarInfoThread);
 
 
+            /**常亮*/
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "liveTAG");
+            wakeLock.acquire();
 
-//        countDownTimer=new CountDownTimer(100000000,1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                requestCarInfo();
-//            }
-//            @Override
-//            public void onFinish() {
-//            }
-//        }.start();
+            CompentOnTouch compentOnTouch = new CompentOnTouch();
+
+            //返回键
+            findViewById(R.id.back2).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View V) {
+                    //对话框
+                    View my_view = LayoutInflater.from(RemoteControlEZPlayer.this).inflate(R.layout.my_dialog, null, false);
+                    final AlertDialog dialog = new AlertDialog.Builder(RemoteControlEZPlayer.this).setView(my_view).create();
+                    TextView Title = my_view.findViewById(R.id.title);
+                    TextView Context = my_view.findViewById(R.id.content);
+                    Title.setText("结束挪车");
+                    Context.setText("您已确定车辆已经抵达目标位置并结束挪车操作吗？");
+                    ImageButton Confirm = my_view.findViewById(R.id.confirm);
+                    ImageButton cancel = my_view.findViewById(R.id.cancel);
+                    Confirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                            Intent intent = new Intent(RemoteControlEZPlayer.this, MainActivity.class);
+                            startActivity(intent);
+                            dialog.dismiss();
+                        }
+                    });
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(RemoteControlEZPlayer.this, "取消成功", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                    Objects.requireNonNull(dialog.getWindow()).setLayout(1000, 600);
+                }
+            });
+
+            imageButton_forward = findViewById(R.id.forward);
+            imageButton_forward.setOnTouchListener(compentOnTouch);
+
+            imageButton_backward = findViewById(R.id.backward);
+            imageButton_backward.setOnTouchListener(compentOnTouch);
+
+            imageButton_brake = findViewById(R.id.brake);
+            imageButton_brake.setOnTouchListener(compentOnTouch);
+            sImgView = findViewById(R.id.steering_wheel);
+            dataResult = new DataResult();
+        }
+        mEZPlayer1= EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
+
 
         //下拉单选按钮
         Video_Modul_Spinner = (Spinner)findViewById(R.id.Spinner_VIdeo_Model);
-        Video_Modul_Spinner.setSelection(0);//进入不会自动播放
+//        Video_Modul_Spinner.setSelection(0);//进入不会自动播放
         Video_Modul_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -490,7 +471,7 @@ public class RemoteControlEZPlayer extends Activity {
             //要挂的档位就是当前档位，直接退出函数
             return;
         }
-        if(speedGlobal !=0){
+        if(speedGlobal>1||speedGlobal<-1){
             //车速不为0的话先减速到0再进行挂挡操作
             moveVehicle(-0.3,0.0,0.0);
             sleep(20);
@@ -596,7 +577,13 @@ public class RemoteControlEZPlayer extends Activity {
                     status.name(), reconnect, userContextInfo, msg);
             Log.d(TAG, "onConnectCompleted: "+logInfo);
             if(status==Status.OK){
-             mIsConnected = true;}
+             mIsConnected = true;
+                Log.d(TAG, "onConnectCompleted: 连接状态"+mIsConnected);
+            }else {
+                mIsConnected = false;
+                Log.d(TAG, "onConnectCompleted: 连接状态"+mIsConnected);
+
+            }
         }
 
         @Override
@@ -977,15 +964,20 @@ public class RemoteControlEZPlayer extends Activity {
 
     @Override
     protected void onDestroy() {
-        if(mIsConnected){
-        super.onDestroy();
-        if(speedGlobal !=0){moveVehicle(-0.3,0.0,0.0);}
+        if(!mIsConnected){
+            Log.d(TAG, "onDestroy: 没连接");
+            mIsConnected=false;
+        super.onDestroy();}
+        else {
+        if(speedGlobal>0.01||speedGlobal<-0.01){moveVehicle(-0.5,0.0,0.0);}
         if(braking){braking=false;}
-//        if(gearGlobal!=1){shiftGear(1);}
+        if(gearGlobal!=1){shiftGear(1);}
         if(handBrakeStatus==1){shiftHandbrake(0);}
-        if(mIsConnected){mqttSample.disconnect();}
-
-        Log.d(TAG, "onDestroy: 斷開視頻以及MQTT連接");}
+        mqttSample.disconnect();
+        mIsConnected=false;
+        Log.d(TAG, "onDestroy: 斷開視頻以及MQTT連接");
+        super.onDestroy();
+        }
     }
 
     @Override
@@ -996,6 +988,36 @@ public class RemoteControlEZPlayer extends Activity {
 
     @Override
     public void onBackPressed() {
+
+        //对话框
+        View my_view = LayoutInflater.from(RemoteControlEZPlayer.this).inflate(R.layout.my_dialog, null, false);
+        final AlertDialog dialog = new AlertDialog.Builder(RemoteControlEZPlayer.this).setView(my_view).create();
+        TextView Title = my_view.findViewById(R.id.title);
+        TextView Context = my_view.findViewById(R.id.content);
+        Title.setText("结束挪车");
+        Context.setText("您已确定车辆已经抵达目标位置并结束挪车操作吗？");
+        ImageButton Confirm = my_view.findViewById(R.id.confirm);
+        ImageButton cancel = my_view.findViewById(R.id.cancel);
+        Confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                Intent intent = new Intent(RemoteControlEZPlayer.this, MainActivity.class);
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(RemoteControlEZPlayer.this, "取消成功", Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+        Objects.requireNonNull(dialog.getWindow()).setLayout(1000, 600);
+        /*
 //        super.onBackPressed();
         //对话框
         AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
@@ -1018,7 +1040,7 @@ public class RemoteControlEZPlayer extends Activity {
             }
         });
         AlertDialog b=builder.create();
-        b.show();
+        b.show();*/
         /**demo的内容，恢复设备亮度状态*/
         if (wakeLock != null) {
             wakeLock.release();

@@ -57,10 +57,11 @@ public class AutoParkingOut extends Activity {
         outputfield.append(msg);
         int scrollAmount = outputfield.getLayout().getLineTop(outputfield.getLineCount())
                 - outputfield.getHeight();
-        if (scrollAmount > 0)
+        if (scrollAmount > 0) {
             outputfield.scrollTo(0, scrollAmount);
-        else
+        } else {
             outputfield.scrollTo(0, 0);
+        }
     }
     
 }
