@@ -151,12 +151,13 @@ public class RemoteControlEZPlayer extends Activity {
     private String mDevCert = "";           // Cert String
     private String mDevPriv = "";           // Priv String
 
-    private volatile boolean mIsConnected=false;
+    private volatile boolean mIsConnected;
     ScalableImageView sImgView ;
 
     @SuppressLint({"InvalidWakeLockTag", "ClickableViewAccessibility"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mIsConnected=false;
         maxSpeed = (Integer.parseInt(getIntent().getStringExtra("speedList"))+1)*5.0;
         Log.d(TAG, "onCreate: 最大车速:"+maxSpeed);
         super.onCreate(savedInstanceState);
@@ -171,30 +172,31 @@ public class RemoteControlEZPlayer extends Activity {
 
         Speed=findViewById(R.id.speed);
 
-        mqttSample= new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
+        mqttSample= new MQTTSample(this.mContext, new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
                 mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
 
                 while (!mIsConnected&&connectMQTTTimes<3) {
                     Log.d(TAG, "onCreate: Connecting Mqtt");
                     //轮询连接,万分感谢陈岩大佬
-                    Log.d(TAG, "onCreate: mqttSample"+mqttSample.toString());
+                    Log.d(TAG, "onCreate: "+mqttSample.toString());
                     mqttSample.connect();
                     mqttSample.subscribeTopic();
                     Log.d(TAG, "onCreate: Connet times:"+connectMQTTTimes++);
                     sleep(1000);
                 }
                 if(mIsConnected){
+                    Log.d(TAG, "onCreate: 连接成功");
                     Toast.makeText(RemoteControlEZPlayer.this, "连接成功",Toast.LENGTH_SHORT).show();
                 }else {
                     Log.d(TAG, "onCreate: 连接失败");
-                    Toast.makeText(RemoteControlEZPlayer.this, "连接IOT失败",Toast.LENGTH_SHORT).show();
-//                    this.finish();
+                    Toast.makeText(RemoteControlEZPlayer.this, "连接IOT失败",Toast.LENGTH_LONG).show();
+                    sleep(3000);
+                    finish();
                 }
         if(mIsConnected) {
             for(int i=0;i<3;i++){
             shiftHandbrake(1);
             sleep(300);}
-            Log.d(TAG, "onCreate: ");
 
             ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 10, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
 
@@ -270,10 +272,11 @@ public class RemoteControlEZPlayer extends Activity {
                     Confirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            finish();
+
                             Intent intent = new Intent(RemoteControlEZPlayer.this, MainActivity.class);
                             startActivity(intent);
                             dialog.dismiss();
+                            finish();
                         }
                     });
                     cancel.setOnClickListener(new View.OnClickListener() {
@@ -454,8 +457,8 @@ public class RemoteControlEZPlayer extends Activity {
                 mqttSample.publishTopic("data", JSON.toJSONString(mHandbrake));
                 Log.d(TAG, "onClick: 第"+i+"次放手刹");
                 sleep(50);
-                requestCarInfo();
-                handBrakeStatus=Integer.parseInt(dataResult.getBrake());
+//                requestCarInfo();
+//                handBrakeStatus=Integer.parseInt(dataResult.getBrake());
 //
             }
             Log.d(TAG, "shiftHandbrake: 放手刹失败");

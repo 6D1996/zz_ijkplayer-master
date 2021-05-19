@@ -79,6 +79,7 @@ public class RemoteControlInitial extends Activity {
                                 intent.putExtra("speedList",  speedSpinner.getSelectedItemPosition()+"");
                                 startActivity(intent);
                                 dialog.dismiss();
+                                finish();
                             }
                         });
                             cancel.setOnClickListener(new View.OnClickListener() {
