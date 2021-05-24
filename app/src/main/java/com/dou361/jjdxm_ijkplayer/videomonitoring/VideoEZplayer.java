@@ -51,8 +51,8 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     private String testURL=
-            "ezopen://open.ys7.com/C78957921/1.live";
-//            "ezopen://open.ys7.com/231236707/1.live";
+//            "ezopen://open.ys7.com/C78957921/1.live";
+            "ezopen://open.ys7.com/231236707/1.live";
     public CountDownTimer countDownTimer;
     public VideoRequest videoRequest;
     public VideoReply videoReply,videoReply2;
@@ -77,24 +77,12 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 
         Log.d(TAG, "onCreate: EZplayer Creating");
         mEZPlayer1 = EZOpenSDK.getInstance().createPlayerWithUrl("https://hls01open.ys7.com/openlive/6e0b2be040a943489ef0b9bb344b96b8.hd.m3u8");
+
 //        SurfaceView mSurfaceView1 = (SurfaceView) findViewById(R.id.surfaceview);
 //        SurfaceHolder mSurfaceHolder1 = mSurfaceView1.getHolder();
 //        Log.d(TAG, "playViaDevSerial: 播放器绑定界面"+mEZPlayer1.setSurfaceHold(mSurfaceHolder1));
 //        mSurfaceHolder1.addCallback(this);
 
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run: 获取相机列表");
-                try {
-                    EZOpenSDK.getInstance().getDeviceList(1,10);
-//                    ezOpenSDK.getDeviceList(1,1);
-                } catch (BaseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
 
 
 

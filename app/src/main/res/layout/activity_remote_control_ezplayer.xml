@@ -31,16 +31,38 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
+
+
     <SurfaceView
-        android:id="@+id/ezplayerSurfaceview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="200dp"
+        android:id="@+id/ezplayerSurfaceviewLeft"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
         android:layout_marginRight="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/ezplayerSurfaceview"
+        app:layout_constraintStart_toStartOf="@id/ezplayerSurfaceview"
         app:layout_constraintTop_toTopOf="parent" />
+    <SurfaceView
+        android:id="@+id/ezplayerSurfaceviewRight"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:layout_marginLeft="200dp"
+        app:layout_constraintBottom_toTopOf="@id/ezplayerSurfaceview"
+        app:layout_constraintEnd_toEndOf="@id/ezplayerSurfaceview"
+        app:layout_constraintTop_toTopOf="parent" />
+    <SurfaceView
+            android:id="@+id/ezplayerSurfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="200dp"
+            android:layout_marginTop="150dp"
+            android:layout_marginRight="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
     <include
         android:id="@+id/remove_topbar_2"
         layout="@layout/remove_topbar"

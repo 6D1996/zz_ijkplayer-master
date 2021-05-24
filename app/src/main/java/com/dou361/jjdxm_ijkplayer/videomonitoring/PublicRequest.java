@@ -1,6 +1,9 @@
 package com.dou361.jjdxm_ijkplayer.videomonitoring;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class PublicRequest {
+    @JSONField(serialize = false)
     public String hostURL="http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
     private String requestId;
     private String userId="6DAndroid";

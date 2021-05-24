@@ -4,6 +4,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializeFilter;
+import com.alibaba.fastjson.serializer.SerializeFilterable;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.PublicRequest;
 
 import okhttp3.MediaType;
@@ -31,6 +36,8 @@ public class AutoParkingRequest extends PublicRequest {
     //自动叫车时，起止点数据
     public String pathData;
 
+    @JSONField(name="autoParkingReplyString", serialize=false)
+    public String autoParkingReplyString="Initial";
     public String getAutoParkingReplyString() {
         return autoParkingReplyString;
     }
@@ -38,8 +45,6 @@ public class AutoParkingRequest extends PublicRequest {
     public void setAutoParkingReplyString(String autoParkingReplyString) {
         this.autoParkingReplyString = autoParkingReplyString;
     }
-
-    public String autoParkingReplyString="Initial";
 
     public int getParkingType() {
         return parkingType;
@@ -73,6 +78,17 @@ public class AutoParkingRequest extends PublicRequest {
         this.pathData = pathData;
     }
 
+    @Override
+    public String toString() {
+        return "AutoParkingRequest{" +
+                "parkingType=" + parkingType +
+                ", parkingOutWay=" + parkingOutWay +
+                ", parkingDirection=" + parkingDirection +
+                ", pathData='" + pathData + '\'' +
+                ", autoParkingReplyString='" + autoParkingReplyString + '\'' +
+                '}';
+    }
+
     /**
      * Auto park method string
      *
@@ -85,11 +101,25 @@ public class AutoParkingRequest extends PublicRequest {
      * @return the string
      */
     public String AutoParkMethod( int parkingType, int parkingOutWay,int parkingDirection,String pathData){
+        final String autoParkingRequestJson;
         this.setParkingType(parkingType);
-        if(parkingType==2){this.setParkingOutWay(parkingOutWay);this.setParkingDirection(parkingDirection);}
-        else if(parkingType==3){this.setPathData(pathData);}
+        if (parkingType==1){
+            SimplePropertyPreFilter filter = new SimplePropertyPreFilter(AutoParkingRequest.class, new String[]{"requestId","userId","vin","parkingType"});
+            autoParkingRequestJson=JSON.toJSONString(this,filter);
+            Log.d(TAG, "AutoParkMethod: "+this.toString());}
+        else{
+            if (parkingType == 2) {
+                Log.d(TAG, "AutoParkMethod: parkingType==2");
+                this.setParkingOutWay(parkingOutWay);
+                this.setParkingDirection(parkingDirection);
+            } else if (parkingType == 3) {
+                Log.d(TAG, "AutoParkMethod: parkingType==3");
+                this.setPathData(pathData);
+            }
 
-        final String autoParkingRequestJson= JSON.toJSONString(this);//序列化
+            autoParkingRequestJson = JSON.toJSONString(this);//序列化
+        }
+
         Thread requestThread = new Thread(new Runnable() {
             @Override
             public void run() {

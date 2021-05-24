@@ -48,15 +48,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/requestTextView"-->
-            <!--                android:hint="發送數據"-->
-            <!--                android:gravity="center"-->
-            <!--                android:layout_gravity="center_horizontal"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content">-->
-
-            <!--            </TextView>-->
 
 
             <RadioButton
