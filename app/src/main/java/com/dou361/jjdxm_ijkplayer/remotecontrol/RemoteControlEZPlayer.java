@@ -208,6 +208,7 @@ public class RemoteControlEZPlayer extends Activity {
                     shiftHandbrake(1);
                     while ("com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlEZPlayer".equals(getRunningActivityName())) {
                             try {
+                                wheelAngle = sImgView.getmDegree();
                                 if(!gearing) {
 //                                    Log.d(TAG, "run: 线程1");
                                     if (braking) {
@@ -239,7 +240,6 @@ public class RemoteControlEZPlayer extends Activity {
                 public void run() {
                     while ("com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlEZPlayer".equals(getRunningActivityName())) {
                             try {
-                                wheelAngle = sImgView.getmDegree();
                                 ntpTime = new SntpClient().getNtpTime();
                                 requestCarInfo();
                                 if (!"Initial".equals(dataResult.getSpeed3d())) {
@@ -321,10 +321,6 @@ public class RemoteControlEZPlayer extends Activity {
             dataResult = new DataResult();
         }
 //        mEZPlayer1= EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
-        playViaDevSerial("E40958558",R.id.ezplayerSurfaceviewLeft);
-        playViaDevSerial("E40958558",R.id.ezplayerSurfaceview);
-
-        playViaDevSerial("E40958484",R.id.ezplayerSurfaceviewRight);
 
         //下拉单选按钮
         Video_Modul_Spinner = (Spinner)findViewById(R.id.Spinner_VIdeo_Model);
@@ -337,7 +333,9 @@ public class RemoteControlEZPlayer extends Activity {
                     switch (position) {
                         case 0: {
                             /**前摄像*/
-                            playViaDevSerial("E40958703",R.id.ezplayerSurfaceviewLeft);
+                            playViaDevSerial("E40958558",R.id.ezplayerSurfaceviewLeft);
+                            playViaDevSerial("E40958558",R.id.ezplayerSurfaceview);
+                            playViaDevSerial("E40958484",R.id.ezplayerSurfaceviewRight);
                         }
                         break;
 
@@ -451,7 +449,6 @@ public class RemoteControlEZPlayer extends Activity {
             mEZPlayer= EZOpenSDK.getInstance().createPlayerWithUrl(testURL);}
         else{
             mEZPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
-//            mEZPlayer1=EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
         }
         Log.d(TAG, "playViaDevSerial: 播放器绑定界面"+mEZPlayer.setSurfaceHold(mSurfaceHolder1)+surfaceViewId);
 
@@ -473,7 +470,6 @@ public class RemoteControlEZPlayer extends Activity {
             }
         });
 
-//        Log.d(TAG, "playViaDevSerial: 播放器设备"+deviceSerial);
 
         Log.d(TAG, "playViaDevSerial: 播放成功？"+mEZPlayer.startRealPlay());
     }
@@ -482,10 +478,11 @@ public class RemoteControlEZPlayer extends Activity {
     1表示手刹释放，0表示手刹锁定
      **/
 
-    private void shiftHandbrake(int handbrakeToSet) {
+    private boolean shiftHandbrake(int handbrakeToSet) {
 
         Log.d(TAG, "shiftHandbrake: 放手刹");
-        for(int i=0;i<5;i++){
+        int i=0;
+        while(i<5&&handBrakeStatus==handbrakeToSet){
                 Handbrake mHandbrake = new Handbrake();
                 mHandbrake.setTimestamp(ntpTime);
                 mHandbrake.setStatus(handbrakeToSet);
@@ -494,22 +491,25 @@ public class RemoteControlEZPlayer extends Activity {
                 mqttSample.publishTopic("data", JSON.toJSONString(mHandbrake));
                 Log.d(TAG, "onClick: 第"+i+"次放手刹");
                 sleep(1000);
-                handBrakeStatus=handbrakeToSet;
-//                requestCarInfo();
-//                handBrakeStatus=Integer.parseInt(dataResult.getBrake());
-
+//                handBrakeStatus=handbrakeToSet;
+                handBrakeStatus=Integer.parseInt(dataResult.getBrake());
+                i++;
             }
-        return;
+        if(handBrakeStatus==handbrakeToSet) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
     1,2,3,4分別對應P,R,N,D四個檔位
      **/
-    private void shiftGear(final int gearToSet){
+    private boolean shiftGear(final int gearToSet){
 
         if(gearToSet==gearGlobal) {
             //要挂的档位就是当前档位，直接退出函数
-            return;
+            return true;
         }
         if(speedGlobal>1||speedGlobal<-1){
             //车速不为0的话先减速到0再进行挂挡操作
@@ -519,9 +519,6 @@ public class RemoteControlEZPlayer extends Activity {
 
         else{
             gearing=true;
-//            Thread shiftGearThread=new Thread(new Runnable() {
-//                @Override
-//                public void run() {
                     countDownTimer=new CountDownTimer(3000,200) {
                         @Override
                         public void onTick(long millisUntilFinished) {
@@ -543,11 +540,11 @@ public class RemoteControlEZPlayer extends Activity {
                             Log.d(TAG, "onFinish: 挂挡失败");
                         }
                     }.start();
-//                }
-//            });
-//            shiftGearThread.start();
-//            while(!shiftGearThread.isAlive()){return;}
-
+        }
+        if(gearToSet==gearGlobal) {
+            return true;
+        }else {
+            return false;
         }
     }
 //}
