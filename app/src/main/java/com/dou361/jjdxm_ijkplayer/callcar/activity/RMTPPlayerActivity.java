@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.dou361.jjdxm_ijkplayer.R;
 import com.hengyi.fastvideoplayer.library.FastVideoPlayer;
 
@@ -26,11 +27,11 @@ public class RMTPPlayerActivity extends AppCompatActivity {
         videoPlayer.setLive(true);//是直播还是点播  false为点播
         videoPlayer.setScaleType(FastVideoPlayer.SCALETYPE_16_9);
         videoPlayer.setTitle("叫车演示");//设置标题
-        videoPlayer.setUrl("rtmp://150.158.176.170/live/test_vin_5");
+        videoPlayer.setUrl("rtmp://10.6.181.64:60442/live/fushion");
 
 
         //封面图加载
-//        Glide.with(this).load("https://bot.tmall.com/guide/img/guide1-bg760.png").into(videoPlayer.getCoverImage());
+        Glide.with(this).load(R.drawable.pic_before_video).into(videoPlayer.getCoverImage());
 
         play.setOnClickListener(new View.OnClickListener(){
             @Override

@@ -312,6 +312,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
 //        mEZPlayer.setHandler(mHandler);
 
 //        holder.addCallback(this);
+        
         Log.d(TAG, "playViaDevSerial: 播放成功？"+mEZPlayer1.startRealPlay());
     }
 
