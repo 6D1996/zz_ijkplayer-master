@@ -45,6 +45,7 @@ import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
 import com.dou361.jjdxm_ijkplayer.service.NtpTime;
 import com.dou361.jjdxm_ijkplayer.service.SntpClient;
+import com.dou361.jjdxm_ijkplayer.videomonitoring.ShowMyToast;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
 import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
 import com.tencent.iot.hub.device.android.core.util.TXLog;
@@ -518,7 +519,7 @@ public class RemoteControlEZPlayer extends Activity {
      * 1,2,3,4分別對應P,R,N,D四個檔位
      **/
     private boolean shiftGear(final int gearToSet) {
-
+        Log.d(TAG, "shiftGear: 当前档位："+gearGlobal);
         if (gearToSet == gearGlobal) {
             //要挂的档位就是当前档位，直接退出函数
             return true;
@@ -528,11 +529,9 @@ public class RemoteControlEZPlayer extends Activity {
             braking=true;
             active_braking=true;
         } else {
+            //挂挡中，不发指令消息
             gearing = true;
-            braking=false;
-            active_braking=false;
-            int i=0;
-            while (i<5&&gearToSet!=gearGlobal){
+            if (gearToSet!=gearGlobal){
                 Gears mGear = new Gears();
                 mGear.setTimestamp(ntpTime);
                 mGear.setGear(gearToSet);
@@ -540,38 +539,18 @@ public class RemoteControlEZPlayer extends Activity {
                 mGear.setTaskid("手機挂" + gearToSet + "档,当前档位："+gearGlobal);
                 // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
                 mqttSample.publishTopic("data", JSON.toJSONString(mGear));
-                i++;
                 sleep(500);
             }
-            /*countDownTimer = new CountDownTimer(3000, 200) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    //发送挂挡指令
-                    Gears mGear = new Gears();
-                    mGear.setTimestamp(ntpTime);
-                    mGear.setGear(gearToSet);
-                    mGear.setType(13);
-                    mGear.setTaskid("手機挂" + gearToSet + "档");
-                    // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-                    mqttSample.publishTopic("data", JSON.toJSONString(mGear));
-                    if (gearGlobal == gearToSet) {
-                        gearing = false;
-                        countDownTimer.cancel();
-                    }
-                }
-                @Override
-                public void onFinish() {
-                    gearing = false;
-                    Log.d(TAG, "onFinish: 挂挡失败");
-                }
-            }.start();*/
+
         }
         if (gearToSet == gearGlobal) {
             gearing=false;
             //要挂的档位就是当前档位，直接退出函数
             return true;
         } else {
-//            gearing=false;
+            gearing=false;
+            braking=true;
+            active_braking=true;
             return false;
         }
     }
@@ -869,8 +848,8 @@ public class RemoteControlEZPlayer extends Activity {
         private void onTouchChange(String methodName, int eventAction) {
             Log.d(TAG, "onTouchChange: " + methodName + eventAction + "\n" + "onTouchChange: braking" + braking + active_braking);
             if ("backward".equals(methodName) || "forward".equals(methodName)) {
-                braking = false;
-                active_braking = false;
+//                braking = false;
+//                active_braking = false;
                 Log.d(TAG, "onTouchChange: braking" + braking + active_braking);
             }
 // 按下松开分别对应启动停止前进方法
@@ -883,6 +862,8 @@ public class RemoteControlEZPlayer extends Activity {
                 }
                 MiusThread miusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
+                    braking=false;
+                    active_braking=false;
                     forward = false;
                     backward = true;
                     isOnLongClick = true;
@@ -914,6 +895,8 @@ public class RemoteControlEZPlayer extends Activity {
                 PlusThread plusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     forward = true;
+                    braking=false;
+                    active_braking=false;
                     backward = false;
 //                    plusThread = new PlusThread();
                     isOnLongClick = true;
