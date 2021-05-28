@@ -178,14 +178,14 @@ public class RemoteControlEZPlayer extends Activity {
             mqttSample = new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
                     mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
 
-            while (!mIsConnected && connectMQTTTimes < 3) {
+            while (!mIsConnected && connectMQTTTimes < 10) {
                 Log.d(TAG, "onCreate: Connecting Mqtt");
                 //轮询连接,万分感谢陈岩大佬
                 Log.d(TAG, "onCreate: " + mqttSample.toString());
                 mqttSample.connect();
-                mqttSample.subscribeTopic();
+//                mqttSample.subscribeTopic();
                 Log.d(TAG, "onCreate: Connet times:" + connectMQTTTimes++);
-                sleep(500);
+                sleep(2000);
             }
             if (mIsConnected) {
                 Log.d(TAG, "onCreate: 连接成功");
@@ -211,22 +211,31 @@ public class RemoteControlEZPlayer extends Activity {
                         try {
                             wheelAngle = sImgView.getmDegree();
                             if (!gearing) {
-//                                    Log.d(TAG, "run: 线程1");
+                                    Log.d(TAG, "run: 线程1");
                                 if (braking) {
-//                                        Log.d(TAG, "run: 线程2");
+                                        Log.d(TAG, "run: 线程2");
                                     if (active_braking) {
+                                        Log.d(TAG, "run: 线程按刹车");
+                                        forward=false;
+                                        backward=false;
                                         moveVehicle(-1.0, 0.0, wheelAngle);
                                     } else {
+                                        Log.d(TAG, "run: 线程没按");
                                         moveVehicle(-0.2, 0.0, wheelAngle);
                                     }
                                 } else if (forward) {
+                                    Log.d(TAG, "run: 线程前进");
+                                    backward=false;
                                     moveVehicle(0.2, maxSpeed, wheelAngle);
                                 } else if (backward) {
+                                    Log.d(TAG, "run: 线程后退");
+                                    forward=false;
                                     moveVehicle(0.2, 0 - maxSpeed, wheelAngle);
                                 }
                             }
                             sleep(50);
                         } catch (Exception e) {
+                            Log.d(TAG, "run: 线程异常          ");
                             e.printStackTrace();
                         }
                     }
@@ -239,6 +248,7 @@ public class RemoteControlEZPlayer extends Activity {
             getCarInfoThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d(TAG, "run: 线程获取信息");
                     while ("com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlEZPlayer".equals(getRunningActivityName())) {
                         try {
                             ntpTime = new SntpClient().getNtpTime();
@@ -262,6 +272,7 @@ public class RemoteControlEZPlayer extends Activity {
                     }
                 }
             });
+
             threadPoolExecutor.execute(moveThread);
             threadPoolExecutor.execute(getCarInfoThread);
 
@@ -333,7 +344,7 @@ public class RemoteControlEZPlayer extends Activity {
                 switch (position) {
                     case 0: {
                         /**前摄像*/
-                        playViaDevSerial("E40958558", R.id.ezplayerSurfaceviewLeft);
+                        playViaDevSerial("E40958817", R.id.ezplayerSurfaceviewLeft);
                         playViaDevSerial("E40958703", R.id.ezplayerSurfaceview);
                         playViaDevSerial("E40958484", R.id.ezplayerSurfaceviewRight);
                     }
@@ -443,26 +454,62 @@ public class RemoteControlEZPlayer extends Activity {
 
     public void playViaDevSerial(final String deviceSerial, int surfaceViewId) {
         SurfaceView mSurfaceView1 = (SurfaceView) findViewById(surfaceViewId);
-        SurfaceHolder mSurfaceHolder1 = mSurfaceView1.getHolder();
+        final SurfaceHolder mSurfaceHolder1 = mSurfaceView1.getHolder();
 
         if(surfaceViewId!=R.id.ezplayerSurfaceview){
         EZPlayer mEZPlayer;
+            mEZPlayer=EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+            final EZPlayer finalMEZPlayer = mEZPlayer;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    try {
+
+                        finalMEZPlayer.setSurfaceHold(mSurfaceHolder1);
+                        finalMEZPlayer.startRealPlay();
+                    } catch (Exception e) {   ///在这里增加播放失败.
+                        finalMEZPlayer.release();
+                        if(finalMEZPlayer!=null) {
+                            Log.i("sno","eeeeeeeeeeeeerrormediaPlayer!=null");
+                        }
+                        e.printStackTrace();
+                    }
+                }
+            }, 200);}
 //        mEZPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
 //        mEZPlayer.release();
 
-        if (testURL.equals(deviceSerial)) {
+        /*if (testURL.equals(deviceSerial)) {
             mEZPlayer = EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
         } else {
             mEZPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
         }
         Log.d(TAG, "playViaDevSerial: 播放器绑定界面" + mEZPlayer.setSurfaceHold(mSurfaceHolder1) + surfaceViewId);
-        Log.d(TAG, "playViaDevSerial: 播放成功？" + mEZPlayer.startRealPlay());}
+        Log.d(TAG, "playViaDevSerial: 播放成功？" + mEZPlayer.startRealPlay());}*/
         else {
-            ezMainPlayer.release();
-            ezMainPlayer=EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
-            ezMainPlayer.setSurfaceHold(mSurfaceHolder1);
-            ezMainPlayer.startRealPlay();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    try {
+                        ezMainPlayer.release();
+                        ezMainPlayer=EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+                        ezMainPlayer.setSurfaceHold(mSurfaceHolder1);
+                        ezMainPlayer.startRealPlay();
+                    } catch (Exception e) {   ///在这里增加播放失败.
+                        ezMainPlayer.release();
+                        if(ezMainPlayer!=null) {
+                            Log.i("sno","eeeeeeeeeeeeerrormediaPlayer!=null");
+                        }
+                        e.printStackTrace();
+                    }
+                }
+            }, 200);
         }
+
+
+
 
 
         mSurfaceHolder1.addCallback(new SurfaceHolder.Callback() {
@@ -539,7 +586,7 @@ public class RemoteControlEZPlayer extends Activity {
                 mGear.setTaskid("手機挂" + gearToSet + "档,当前档位："+gearGlobal);
                 // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
                 mqttSample.publishTopic("data", JSON.toJSONString(mGear));
-                sleep(500);
+                sleep(300);
             }
 
         }
@@ -571,7 +618,7 @@ public class RemoteControlEZPlayer extends Activity {
         mMove.setWheel_angle(wheelAngle);
         // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
         mqttSample.publishTopic("data", JSON.toJSONString(mMove));
-        Log.d(TAG, "onClick: 上传指令" + JSON.toJSONString(mMove));
+//        Log.d(TAG, "onClick: 上传指令" + JSON.toJSONString(mMove));
     }
 
     @Override
@@ -902,11 +949,11 @@ public class RemoteControlEZPlayer extends Activity {
                     isOnLongClick = true;
 //                    plusThread.start();
                 } else if (eventAction == MotionEvent.ACTION_UP || eventAction == MotionEvent.ACTION_CANCEL) {
-
                     isOnLongClick = false;
                     forward = false;
                     backward = false;
                     braking = true;
+                    active_braking=false;
                     Log.d(TAG, "onTouchChange: 松开手指" + braking);
                     if (plusThread != null) {
                         isOnLongClick = false;
@@ -1025,7 +1072,7 @@ public class RemoteControlEZPlayer extends Activity {
                 moveVehicle(-0.5, 0.0, 0.0);
             }
             if (braking) {
-                braking = false;
+                braking = true;
             }
             if (gearGlobal != 1) {
                 shiftGear(1);
