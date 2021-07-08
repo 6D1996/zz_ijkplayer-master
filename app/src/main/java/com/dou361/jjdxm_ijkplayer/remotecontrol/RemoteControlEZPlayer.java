@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,12 +38,9 @@ import com.dou361.jjdxm_ijkplayer.callcar.API.DataResult;
 import com.dou361.jjdxm_ijkplayer.command.Control;
 import com.dou361.jjdxm_ijkplayer.command.Gears;
 import com.dou361.jjdxm_ijkplayer.command.Handbrake;
-import com.dou361.jjdxm_ijkplayer.command.Video;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTRequest;
 import com.dou361.jjdxm_ijkplayer.mqtt.MQTTSample;
 import com.dou361.jjdxm_ijkplayer.service.NtpTime;
-import com.dou361.jjdxm_ijkplayer.service.SntpClient;
-import com.dou361.jjdxm_ijkplayer.videomonitoring.ShowMyToast;
 import com.dou361.jjdxm_ijkplayer.videomonitoring.utlis.MediaUtils;
 import com.tencent.iot.hub.device.android.core.log.TXMqttLogCallBack;
 import com.tencent.iot.hub.device.android.core.util.TXLog;
@@ -78,7 +73,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.content.ContentValues.TAG;
 import static android.os.SystemClock.uptimeMillis;
 
 /**
@@ -105,7 +99,8 @@ public class RemoteControlEZPlayer extends Activity {
 
 
     private Context mContext;
-    private TextView Speed;
+    private TextView speedText;
+    private TextView gearText;
     private PowerManager.WakeLock wakeLock;
     private View rootView;
     private Activity mActivity;
@@ -126,16 +121,16 @@ public class RemoteControlEZPlayer extends Activity {
     private double wheelAngle = 0.0;
     private double speedGlobal = 0.0;
     private long ntpTime;
+    private long timeDifference;
     private EZPlayer ezMainPlayer;
-
 
 
     /*虛擬機*/
 //    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
-////    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";
+//    //    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";
 //    private String mProductID = "XN03IY1B4J";
 //    private String mDevName = "app_test";
-//    private String mDevPSK  = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
+//    private String mDevPSK = "QVuXmEVWLERWWWEegO0Fzw=="; //若使用证书验证，设为null
 //    private String mTestTopic = "XN03IY1B4J/app_test/data";
 
 
@@ -163,7 +158,7 @@ public class RemoteControlEZPlayer extends Activity {
     @SuppressLint({"InvalidWakeLockTag", "ClickableViewAccessibility"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        timeDifference=new NtpTime().getNtpTimeDiffer();
         maxSpeed = (Integer.parseInt(getIntent().getStringExtra("speedList")) + 1) * 5.0;
         Log.d(TAG, "onCreate: 最大车速:" + maxSpeed);
         super.onCreate(savedInstanceState);
@@ -173,7 +168,8 @@ public class RemoteControlEZPlayer extends Activity {
 
         setContentView(rootView);
 
-        Speed = findViewById(R.id.speed);
+        speedText = findViewById(R.id.speed);
+        gearText = findViewById(R.id.gear_text);
         if (mqttSample == null) {
             mqttSample = new MQTTSample(getApplication(), new SelfMqttActionCallBack(), mBrokerURL, mProductID, mDevName, mDevPSK,
                     mDevCert, mDevPriv, mSubProductID, mSubDevName, mTestTopic, null, null, true, new SelfMqttLogCallBack());
@@ -185,9 +181,10 @@ public class RemoteControlEZPlayer extends Activity {
                 mqttSample.connect();
 //                mqttSample.subscribeTopic();
                 Log.d(TAG, "onCreate: Connet times:" + connectMQTTTimes++);
-                sleep(2000);
+                sleep(3000);
             }
             if (mIsConnected) {
+                mqttSample.subscribeTopic();
                 Log.d(TAG, "onCreate: 连接成功");
                 Toast.makeText(RemoteControlEZPlayer.this, "连接成功", Toast.LENGTH_SHORT).show();
             } else {
@@ -201,7 +198,23 @@ public class RemoteControlEZPlayer extends Activity {
 
             threadPoolExecutor = new ThreadPoolExecutor(3, 10, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
 
-            Thread moveThread, getCarInfoThread;
+            Thread moveThread, getCarInfoThread,ntpTimeThread;
+
+            ntpTimeThread=new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while ("com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlEZPlayer".equals(getRunningActivityName())) {
+                    try {
+                        wheelAngle = sImgView.getmDegree();
+                        ntpTime =timeDifference+System.currentTimeMillis();
+                        Log.d(TAG, "run: ntpTime"+ntpTime);
+                    }catch (Exception e) {
+                        Log.d(TAG, "run: 线程异常          ");
+                        e.printStackTrace();
+                    }
+                    }
+                }
+            });
 
             moveThread = new Thread(new Runnable() {
                 @Override
@@ -209,27 +222,23 @@ public class RemoteControlEZPlayer extends Activity {
                     shiftHandbrake(1);
                     while ("com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlEZPlayer".equals(getRunningActivityName())) {
                         try {
-                            wheelAngle = sImgView.getmDegree();
+
                             if (!gearing) {
-                                    Log.d(TAG, "run: 线程1");
+//                                Log.d(TAG, "run: 线程1");
                                 if (braking) {
-                                        Log.d(TAG, "run: 线程2");
+//                                    Log.d(TAG, "run: 线程2");
                                     if (active_braking) {
-                                        Log.d(TAG, "run: 线程按刹车");
-                                        forward=false;
-                                        backward=false;
+//                                        Log.d(TAG, "run: 线程按刹车");
                                         moveVehicle(-1.0, 0.0, wheelAngle);
                                     } else {
-                                        Log.d(TAG, "run: 线程没按");
+//                                        Log.d(TAG, "run: 线程没按");
                                         moveVehicle(-0.2, 0.0, wheelAngle);
                                     }
                                 } else if (forward) {
-                                    Log.d(TAG, "run: 线程前进");
-                                    backward=false;
+//                                    Log.d(TAG, "run: 线程前进");
                                     moveVehicle(0.2, maxSpeed, wheelAngle);
                                 } else if (backward) {
-                                    Log.d(TAG, "run: 线程后退");
-                                    forward=false;
+//                                    Log.d(TAG, "run: 线程后退");
                                     moveVehicle(0.2, 0 - maxSpeed, wheelAngle);
                                 }
                             }
@@ -242,7 +251,6 @@ public class RemoteControlEZPlayer extends Activity {
 
                 }
 
-
             });
 
             getCarInfoThread = new Thread(new Runnable() {
@@ -251,7 +259,7 @@ public class RemoteControlEZPlayer extends Activity {
                     Log.d(TAG, "run: 线程获取信息");
                     while ("com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlEZPlayer".equals(getRunningActivityName())) {
                         try {
-                            ntpTime = new SntpClient().getNtpTime();
+
                             requestCarInfo();
                             if (!"Initial".equals(dataResult.getSpeed3d())) {
                                 gearGlobal = Integer.parseInt(dataResult.getGears()) + 1;
@@ -260,11 +268,27 @@ public class RemoteControlEZPlayer extends Activity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Speed.setText(speed[0]);
+                                        speedText.setText(speed[0]);
+                                        switch (gearGlobal){
+                                            case 1:
+                                                gearText.setText("P");
+                                                break;
+                                            case 2:
+                                                gearText.setText("R");
+                                                break;
+                                            case 3:
+                                                gearText.setText("N");
+                                                break;
+                                            case 4:
+                                                gearText.setText("D");
+                                                break;
+                                            default:
+                                                break;
+                                        }
+
                                     }
                                 });
                             }
-                            sleep(50);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -273,6 +297,7 @@ public class RemoteControlEZPlayer extends Activity {
                 }
             });
 
+            threadPoolExecutor.execute(ntpTimeThread);
             threadPoolExecutor.execute(moveThread);
             threadPoolExecutor.execute(getCarInfoThread);
 
@@ -283,8 +308,7 @@ public class RemoteControlEZPlayer extends Activity {
             wakeLock.acquire();
 
             CompentOnTouch compentOnTouch = new CompentOnTouch();
-
-
+            
             //返回键
             findViewById(R.id.back2).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -344,7 +368,7 @@ public class RemoteControlEZPlayer extends Activity {
                 switch (position) {
                     case 0: {
                         /**前摄像*/
-                        playViaDevSerial("E40958817", R.id.ezplayerSurfaceviewLeft);
+                        playViaDevSerial("D30723108", R.id.ezplayerSurfaceviewLeft);
                         playViaDevSerial("E40958703", R.id.ezplayerSurfaceview);
                         playViaDevSerial("E40958484", R.id.ezplayerSurfaceviewRight);
                     }
@@ -412,6 +436,7 @@ public class RemoteControlEZPlayer extends Activity {
                     @Override
                     public void run() {
                         try {
+                            Log.d(TAG, "run: 线程获取信息函数");
 //                            Log.d(TAG, "postAddressRequest: "+addressRequestJson);
                             OkHttpClient addressClient = new OkHttpClient();
                             String hostURL = "http://vehicleroadcloud.faw.cn:60443/backend/appBackend/";
@@ -423,21 +448,15 @@ public class RemoteControlEZPlayer extends Activity {
 //                            Log.d(TAG, "run: 请求json："+addressRequestJson);
                             Response addressResponse = addressClient.newCall(addressRequest).execute();
                             carInfoString = addressResponse.body().string();
-//                            Log.d(TAG, "run: 接受到了carInfoString"+carInfoString);
+                            Log.d(TAG, "run: 线程获取到了carInfoString" + carInfoString);
                         } catch (Exception e) {
+                            Log.d(TAG, "run: 线程获取信息函数失败");
                             e.printStackTrace();
 //                            Log.d("POST失敗", "onClick: "+e.toString());
                             CarInfoReceive carInfoReceive1 = new CarInfoReceive();
                             DataResult dataResult1 = new DataResult();
                             carInfoReceive1.setDataResults(JSON.toJSONString(dataResult1));
                             carInfoString = JSON.toJSONString(carInfoReceive1);
-//                            Log.d(TAG, "run: 失败carInfoString"+carInfoString);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(RemoteControlEZPlayer.this, "獲取車輛信息失敗\n注意不要連一汽Wifi", Toast.LENGTH_SHORT).show();
-                                }
-                            });
                         }
                     }
                 }
@@ -456,9 +475,9 @@ public class RemoteControlEZPlayer extends Activity {
         SurfaceView mSurfaceView1 = (SurfaceView) findViewById(surfaceViewId);
         final SurfaceHolder mSurfaceHolder1 = mSurfaceView1.getHolder();
 
-        if(surfaceViewId!=R.id.ezplayerSurfaceview){
-        EZPlayer mEZPlayer;
-            mEZPlayer=EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+        if (surfaceViewId != R.id.ezplayerSurfaceview) {
+            EZPlayer mEZPlayer;
+            mEZPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
             final EZPlayer finalMEZPlayer = mEZPlayer;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -470,46 +489,33 @@ public class RemoteControlEZPlayer extends Activity {
                         finalMEZPlayer.startRealPlay();
                     } catch (Exception e) {   ///在这里增加播放失败.
                         finalMEZPlayer.release();
-                        if(finalMEZPlayer!=null) {
-                            Log.i("sno","eeeeeeeeeeeeerrormediaPlayer!=null");
+                        if (finalMEZPlayer != null) {
+                            Log.i("sno", "eeeeeeeeeeeeerrormediaPlayer!=null");
                         }
                         e.printStackTrace();
                     }
                 }
-            }, 200);}
-//        mEZPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
-//        mEZPlayer.release();
-
-        /*if (testURL.equals(deviceSerial)) {
-            mEZPlayer = EZOpenSDK.getInstance().createPlayerWithUrl(testURL);
+            }, 200);
         } else {
-            mEZPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
-        }
-        Log.d(TAG, "playViaDevSerial: 播放器绑定界面" + mEZPlayer.setSurfaceHold(mSurfaceHolder1) + surfaceViewId);
-        Log.d(TAG, "playViaDevSerial: 播放成功？" + mEZPlayer.startRealPlay());}*/
-        else {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     // TODO Auto-generated method stub
                     try {
                         ezMainPlayer.release();
-                        ezMainPlayer=EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
+                        ezMainPlayer = EZOpenSDK.getInstance().createPlayer(deviceSerial, 1);
                         ezMainPlayer.setSurfaceHold(mSurfaceHolder1);
                         ezMainPlayer.startRealPlay();
                     } catch (Exception e) {   ///在这里增加播放失败.
                         ezMainPlayer.release();
-                        if(ezMainPlayer!=null) {
-                            Log.i("sno","eeeeeeeeeeeeerrormediaPlayer!=null");
+                        if (ezMainPlayer != null) {
+                            Log.i("sno", "eeeeeeeeeeeeerrormediaPlayer!=null");
                         }
                         e.printStackTrace();
                     }
                 }
             }, 200);
         }
-
-
-
 
 
         mSurfaceHolder1.addCallback(new SurfaceHolder.Callback() {
@@ -530,7 +536,6 @@ public class RemoteControlEZPlayer extends Activity {
         });
 
 
-
     }
 
     /**
@@ -541,7 +546,7 @@ public class RemoteControlEZPlayer extends Activity {
 
         Log.d(TAG, "shiftHandbrake: 放手刹");
         int i = 0;
-        while (i < 10 && handBrakeStatus== handbrakeToSet) {
+        while (i < 10 && handBrakeStatus == handbrakeToSet) {
             Handbrake mHandbrake = new Handbrake();
             mHandbrake.setTimestamp(ntpTime);
             mHandbrake.setStatus(handbrakeToSet);
@@ -552,7 +557,7 @@ public class RemoteControlEZPlayer extends Activity {
             sleep(500);
 //                handBrakeStatus=handbrakeToSet;
             handBrakeStatus = Integer.parseInt(dataResult.getBrake());
-            Log.d(TAG, "shiftHandbrake: 手刹状态"+handBrakeStatus);
+            Log.d(TAG, "shiftHandbrake: 手刹状态" + handBrakeStatus);
             i++;
         }
         if (handBrakeStatus == handbrakeToSet) {
@@ -566,38 +571,47 @@ public class RemoteControlEZPlayer extends Activity {
      * 1,2,3,4分別對應P,R,N,D四個檔位
      **/
     private boolean shiftGear(final int gearToSet) {
-        Log.d(TAG, "shiftGear: 当前档位："+gearGlobal);
+        Log.d(TAG, "shiftGear: 当前档位：" + gearGlobal);
+        int i = 0;
         if (gearToSet == gearGlobal) {
             //要挂的档位就是当前档位，直接退出函数
             return true;
-        }
-        if (speedGlobal > 0.02 || speedGlobal < -0.02) {
-            //车速不为0的话先减速到0再进行挂挡操作
-            braking=true;
-            active_braking=true;
         } else {
-            //挂挡中，不发指令消息
-            gearing = true;
-            if (gearToSet!=gearGlobal){
-                Gears mGear = new Gears();
-                mGear.setTimestamp(ntpTime);
-                mGear.setGear(gearToSet);
-                mGear.setType(13);
-                mGear.setTaskid("手機挂" + gearToSet + "档,当前档位："+gearGlobal);
-                // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
-                mqttSample.publishTopic("data", JSON.toJSONString(mGear));
-                sleep(300);
+            while (i < 5 && gearToSet != gearGlobal) {
+                if (speedGlobal > 0.01 || speedGlobal < -0.01) {
+                    //车速不为0的话先减速1秒
+                    braking = true;
+                    active_braking = true;
+                    sleep(1000);
+                }
+                if (speedGlobal < 0.01 && speedGlobal > -0.01) {
+                    //挂挡中，不发指令消息
+                    gearing = true;
+                    if (gearToSet != gearGlobal) {
+                        Gears mGear = new Gears();
+                        mGear.setTimestamp(ntpTime);
+                        mGear.setGear(gearToSet);
+                        mGear.setType(13);
+                        mGear.setTaskid("手機挂" + gearToSet + "档,当前档位：" + gearGlobal);
+                        // 需先在腾讯云控制台，增加自定义主题: data，用于更新自定义数据
+                        mqttSample.publishTopic("data", JSON.toJSONString(mGear));
+                        sleep(500);
+                    }
+                }
+                i++;
+                sleep(100);
             }
-
         }
+
         if (gearToSet == gearGlobal) {
-            gearing=false;
+            gearing = false;
+            braking = false;
             //要挂的档位就是当前档位，直接退出函数
             return true;
         } else {
-            gearing=false;
-            braking=true;
-            active_braking=true;
+            gearing = false;
+            braking = true;
+            active_braking = true;
             return false;
         }
     }
@@ -693,9 +707,9 @@ public class RemoteControlEZPlayer extends Activity {
             if (userContext instanceof MQTTRequest) {
                 userContextInfo = userContext.toString();
             }
-            String logInfo = String.format("onPublishCompleted, status[%s], topics[%s],  userContext[%s], errMsg[%s]",
-                    status.name(), Arrays.toString(token.getTopics()), userContextInfo, errMsg);
-            Log.d(TAG, "onConnectCompleted: " + logInfo);
+//            String logInfo = String.format("onPublishCompleted, status[%s], topics[%s],  userContext[%s], errMsg[%s]",
+//                    status.name(), Arrays.toString(token.getTopics()), userContextInfo, errMsg);
+//            Log.d(TAG, "onConnectCompleted: " + logInfo);
         }
 
         @Override
@@ -728,8 +742,16 @@ public class RemoteControlEZPlayer extends Activity {
         @Override
         public void onMessageReceived(final String topic, final MqttMessage message) {
             String logInfo = String.format("receive command, topic[%s], message[%s]", topic, message.toString());
-//            Toast.makeText(RemoteControl.this, logInfo,Toast.LENGTH_SHORT).show();
+//            Toast.makeText(RemoteControl, logInfo,Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onConnectCompleted: " + logInfo);
+            mqttSample.unSubscribeTopic();
+            mqttSample.disconnect();
+            sleep(10000);
+
+            Intent intent=new Intent(RemoteControlEZPlayer.this, RemoteControlInitial.class);
+            intent.putExtra("error",  message.toString());
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -904,13 +926,13 @@ public class RemoteControlEZPlayer extends Activity {
             if ("backward".equals(methodName)) {
                 //挂挡
 
-                if (gearGlobal != 2) {
-                    shiftGear(2);
-                }
                 MiusThread miusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
-                    braking=false;
-                    active_braking=false;
+                    if (gearGlobal != 2) {
+                        shiftGear(2);
+                    }
+                    braking = false;
+                    active_braking = false;
                     forward = false;
                     backward = true;
                     isOnLongClick = true;
@@ -935,15 +957,15 @@ public class RemoteControlEZPlayer extends Activity {
             }
 // 按下松开分别对应启动停止加线程方法
             else if ("forward".equals(methodName)) {
-                if (gearGlobal != 4) {
-                    shiftGear(4);
-                }
 
                 PlusThread plusThread = null;
                 if (eventAction == MotionEvent.ACTION_DOWN) {
+                    if (gearGlobal != 4) {
+                        shiftGear(4);
+                    }
                     forward = true;
-                    braking=false;
-                    active_braking=false;
+                    braking = false;
+                    active_braking = false;
                     backward = false;
 //                    plusThread = new PlusThread();
                     isOnLongClick = true;
@@ -953,7 +975,7 @@ public class RemoteControlEZPlayer extends Activity {
                     forward = false;
                     backward = false;
                     braking = true;
-                    active_braking=false;
+                    active_braking = false;
                     Log.d(TAG, "onTouchChange: 松开手指" + braking);
                     if (plusThread != null) {
                         isOnLongClick = false;
@@ -964,9 +986,10 @@ public class RemoteControlEZPlayer extends Activity {
                     }
                 }
             } else if ("brake".equals(methodName)) {
-                braking = true;
+
                 if (eventAction == MotionEvent.ACTION_DOWN) {
                     active_braking = true;
+                    braking = true;
                     forward = false;
                     backward = false;
                     isOnLongClick = true;
@@ -1123,30 +1146,7 @@ public class RemoteControlEZPlayer extends Activity {
         });
         dialog.show();
         Objects.requireNonNull(dialog.getWindow()).setLayout(1000, 600);
-        /*
-//        super.onBackPressed();
-        //对话框
-        AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
-        builder.setTitle("结束挪车");//设置对话框的标题
-        builder.setMessage("您已确定车辆已经抵达目标位置并结束挪车操作吗？");//设置对话框的内容
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {  //这个是设置确定按钮
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                finish();
-                Intent intent=new Intent(RemoteControlEZPlayer.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {  //取消按钮
 
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                Toast.makeText(RemoteControlEZPlayer.this, "取消成功",Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        AlertDialog b=builder.create();
-        b.show();*/
         /**demo的内容，恢复设备亮度状态*/
         if (wakeLock != null) {
             wakeLock.release();

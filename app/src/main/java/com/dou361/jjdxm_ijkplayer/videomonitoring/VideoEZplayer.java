@@ -267,7 +267,7 @@ public class VideoEZplayer extends Activity implements View.OnClickListener , My
                 break;
             case 3:
                 //左视角
-                playViaDevSerial("E40958558");
+                playViaDevSerial("D30723108");
 //                mEZPlayer1=EZOpenSDK.getInstance().createPlayer("E40958484",1);
 //                mEZPlayer1.startRealPlay();
                 break;

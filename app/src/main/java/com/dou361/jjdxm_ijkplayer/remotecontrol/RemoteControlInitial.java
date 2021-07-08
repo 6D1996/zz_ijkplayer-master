@@ -24,6 +24,7 @@ public class RemoteControlInitial extends Activity {
     private TextView speedTextView ;
     private double wheelAngle=0.0;
     ScalableImageView sImgView ;
+    Toast toast;
 
 
 
@@ -33,23 +34,12 @@ public class RemoteControlInitial extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //一直连接Iothub
+        Toast.makeText(RemoteControlInitial.this,getIntent().getStringExtra("error"),Toast.LENGTH_LONG).show();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_controlinitial);
         sImgView = findViewById(R.id.steering_wheel);
 
-//        CountDownTimer countDownTimer = new CountDownTimer(1000000, 200) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                wheelAngle=sImgView.getmDegree();
-//                speedTextView = findViewById(R.id.speed);
-//                speedTextView.setText(String.valueOf((int) wheelAngle));
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//            }
-//        }.start();
 
         //返回键
         findViewById(R.id.back2).setOnClickListener(new View.OnClickListener(){

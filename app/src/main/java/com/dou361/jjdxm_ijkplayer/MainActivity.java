@@ -64,5 +64,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void startActivity(Class<?> cls) {
         Intent intent = new Intent(MainActivity.this, cls);
         startActivity(intent);
+//        finish();
     }
 }

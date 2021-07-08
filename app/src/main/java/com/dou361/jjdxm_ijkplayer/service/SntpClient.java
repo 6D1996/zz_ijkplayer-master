@@ -94,7 +94,7 @@ public class SntpClient {
      * @param timeout network timeout in milliseconds.
      * @return true if the transaction was successful.
      */
-    public boolean requestTime(String host, int timeout) {
+    public long getNtpMinusSystemTime(String host, int timeout) {
         DatagramSocket socket = null;
         InetAddress address = null;
         try {
@@ -159,24 +159,17 @@ public class SntpClient {
 //                Log.e(TAG, "Error address: " + address.toString());
             }
             Log.e(TAG, "Request time from ntp server failed ,msg: " + e.getMessage());
-            return false;
+            return mNtpTime-System.currentTimeMillis();
         } finally {
             if (socket != null) {
                 socket.close();
             }
         }
 
-        return true;
+        return mNtpTime-System.currentTimeMillis();
     }
 
-    /**
-     * Returns the time computed from the NTP transaction.
-     *
-     * @return time value computed from NTP server response.
-     */
-    public long getNtpTime() {
-        return mNtpTime;
-    }
+
 
     /**
      * Returns the reference clock value (value of SystemClock.elapsedRealtime())

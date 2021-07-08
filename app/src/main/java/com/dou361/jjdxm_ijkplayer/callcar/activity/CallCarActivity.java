@@ -49,6 +49,7 @@
 
  import java.io.IOException;
  import java.io.InputStream;
+ import java.util.List;
 
  import okhttp3.MediaType;
  import okhttp3.OkHttpClient;
@@ -124,16 +125,23 @@
          addMarkersToMap();// 往地图上添加marker
          aMap.setOnMapClickListener(this);// 对amap添加单击地图事件监听器
          aMap.setMapType(AMap.MAP_TYPE_SATELLITE);
-         // 绘制一个多邊形
+         // 叫车区域
          PolygonOptions pOption = new PolygonOptions();
-         pOption.add(new LatLng(43.83604303740284,125.1615908191709));
-         pOption.add(new LatLng(43.83589309459136,125.1616444633503));
-         pOption.add(new LatLng(43.83588438822299,125.16169140200725));
-         pOption.add(new LatLng(43.835763466308755,125.16175175170903));
-         pOption.add(new LatLng(43.83607399329118,125.16326451756757));
-         pOption.add(new LatLng(43.83622103354154,125.16319343902988));
+         pOption.add(new LatLng(43.83347207503405,125.1551115893156));
+         pOption.add(new LatLng(43.83432160538837,125.15865212379617));
+         pOption.add(new LatLng(43.83175865760996,125.15982558462218));
+         pOption.add(new LatLng(43.83090916322726,125.15628518501079));
 
-         polygon = aMap.addPolygon(pOption.strokeWidth(4)
+         // 绘制一个多邊形
+         PolygonOptions mapDraw = new PolygonOptions();
+         mapDraw.add(new LatLng(43.83604303740284,125.1615908191709));
+         mapDraw.add(new LatLng(43.83589309459136,125.1616444633503));
+         mapDraw.add(new LatLng(43.83588438822299,125.16169140200725));
+         mapDraw.add(new LatLng(43.835763466308755,125.16175175170903));
+         mapDraw.add(new LatLng(43.83607399329118,125.16326451756757));
+         mapDraw.add(new LatLng(43.83622103354154,125.16319343902988));
+
+         polygon = aMap.addPolygon(mapDraw.strokeWidth(4)
                  .strokeColor(Color.argb(50, 54, 58, 90))
                  .fillColor(Color.argb(50,  155,  0,  255)));
          aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.83598692981427,125.1624303505782), 18.6f));
@@ -162,7 +170,7 @@
          if (aMap != null) {
              aMap.moveCamera(CameraUpdateFactory.changeLatLng(marker.getPosition()));
          }
-
+         showMyDialog(marker);
          boolean markerInPolygon = polygon.contains(marker.getPosition());
          if(markerInPolygon){showMyDialog(marker);}
          else {
@@ -187,7 +195,8 @@
              @Override
              public void onClick(View v) {
                  callCarRequest= new CallCarRequest();
-                 double[] desLatLngArr = GpsUtil.gps84_To_Gcj02(marker.getPosition().latitude, marker.getPosition().longitude);
+                 double[] desLatLngArr = GpsUtil.gcj02_To_Gps84(marker.getPosition().latitude, marker.getPosition().longitude);
+//                 double[] desLatLngArr = GpsUtil.gps84_To_Gcj02(marker.getPosition().latitude, marker.getPosition().longitude);
                  LatLng marker_wgs84 = new LatLng(desLatLngArr[0],desLatLngArr[1]);
                  destination.setLatitude(desLatLngArr[0]);
                  destination.setLongitude(desLatLngArr[1]);
@@ -208,9 +217,6 @@
  //进入播放器界面
                          Intent intent = new Intent(CallCarActivity.this, RMTPPlayerActivity.class);
                          startActivity(intent);
-
- //                Intent intent=new Intent(CallCarActivity.this, CallCarActivity.class);
- //                startActivity(intent);
                          dialog.dismiss();
                      }
 
@@ -333,19 +339,19 @@
          navimap = (Button)findViewById(R.id.navimap);
          navimap.setOnClickListener(this);
 
-         mStyleCheckbox = (CheckBox) findViewById(R.id.check_style);
+//         mStyleCheckbox = (CheckBox) findViewById(R.id.check_style);
 
-         mStyleCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-             @Override
-             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                 if(mapStyleOptions != null) {
-                     // 设置自定义样式
-                     mapStyleOptions.setEnable(b);
- //					mapStyleOptions.setStyleId("your id");
-                     aMap.setCustomMapStyle(mapStyleOptions);
-                 }
-             }
-         });
+//         mStyleCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//             @Override
+//             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                 if(mapStyleOptions != null) {
+//                     // 设置自定义样式
+//                     mapStyleOptions.setEnable(b);
+// //					mapStyleOptions.setStyleId("your id");
+//                     aMap.setCustomMapStyle(mapStyleOptions);
+//                 }
+//             }
+//         });
 
      }
 
@@ -437,9 +443,18 @@
      @Override
      public void onMapClick(LatLng latLng) {
          if (marker != null) {
-             marker.remove();
+             Log.d(TAG, "onMapClick: 打了一個點"+latLng.toString());
+             List<Marker> mapScreenMarkers = aMap.getMapScreenMarkers();
+             for (int i = 0; i < mapScreenMarkers.size(); i++) {
+                 Marker marker = mapScreenMarkers.get(i);
+//                 if (marker.getObject() instanceof xxx) {
+                     marker.remove();//移除当前Marker
+//                 }
+             }
+//             aMap.invalidate();//刷新地图
+//             marker.remove();
          }
-         Log.d(TAG, "onMapClick: 打了一個點"+latLng.toString());
+
          LatLonPoint latLonPoint= new LatLonPoint(latLng.latitude, latLng.longitude);
          getAddress(latLonPoint);
          markerOption = new MarkerOptions().icon(BitmapDescriptorFactory

@@ -10,6 +10,7 @@
     <string name="au_park">自动出泊车</string>
     <string name="call">叫车</string>
     <string name="speed">速度</string>
+    <string name="gear">档位</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 

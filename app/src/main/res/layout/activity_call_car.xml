@@ -10,13 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
 
-    <CheckBox
-        android:id="@+id/check_style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text="清理标记点"/>
-    <RelativeLayout
+
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/offset_title"
@@ -66,7 +61,7 @@
                 android:textColor="@color/gary"
                 android:textSize="14sp" />
         </LinearLayout>
-    </RelativeLayout>
+    </RelativeLayout>-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -124,7 +119,7 @@
 
         <Button
             android:id="@+id/basicmap"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:gravity="center"
             android:background="@drawable/btn_map_poi"
@@ -133,7 +128,7 @@
             android:text="标准地图"/>
         <Button
             android:id="@+id/rsmap"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:gravity="center"
             android:background="@drawable/btn_map_poi"
@@ -142,7 +137,7 @@
             android:text="卫星地图"/>
         <Button
             android:id="@+id/nightmap"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:background="@drawable/btn_map_poi"
             android:textColor="@color/black"
@@ -151,7 +146,7 @@
             android:text="夜间模式"/>
         <Button
             android:id="@+id/navimap"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:background="@drawable/btn_map_poi"
             android:textColor="@color/black"
