@@ -2,10 +2,10 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.7">
-      <module name="zz_ijkplayer-master.app" target="1.8" />
+      <module name="zz_ijkplayer-master.app" target="11" />
       <module name="zz_ijkplayer-master.hub-device-android.hub-demo" target="1.8" />
-      <module name="zz_ijkplayer-master.hub-device-android.iot_core" target="1.8" />
-      <module name="zz_ijkplayer-master.hub-device-android.iot_service" target="1.8" />
+      <module name="zz_ijkplayer-master.hub-device-android.iot_core" target="11" />
+      <module name="zz_ijkplayer-master.hub-device-android.iot_service" target="11" />
       <module name="zz_ijkplayer-master.iot_core" target="1.8" />
       <module name="zz_ijkplayer-master.iot_service" target="1.8" />
       <module name="zz_ijkplayer-master.jjdxm-ijkplayer" target="1.8" />
