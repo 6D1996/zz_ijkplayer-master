@@ -125,7 +125,7 @@ public class RemoteControlEZPlayer extends Activity {
     private EZPlayer ezMainPlayer;
 
 
-    /*虛擬機*/
+    /*虛擬配置*/
 //    private String mBrokerURL = "ssl://fawtsp-mqtt-public-sit.faw.cn:8883";  //传入null，即使用腾讯云物联网通信默认地址 "${ProductId}.iotcloud.tencentdevices.com:8883"  https://cloud.tencent.com/document/product/634/32546
 //    //    private String mBrokerURL = "ssl://fawtsp-mqtt-sit.faw.cn:8883";
 //    private String mProductID = "XN03IY1B4J";
@@ -178,6 +178,7 @@ public class RemoteControlEZPlayer extends Activity {
                 Log.d(TAG, "onCreate: Connecting Mqtt");
                 //轮询连接,万分感谢陈岩大佬
                 Log.d(TAG, "onCreate: " + mqttSample.toString());
+                //连接MQTT
                 mqttSample.connect();
 //                mqttSample.subscribeTopic();
                 Log.d(TAG, "onCreate: Connet times:" + connectMQTTTimes++);
@@ -222,22 +223,30 @@ public class RemoteControlEZPlayer extends Activity {
                     shiftHandbrake(1);
                     while ("com.dou361.jjdxm_ijkplayer.remotecontrol.RemoteControlEZPlayer".equals(getRunningActivityName())) {
                         try {
-
+                            //不在挂挡状态
                             if (!gearing) {
 //                                Log.d(TAG, "run: 线程1");
+                                //刹车状态，主动和被动两种
                                 if (braking) {
 //                                    Log.d(TAG, "run: 线程2");
+                                    //主动按下刹车
                                     if (active_braking) {
 //                                        Log.d(TAG, "run: 线程按刹车");
                                         moveVehicle(-1.0, 0.0, wheelAngle);
-                                    } else {
+                                    }
+                                    //无操作
+                                    else {
 //                                        Log.d(TAG, "run: 线程没按");
                                         moveVehicle(-0.2, 0.0, wheelAngle);
                                     }
-                                } else if (forward) {
+                                }
+                                //前进
+                                else if (forward) {
 //                                    Log.d(TAG, "run: 线程前进");
                                     moveVehicle(0.2, maxSpeed, wheelAngle);
-                                } else if (backward) {
+                                }
+                                //后退
+                                else if (backward) {
 //                                    Log.d(TAG, "run: 线程后退");
                                     moveVehicle(0.2, 0 - maxSpeed, wheelAngle);
                                 }
@@ -744,14 +753,15 @@ public class RemoteControlEZPlayer extends Activity {
             String logInfo = String.format("receive command, topic[%s], message[%s]", topic, message.toString());
 //            Toast.makeText(RemoteControl, logInfo,Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onConnectCompleted: " + logInfo);
-            mqttSample.unSubscribeTopic();
+            //TO DO：故障消息的處理
+/*            mqttSample.unSubscribeTopic();
             mqttSample.disconnect();
             sleep(10000);
 
             Intent intent=new Intent(RemoteControlEZPlayer.this, RemoteControlInitial.class);
             intent.putExtra("error",  message.toString());
             startActivity(intent);
-            finish();
+            finish();*/
         }
     }
 

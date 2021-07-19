@@ -339,19 +339,19 @@
          navimap = (Button)findViewById(R.id.navimap);
          navimap.setOnClickListener(this);
 
-//         mStyleCheckbox = (CheckBox) findViewById(R.id.check_style);
+         mStyleCheckbox = (CheckBox) findViewById(R.id.check_style);
 
-//         mStyleCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//             @Override
-//             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                 if(mapStyleOptions != null) {
-//                     // 设置自定义样式
-//                     mapStyleOptions.setEnable(b);
-// //					mapStyleOptions.setStyleId("your id");
-//                     aMap.setCustomMapStyle(mapStyleOptions);
-//                 }
-//             }
-//         });
+         mStyleCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+             @Override
+             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                 if(mapStyleOptions != null) {
+                     // 设置自定义样式
+                     mapStyleOptions.setEnable(b);
+ //					mapStyleOptions.setStyleId("your id");
+                     aMap.setCustomMapStyle(mapStyleOptions);
+                 }
+             }
+         });
 
      }
 
